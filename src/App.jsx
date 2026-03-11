@@ -339,6 +339,30 @@ const HeroParticles = ({ mouseX, mouseY }) => {
 
 // ── Section 1 · Hero ──────────────────────────────────────────────────────────
 
+const AnimatedNumber = ({ value }) => {
+    const [display, setDisplay] = useState(0);
+    useEffect(() => {
+        let start;
+        const duration = 900;
+        const step = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = (timestamp - start) / duration;
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            if (progress < 1) {
+                setDisplay(Math.floor(easeOut * value));
+                requestAnimationFrame(step);
+            } else {
+                setDisplay(value);
+            }
+        };
+        const timeout = setTimeout(() => {
+            requestAnimationFrame(step);
+        }, 300);
+        return () => clearTimeout(timeout);
+    }, [value]);
+    return <>{display}</>;
+};
+
 const HeroSection = () => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -362,7 +386,7 @@ const HeroSection = () => {
 
     return (
         <section
-            className="relative min-h-screen overflow-hidden bg-[#0F0F13]"
+            className="relative h-screen overflow-hidden bg-[#0F0F13]"
             onMouseMove={handleMouseMove}
         >
             {/* Layer 1: copper radial glow */}
@@ -385,526 +409,950 @@ const HeroSection = () => {
             />
 
             {/* Layer 4: Two-column split layout */}
-            <div
-                className="relative min-h-screen flex flex-col md:flex-row"
-                style={{ zIndex: 10 }}
-            >
-                {/* ── LEFT 60% — Brand visual area ── */}
-                <motion.div
-                    initial={{ opacity: 0, x: -24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 1.4, ease: 'easeOut' }}
-                    className="relative flex flex-col items-center justify-center md:items-stretch md:justify-start"
-                    style={{ flex: '0 0 60%', minHeight: '50vh' }}
-                >
-                    {/* Layer A: Zodiac SVG — centered horizontally and vertically */}
-                    <motion.div
-                        className="md:absolute md:inset-0 flex items-center justify-center pointer-events-none mt-20 md:mt-0"
-                        style={{ x: zodiacX, y: zodiacY }}
-                    >
-                        {/* Soft Glow Pulse background */}
+            <div className="relative h-full flex items-center justify-center z-10 px-6 py-20 w-full pt-32">
+                <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 h-full">
+                    {/* ── LEFT 60% — Brand visual area + Card ── */}
+                    <div className="relative flex flex-col items-center justify-center w-full md:w-[60%] h-full min-h-[400px]">
+                        {/* Layer A: Zodiac SVG — centered within its column */}
                         <motion.div
-                            className="absolute w-[400px] h-[400px] bg-[#D88A3D]/10 rounded-full blur-[80px]"
-                            animate={{
-                                opacity: [0.3, 0.6, 0.3],
-                                scale: [0.95, 1.05, 0.95]
-                            }}
-                            transition={{
-                                duration: 8,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                        />
-
-                        {/* Rotating Zodiac Wheel */}
-                        <motion.img
-                            src="/assets/zodiac.svg"
-                            alt=""
-                            className="w-[75%] max-w-[320px] md:max-w-[650px] relative z-10"
-                            style={{
-                                height: 'auto',
-                                opacity: 0.25,
-                                width: '75%',
-                                maxWidth: '650px'
-                            }}
-                            animate={{ rotate: 360 }}
-                            transition={{
-                                duration: 60,
-                                repeat: Infinity,
-                                ease: "linear"
-                            }}
-                        />
-                    </motion.div>
-                </motion.div>
-
-                {/* ── RIGHT 40% — Text + CTA ── */}
-                <motion.div
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 1.4, delay: 0.2, ease: 'easeOut' }}
-                    className="flex flex-col justify-center items-center md:items-start text-center md:text-left"
-                    style={{
-                        flex: '0 0 40%',
-                        paddingLeft: 'clamp(1.5rem, 60px, 60px)',
-                        paddingRight: 'clamp(1.5rem, 60px, 60px)',
-                        paddingTop: 'clamp(2rem, 80px, 80px)',
-                        paddingBottom: 'clamp(6rem, 80px, 80px)',
-                    }}
-                >
-                    {/* Category Label */}
-                    <p
-                        className="font-sans text-[#A1A1AA] uppercase"
-                        style={{ fontSize: '13px', letterSpacing: '0.2em', marginBottom: '16px' }}
-                    >
-                        AI Style Intelligence
-                    </p>
-
-                    {/* Line 1 */}
-                    <p
-                        className="font-sans text-[#F5F5F7]"
-                        style={{ fontWeight: 400, fontSize: 'clamp(28px, 32px, 32px)', lineHeight: 1.3 }}
-                    >
-                        Your outfit says<br className="hidden md:block" /> more than you think.
-                    </p>
-
-                    {/* Line 2 — larger */}
-                    <p
-                        className="font-sans text-[#F5F5F7]"
-                        style={{ fontWeight: 500, fontSize: 'clamp(44px, 48px, 48px)', lineHeight: 1.2, marginTop: '24px' }}
-                    >
-                        Understand your vibe<br className="hidden md:block" /> like never before.
-                    </p>
-
-                    {/* Supporting text */}
-                    <p
-                        className="font-sans text-[#A1A1AA]"
-                        style={{ fontWeight: 400, fontSize: 'clamp(16px, 18px, 18px)', lineHeight: 1.5, marginTop: '24px' }}
-                    >
-                        See what your outfit is really saying.
-                    </p>
-
-                    {/* Product Flow Indicator */}
-                    <div
-                        className="flex items-center gap-4 md:gap-6 mt-8 py-4 border-y border-white/5 w-full md:w-auto overflow-x-auto no-scrollbar"
-                        style={{ marginBottom: '32px' }}
-                    >
-                        <div className="flex items-center gap-2 shrink-0">
-                            <Camera size={14} className="text-[#D88A3D]" />
-                            <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[#F5F5F7]">Upload Outfit</span>
-                        </div>
-                        <ArrowRight size={12} className="text-white/20 shrink-0" />
-                        <div className="flex items-center gap-2 shrink-0">
-                            <Sparkles size={14} className="text-[#D88A3D]" />
-                            <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[#F5F5F7]">AI Analysis</span>
-                        </div>
-                        <ArrowRight size={12} className="text-white/20 shrink-0" />
-                        <div className="flex items-center gap-2 shrink-0">
-                            <Share2 size={14} className="text-[#D88A3D]" />
-                            <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-wider text-[#F5F5F7]">Your Vibe</span>
-                        </div>
-                    </div>
-
-                    {/* CTA */}
-                    <div>
-                        <a
-                            href="#download"
-                            className="inline-flex items-center font-sans font-bold uppercase tracking-widest text-[#0F0F13] transition-colors duration-200"
-                            style={{
-                                fontSize: '11px',
-                                background: '#D88A3D',
-                                borderRadius: '10px',
-                                padding: '14px 24px',
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#F0B67F'}
-                            onMouseLeave={e => e.currentTarget.style.background = '#D88A3D'}
+                            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                            style={{ x: zodiacX, y: zodiacY }}
                         >
-                            Download App
-                        </a>
+                            {/* Rotating Zodiac Wheel */}
+                            <motion.img
+                                src="/assets/zodiac.svg"
+                                alt=""
+                                className="w-[100%] max-w-[500px] md:max-w-[750px] relative z-10"
+                                style={{
+                                    height: 'auto',
+                                    opacity: 0.4,
+                                }}
+                                animate={{ rotate: 360 }}
+                                transition={{
+                                    duration: 120,
+                                    repeat: Infinity,
+                                    ease: "linear"
+                                }}
+                            />
+                        </motion.div>
+
+                        {/* Floating Harmony Check Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.3 }}
+                            whileHover={{ y: -6 }}
+                            className="absolute z-20 bg-[#1C1C23] p-[24px]"
+                            style={{
+                                border: '1px solid #D88A3D',
+                                borderRadius: '16px',
+                                minWidth: '300px',
+                                bottom: '5%',
+                                right: '0',
+                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                            }}
+                        >
+                            <p className="text-[#A1A1AA] uppercase tracking-[0.2em] text-[10px] mb-6 font-bold">Harmony Check</p>
+
+                            <div className="flex justify-between items-end mb-5 border-b border-white/5 pb-5">
+                                <span className="text-[#F5F5F7] font-sans text-sm">Harmony</span>
+                                <span className="text-[#D88A3D] font-serif text-[42px] leading-none"><AnimatedNumber value={82} />%</span>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Style Energy</span>
+                                    <span className="text-[#F5F5F7] text-sm font-medium">Libra Balance</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Contrast</span>
+                                    <span className="text-[#F5F5F7] text-sm font-medium">Medium</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Layering</span>
+                                    <span className="text-[#F5F5F7] text-sm font-medium">Structured</span>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
-                </motion.div>
+
+                    {/* ── RIGHT 40% — Text + CTA ── */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
+                        className="flex flex-col justify-center items-center md:items-start text-center md:text-left w-full md:w-[40%]"
+                    >
+                        {/* Headline */}
+                        <h1
+                            className="font-serif text-[#F5F5F7]"
+                            style={{ fontSize: 'clamp(44px, 5vw, 64px)', lineHeight: 1.1 }}
+                        >
+                            Your outfit says<br className="hidden md:block" /> more than you think.
+                        </h1>
+
+                        {/* Subheadline */}
+                        <p
+                            className="font-sans text-[#F5F5F7]"
+                            style={{ fontWeight: 400, fontSize: 'clamp(20px, 2vw, 24px)', lineHeight: 1.3, marginTop: '24px' }}
+                        >
+                            Understand the signals your style sends.
+                        </p>
+
+                        {/* Supporting text */}
+                        <p
+                            className="font-sans text-[#A1A1AA]"
+                            style={{ fontWeight: 300, fontSize: 'clamp(16px, 1.2vw, 18px)', lineHeight: 1.6, marginTop: '24px', maxWidth: '440px' }}
+                        >
+                            AURSA is an AI mirror that analyzes your outfit and reveals the visual harmony and identity behind it — before you step out.
+                        </p>
+
+                        {/* CTA */}
+                        <div className="mt-12 flex flex-col items-center md:items-start">
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="inline-flex items-center justify-center font-sans font-bold uppercase tracking-widest text-[#0F0F13] transition-colors duration-200"
+                                style={{
+                                    fontSize: '12px',
+                                    background: '#D88A3D',
+                                    borderRadius: '10px',
+                                    padding: '18px 40px',
+                                }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#F0B67F'}
+                                onMouseLeave={e => e.currentTarget.style.background = '#D88A3D'}
+                            >
+                                Coming Soon
+                            </motion.button>
+                            <p className="text-[#A1A1AA] text-[10px] font-medium tracking-[0.1em] mt-4 uppercase">
+                                Launching on iOS and Android
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
             </div>
         </section>
     );
 };
 
 
-// ── Section 3 · Relatable Moment ──────────────────────────────────────────────
+// ── Section 2 · Mirror Moment ──────────────────────────────────────────────
 
-const RelatableSection = () => {
-    const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end end'],
-    });
+const MirrorMomentSection = () => {
+    // Animation variants
+    const headlineVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
+    };
 
-    const opacity1 = useTransform(scrollYProgress, [0.1, 0.25], [0, 1]);
-    const opacity2 = useTransform(scrollYProgress, [0.35, 0.5], [0, 1]);
-    const opacity3 = useTransform(scrollYProgress, [0.6, 0.75], [0, 1]);
-    const opacityFinal = useTransform(scrollYProgress, [0.85, 0.95], [0, 1]);
-    const yFinal = useTransform(scrollYProgress, [0.85, 0.95], [20, 0]);
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: { staggerChildren: 0.15, delayChildren: 0.2 }
+        }
+    };
+
+    const textVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
+    };
+
+    const finalStatementVariants = {
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, ease: "easeOut", delay: 1.0 } // delayed after paragraph
+        }
+    };
 
     return (
         <section
-            id="relatable-section"
-            ref={containerRef}
-            className="relative h-[400vh] bg-[#F5F5F7]"
+            id="mirror-moment"
+            className="w-full bg-[#0F0F13] flex flex-col items-center justify-center text-center px-6"
+            style={{ paddingTop: '160px', paddingBottom: '160px' }}
         >
-            <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center px-8 overflow-hidden">
-                <div className="max-w-4xl text-center z-10">
-                    <p className="text-[#D88A3D] uppercase tracking-[0.3em] text-[10px] font-bold mb-6">
-                        Internal Monologue
-                    </p>
-                    <h2 className="text-4xl md:text-6xl font-serif mb-12 leading-tight text-[#0F0F13]">
-                        Before stepping out, everyone <br className="hidden md:block" />
-                        asks the same question.
-                    </h2>
+            <div className="w-full mx-auto flex flex-col items-center gap-16 md:gap-24">
 
-                    <div className="space-y-6 md:space-y-10 min-h-[300px] flex flex-col justify-start pt-4">
-                        <motion.p style={{ opacity: opacity1 }} className="text-3xl md:text-5xl font-serif text-[#0F0F13] italic">
-                            "Do I look good?"
-                        </motion.p>
-                        <motion.p style={{ opacity: opacity2 }} className="text-3xl md:text-5xl font-serif text-[#0F0F13] italic">
-                            "Does this outfit feel right?"
-                        </motion.p>
-                        <motion.p style={{ opacity: opacity3 }} className="text-3xl md:text-5xl font-serif text-[#0F0F13] italic">
-                            "Is this the vibe I want today?"
-                        </motion.p>
-                    </div>
-
-                    <motion.div
-                        style={{ opacity: opacityFinal, y: yFinal }}
-                        className="mt-16 max-w-2xl mx-auto space-y-6"
+                {/* Paragraph Container (max 640px) */}
+                <div className="max-w-[640px] w-full flex flex-col items-center gap-12">
+                    {/* Headline */}
+                    <motion.h2
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={headlineVariants}
+                        className="font-serif text-[#F5F5F7] leading-tight"
+                        style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}
                     >
-                        <p className="text-xl text-[#0F0F13] font-light leading-relaxed">
-                            We usually trust our instinct — or ask a friend. <br />
-                            <span className="text-[#D88A3D] font-bold">Aursa helps you see the answer.</span>
-                        </p>
-                        <p className="text-base text-[#6B6B75] leading-relaxed max-w-lg mx-auto">
-                            Upload your outfit and Aursa analyzes the visual signals — color, balance, contrast, and energy — to reveal the vibe you're putting out into the world.
-                        </p>
-                        <div className="w-12 h-px bg-[#D88A3D] mx-auto opacity-40" />
+                        Before stepping out,<br />
+                        there’s always a moment of doubt.
+                    </motion.h2>
+
+                    {/* Body text block */}
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, margin: "-100px" }}
+                        variants={containerVariants}
+                        className="flex flex-col gap-6 w-full text-left md:text-center"
+                    >
+                        <motion.p
+                            variants={textVariants}
+                            className="font-sans text-[#F5F5F7]"
+                            style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
+                        >
+                            You look in the mirror and wonder.
+                        </motion.p>
+
+                        <div className="flex flex-col gap-2">
+                            <motion.p
+                                variants={textVariants}
+                                className="font-sans text-[#A1A1AA]"
+                                style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
+                            >
+                                Do these colors actually work together?
+                            </motion.p>
+                            <motion.p
+                                variants={textVariants}
+                                className="font-sans text-[#A1A1AA]"
+                                style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
+                            >
+                                Does this outfit feel balanced?
+                            </motion.p>
+                            <motion.p
+                                variants={textVariants}
+                                className="font-sans text-[#A1A1AA]"
+                                style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
+                            >
+                                Does this look like me?
+                            </motion.p>
+                        </div>
                     </motion.div>
                 </div>
 
-                <div
-                    className="absolute inset-0 opacity-5 pointer-events-none"
-                    style={{
-                        backgroundImage: 'radial-gradient(#000 0.5px, transparent 0.5px)',
-                        backgroundSize: '32px 32px',
-                    }}
-                />
+                {/* Final Statement (stretches visually, not limited to 640px) */}
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={finalStatementVariants}
+                    className="w-full max-w-[1000px] mx-auto px-4"
+                >
+                    <p
+                        className="font-serif"
+                        style={{
+                            fontSize: 'clamp(40px, 6vw, 72px)',
+                            lineHeight: 1.1,
+                            fontWeight: 500,
+                            letterSpacing: '0.01em'
+                        }}
+                    >
+                        <span className="text-[#D88A3D]">AURSA</span>
+                        <span className="text-[#F5F5F7]"> is built for that moment.</span>
+                    </p>
+                </motion.div>
+
             </div>
         </section>
     );
 };
 
-// ── Section 4 · How Aursa Works ───────────────────────────────────────────────
+// ── Section 3 · AI Mirror ───────────────────────────────────────────────
 
-const HowItWorksSection = () => (
-    <section id="how" className="py-32 px-8">
-        <div className="max-w-6xl mx-auto">
-            <SectionHeading small="The Methodology" title="From outfit to insight." />
+const AIMirrorSection = () => {
+    // Staggered labels animation variants
+    const labelContainer = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.15, // 150ms delay between labels
+                delayChildren: 0.6, // Start after grid draw
+            }
+        }
+    };
 
-            <div className="grid md:grid-cols-3 gap-12 relative">
-                {/* Connector line */}
-                <div className="absolute top-8 left-0 w-full h-px bg-white/5 hidden md:block" />
+    const labelItem = {
+        hidden: { opacity: 0, x: -10 },
+        visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
+    };
 
-                {[
-                    {
-                        icon: <Camera size={22} />,
-                        step: '01',
-                        title: 'Upload your outfit',
-                        desc: 'Take a photo or upload a look from your gallery.',
-                    },
-                    {
-                        icon: <Sparkles size={22} />,
-                        step: '02',
-                        title: 'AI analyzes the visual signals',
-                        desc: 'Aursa reads color harmony, contrast, layering, and balance.',
-                    },
-                    {
-                        icon: <Layers size={22} />,
-                        step: '03',
-                        title: 'Discover your vibe',
-                        desc: 'See the psychological insight behind what your outfit communicates.',
-                    },
-                ].map((step, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 24 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: i * 0.15 }}
-                        className="flex flex-col items-center text-center p-8 bg-[#0F0F13] z-10"
+    return (
+        <section id="how" className="py-24 md:py-32 px-6 bg-[#0F0F13]">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-24">
+
+                {/* ── LEFT COLUMN: Text Explanation ── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8 }}
+                    className="w-full md:w-1/2 flex flex-col items-start text-left"
+                >
+                    <h2
+                        className="font-serif text-[#F5F5F7] mb-8"
+                        style={{ fontSize: 'clamp(40px, 4vw, 56px)', lineHeight: 1.1 }}
                     >
-                        <div className="text-[#D88A3D] text-[10px] uppercase tracking-[0.4em] font-bold mb-4">
-                            {step.step}
-                        </div>
-                        <div className="w-16 h-16 rounded-full bg-[#1C1C23] border border-white/5 flex items-center justify-center text-[#D88A3D] mb-8">
-                            {step.icon}
-                        </div>
-                        <h4 className="text-xl font-serif mb-4 text-[#F5F5F7]">{step.title}</h4>
-                        <p className="text-[#A1A1AA] text-sm leading-relaxed">{step.desc}</p>
-
-                        {i < 2 && (
-                            <div className="hidden md:flex absolute right-0 top-8 items-center justify-center w-8 text-[#D88A3D]/30">
-                                <ArrowRight size={16} />
-                            </div>
-                        )}
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Visual flow label */}
-            <div className="mt-16 flex items-center justify-center gap-6 text-[#6B6B75] text-[10px] uppercase tracking-[0.3em]">
-                <span className="text-[#F5F5F7]/50">Outfit photo</span>
-                <span className="text-[#D88A3D]/40">→</span>
-                <span className="text-[#F5F5F7]/50">AI analysis</span>
-                <span className="text-[#D88A3D]/40">→</span>
-                <span className="text-[#F5F5F7]/50">Vibe card</span>
-            </div>
-        </div>
-    </section>
-);
-
-// ── Section 5 · Vibe Examples ─────────────────────────────────────────────────
-
-const VibeExamplesSection = () => (
-    <section id="vibe" className="py-32 px-8 bg-[#0F0F13]">
-        <div className="max-w-7xl mx-auto">
-            <SectionHeading
-                small="The Output"
-                title="See what Aursa reveals."
-                subtitle="Aursa analyzes your outfit and reveals the visual signals behind it."
-                mb="mb-[60px]"
-            />
-
-            <div className="grid md:grid-cols-3 gap-8 justify-items-center">
-                <VibeCard
-                    title="Effortless Balance"
-                    harmony={4}
-                    contrast={2}
-                    layering={5}
-                    insight="Your outfit creates a calm and balanced presence, signaling approachability and intentionality."
-                />
-                <VibeCard
-                    title="Bold Energy"
-                    harmony={2}
-                    contrast={5}
-                    layering={3}
-                    insight="High contrast and sharp lines communicate authority and a focus on precision."
-                />
-                <VibeCard
-                    title="Minimal Harmony"
-                    harmony={5}
-                    contrast={1}
-                    layering={2}
-                    insight="Restraint and mono-tone cohesion signal sophistication and quiet confidence."
-                />
-            </div>
-        </div>
-    </section>
-);
-
-// ── Section 6 · Wardrobe Feature ─────────────────────────────────────────────
-
-const WardrobeSection = () => (
-    <section className="py-32 px-8">
-        <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-                <motion.div
-                    initial={{ opacity: 0, x: -24 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <p className="text-[#D88A3D] uppercase tracking-[0.35em] text-[10px] font-bold mb-4">
-                        Wardrobe Archive
-                    </p>
-                    <h2 className="text-4xl md:text-5xl font-serif leading-tight mb-8 text-[#F5F5F7]">
-                        Your wardrobe becomes a story.
+                        An AI mirror for <br className="hidden md:block" /> your personal style.
                     </h2>
-                    <p className="text-[#A1A1AA] text-lg font-light leading-relaxed mb-6">
-                        Save your looks and build a living archive of your style.
-                    </p>
-                    <p className="text-[#6B6B75] text-base font-light leading-relaxed">
-                        Over time, Aursa reveals patterns in how you dress and how your vibe evolves — season by season, day by day.
-                    </p>
-                </motion.div>
 
-                <motion.div
-                    initial={{ opacity: 0, x: 24 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.15 }}
-                    className="grid grid-cols-2 gap-4"
-                >
-                    {['Effortless Balance', 'Bold Energy', 'Minimal Harmony', 'Soft Contrast'].map((label, i) => (
-                        <div
-                            key={i}
-                            className="bg-[#1C1C23] border border-white/5 rounded-2xl p-5 flex flex-col gap-3"
-                        >
-                            <div className="w-8 h-8 rounded-full bg-[#D88A3D]/10 flex items-center justify-center">
-                                <Archive size={14} className="text-[#D88A3D]" />
-                            </div>
-                            <p className="text-[#F5F5F7] text-sm font-serif">{label}</p>
-                            <div className="flex gap-1">
-                                {[...Array(5)].map((_, j) => (
-                                    <div
-                                        key={j}
-                                        className={`h-1 flex-1 rounded-full ${j < 3 ? 'bg-[#D88A3D]' : 'bg-white/5'}`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </motion.div>
-            </div>
-        </div>
-    </section>
-);
+                    <div className="space-y-6">
+                        <p className="font-sans text-[#F5F5F7] text-lg md:text-xl font-medium">
+                            Upload your outfit.
+                        </p>
 
-// ── Section 7 · Share Vibe Feature ───────────────────────────────────────────
+                        <p className="font-sans text-[#A1A1AA] text-base md:text-lg leading-relaxed max-w-md">
+                            AURSA analyzes the visual composition of your look — from color harmony to contrast, layering, and balance.
+                        </p>
 
-const ShareVibeSection = () => (
-    <section className="py-32 px-8 bg-[#16161C]">
-        <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-                <motion.div
-                    initial={{ opacity: 0, x: 24 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8 }}
-                    className="order-last md:order-first"
-                >
-                    <div className="bg-[#1C1C23] rounded-3xl border border-white/5 p-8 max-w-xs mx-auto shadow-2xl">
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="text-[10px] uppercase tracking-widest text-[#6B6B75]">Vibe Card</span>
-                            <Share2 size={14} className="text-[#D88A3D]" />
-                        </div>
-                        <h3 className="text-2xl font-serif text-[#F5F5F7] mb-6">Effortless Balance</h3>
-                        <div className="space-y-3 mb-6">
-                            {[['Color Harmony', 4], ['Contrast', 2], ['Layering', 5]].map(([label, count]) => (
-                                <div key={label} className="flex justify-between items-center">
-                                    <span className="text-[10px] text-[#A1A1AA] uppercase tracking-widest">{label}</span>
-                                    <div className="flex gap-1.5">
-                                        {[...Array(5)].map((_, i) => (
-                                            <div key={i} className={`w-2 h-2 rounded-full ${i < count ? 'bg-[#D88A3D]' : 'bg-[#16161C] border border-white/5'}`} />
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="pt-4 border-t border-white/5">
-                            <p className="text-[#A1A1AA] text-xs italic">Made with Aursa</p>
-                        </div>
+                        <p className="font-sans text-[#A1A1AA] text-base md:text-lg leading-relaxed max-w-md">
+                            Then it reveals the vibe your outfit projects.
+                        </p>
+                    </div>
+
+                    <div className="mt-12 pt-12 border-t border-white/10">
+                        <p className="font-sans text-[#A1A1AA] text-sm md:text-base leading-relaxed italic border-l-2 border-[#D88A3D] pl-4">
+                            Not trends.<br />
+                            Not fashion rules.<br />
+                            <span className="text-[#F5F5F7] font-medium not-italic block mt-3">Just understanding your style.</span>
+                        </p>
                     </div>
                 </motion.div>
 
+                {/* ── RIGHT COLUMN: Outfit Grid Animation ── */}
                 <motion.div
-                    initial={{ opacity: 0, x: -24 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.8 }}
+                    className="w-full md:w-1/2 relative flex justify-center items-center"
                 >
-                    <p className="text-[#D88A3D] uppercase tracking-[0.35em] text-[10px] font-bold mb-4">
-                        Share Feature
-                    </p>
-                    <h2 className="text-4xl md:text-5xl font-serif leading-tight mb-8 text-[#F5F5F7]">
-                        Style is meant to be shared.
-                    </h2>
-                    <p className="text-[#A1A1AA] text-lg font-light leading-relaxed mb-8">
-                        Generate Vibe Cards and share them with friends.
-                    </p>
-                    <span className="inline-block text-[10px] uppercase tracking-[0.4em] text-[#6B6B75] border border-white/10 px-4 py-2">
-                        Coming Soon
-                    </span>
+                    <div className="relative w-[300px] h-[450px] md:w-[400px] md:h-[600px] rounded-2xl overflow-hidden bg-[#1C1C23]">
+                        {/* Placeholder image for outfit — using a gradient block if actual image is missing */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a35] to-[#1C1C23]" />
+                        <img
+                            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop"
+                            alt="Outfit Example"
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity"
+                        />
+
+                        {/* Animated Grid Overlay */}
+                        <motion.div
+                            initial={{ clipPath: 'inset(0 100% 0 0)' }}
+                            whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, ease: "easeInOut" }}
+                            className="absolute inset-0"
+                        >
+                            {/* Horizontal scanning lines */}
+                            <div className="absolute top-1/4 left-0 w-full h-px bg-[#D88A3D]/40" />
+                            <div className="absolute top-2/4 left-0 w-full h-px bg-[#D88A3D]/40" />
+                            <div className="absolute top-3/4 left-0 w-full h-px bg-[#D88A3D]/40" />
+
+                            {/* Vertical scanning lines */}
+                            <div className="absolute top-0 left-1/3 w-px h-full bg-[#D88A3D]/40" />
+                            <div className="absolute top-0 left-2/3 w-px h-full bg-[#D88A3D]/40" />
+
+                            {/* Corner brackets */}
+                            <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-[#D88A3D]" />
+                            <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-[#D88A3D]" />
+                            <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-[#D88A3D]" />
+                            <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-[#D88A3D]" />
+                        </motion.div>
+
+                        {/* Sequential Labels */}
+                        <motion.div
+                            variants={labelContainer}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            className="absolute inset-y-0 right-4 flex flex-col justify-center gap-12"
+                        >
+                            {['Color Harmony', 'Contrast', 'Layering', 'Balance'].map((label, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    variants={labelItem}
+                                    className="flex items-center justify-end gap-3"
+                                >
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                                    <span className="bg-[#16161C]/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#D88A3D]/20 text-[10px] uppercase tracking-wider font-bold text-[#F5F5F7] whitespace-nowrap shadow-xl">
+                                        {label}
+                                    </span>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    </div>
                 </motion.div>
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};
 
-// ── Section 8 · Editorial Statement ──────────────────────────────────────────
+// ── Section 4 · Personal Style Patterns ────────────────────────────────────────
 
-const EditorialSection = () => (
-    <section className="py-48 px-8 flex items-center justify-center text-center overflow-hidden relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#D88A3D]/5 rounded-full blur-[130px] pointer-events-none" />
-        <div className="max-w-5xl z-10">
-            <motion.h2
-                initial={{ opacity: 0, scale: 0.94 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+const StylePatternsSection = () => {
+    // Animation variants for the staggered list
+    const listContainer = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.3,
+            }
+        }
+    };
+
+    const listItem = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.6, ease: "easeOut" }
+        }
+    };
+
+    return (
+        <section className="relative py-32 px-6 bg-[#0F0F13] flex flex-col items-center justify-center text-center overflow-hidden min-h-[80vh]">
+
+            {/* Subtle Background Pattern */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 0.03 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.5, ease: 'easeOut' }}
-                className="text-5xl md:text-8xl font-serif leading-tight italic text-[#F5F5F7]"
+                transition={{ duration: 1.5 }}
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)',
+                    backgroundSize: '48px 48px',
+                }}
+            />
+
+            <div className="relative z-10 max-w-[680px] w-full mx-auto flex flex-col items-center gap-12">
+
+                {/* Headline */}
+                <motion.h2
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="font-serif text-[#F5F5F7] leading-tight"
+                    style={{ fontSize: 'clamp(40px, 5vw, 56px)' }}
+                >
+                    Your style is not random.
+                </motion.h2>
+
+                {/* Body Intro */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                    className="flex flex-col gap-4 text-[#A1A1AA] font-sans text-lg md:text-xl font-light"
+                >
+                    <p>Most people believe their style changes constantly.</p>
+                    <p>But when multiple outfits are analyzed,<br className="hidden md:block" /> patterns begin to appear.</p>
+                </motion.div>
+
+                {/* Staggered List */}
+                <motion.ul
+                    variants={listContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="flex flex-col gap-4 w-full max-w-[400px] mx-auto text-left"
+                >
+                    {[
+                        'Color palette patterns',
+                        'Contrast preferences',
+                        'Layering habits',
+                        'Visual balance'
+                    ].map((item, idx) => (
+                        <motion.li
+                            key={idx}
+                            variants={listItem}
+                            className="bg-[#1C1C23] border border-white/5 rounded-xl px-6 py-4 flex items-center justify-between shadow-lg"
+                        >
+                            <span className="font-sans text-[#F5F5F7] font-medium tracking-wide">{item}</span>
+                            <div className="w-2 h-2 rounded-full bg-[#D88A3D]" />
+                        </motion.li>
+                    ))}
+                </motion.ul>
+
+                {/* Closing text */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
+                    className="mt-8 flex flex-col gap-2"
+                >
+                    <p className="font-sans text-[#F5F5F7] text-lg font-medium">
+                        These patterns form a visual fingerprint.
+                    </p>
+                    <p className="font-sans text-[#D88A3D] text-sm uppercase tracking-widest font-bold mt-2">
+                        AURSA helps you discover yours.
+                    </p>
+                </motion.div>
+
+            </div>
+        </section>
+    );
+};
+
+// ── Section 5 · Feature Explanation ───────────────────────────────────────────
+
+const FeatureExplanationSection = () => {
+    // Staggered variants for the cards
+    const gridContainer = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.1,
+            }
+        }
+    };
+
+    const gridItem = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    };
+
+    return (
+        <section className="py-24 md:py-32 px-6 bg-[#0F0F13]">
+            <div className="max-w-[800px] w-full mx-auto flex flex-col items-center">
+
+                <motion.div
+                    variants={gridContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full"
+                >
+                    {[
+                        {
+                            title: 'Color Harmony',
+                            desc: 'How well the colors in your outfit work together.'
+                        },
+                        {
+                            title: 'Contrast Energy',
+                            desc: 'The visual intensity your outfit projects.'
+                        },
+                        {
+                            title: 'Layering Structure',
+                            desc: 'How garments interact to create depth.'
+                        },
+                        {
+                            title: 'Visual Balance',
+                            desc: 'The overall composition of your look.'
+                        }
+                    ].map((feature, idx) => (
+                        <motion.div
+                            key={idx}
+                            variants={gridItem}
+                            whileHover={{
+                                scale: 1.03,
+                                borderColor: "#D88A3D",
+                                boxShadow: "0px 10px 30px rgba(216, 138, 61, 0.15)",
+                                transition: { duration: 0.2, ease: "easeOut" }
+                            }}
+                            className="bg-[#1C1C23] border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center cursor-default h-full"
+                        >
+                            <h3 className="font-serif text-[#F5F5F7] text-2xl mb-4 leading-tight">
+                                {feature.title}
+                            </h3>
+                            <p className="font-sans text-[#A1A1AA] text-base leading-relaxed">
+                                {feature.desc}
+                            </p>
+                        </motion.div>
+                    ))}
+                </motion.div>
+
+            </div>
+        </section>
+    );
+};
+
+// ── Section 6 · Result Card ───────────────────────────────────────────
+
+const ResultCardSection = () => {
+    // Staggered variants for the card metrics
+    const metricsContainer = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.12, // 120ms stagger
+                delayChildren: 0.4,
+            }
+        }
+    };
+
+    const metricItem = {
+        hidden: { opacity: 0, y: 10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    };
+
+    return (
+        <section className="py-24 md:py-32 px-6 bg-[#0F0F13] flex flex-col items-center justify-center text-center">
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className="max-w-[600px] w-full mx-auto mb-16"
             >
-                Style is more than what you wear. <br />
-                <span className="text-[#D88A3D] opacity-90">It's how you show up.</span>
-            </motion.h2>
-        </div>
-    </section>
-);
+                <h2
+                    className="font-serif text-[#F5F5F7] mb-6 leading-tight"
+                    style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
+                >
+                    A clear reflection <br className="hidden md:block" /> of your style.
+                </h2>
+                <p className="font-sans text-[#A1A1AA] text-lg md:text-xl font-light">
+                    AURSA translates visual analysis into an intuitive result.
+                </p>
+            </motion.div>
+
+            {/* The Floating Result Card */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                whileHover={{ y: -8, transition: { duration: 0.4, ease: "easeOut" } }}
+                className="relative z-10 w-full max-w-[320px] bg-[#1C1C23] border border-[#D88A3D]/30 p-6 md:p-8 flex flex-col gap-8 shadow-[0_20px_40px_rgba(216,138,61,0.08)] mb-16"
+                style={{ borderRadius: '24px' }}
+            >
+                {/* Header Profile - purely visual context */}
+                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                    <span className="font-serif text-[#F5F5F7] text-lg">Your Vibe</span>
+                    <span className="text-[#D88A3D] text-[10px] uppercase tracking-[0.3em] font-bold">Analysis Complete</span>
+                </div>
+
+                <motion.div
+                    variants={metricsContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="flex flex-col gap-6"
+                >
+                    {/* Primary Metric: Harmony */}
+                    <div className="flex flex-col gap-2 items-start border-b border-white/5 pb-6">
+                        <span className="text-[#A1A1AA] text-[11px] uppercase tracking-widest font-semibold flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                            Harmony
+                        </span>
+                        <div className="flex items-baseline gap-1">
+                            {/* Reusing the AnimatedNumber logic for 82% */}
+                            <AnimatedNumber end={82} duration={900} />
+                            <span className="text-4xl font-serif text-[#F5F5F7]">%</span>
+                        </div>
+                    </div>
+
+                    {/* Secondary Metrics */}
+                    <div className="flex flex-col gap-5">
+                        {[
+                            { label: 'Style Energy', value: 'Libra Balance' },
+                            { label: 'Contrast', value: 'Medium' },
+                            { label: 'Layering', value: 'Structured' }
+                        ].map((metric, idx) => (
+                            <motion.div
+                                key={idx}
+                                variants={metricItem}
+                                className="flex items-center justify-between"
+                            >
+                                <span className="text-[#6B6B75] text-xs uppercase tracking-wider font-medium">{metric.label}</span>
+                                <span className="font-serif text-[#F5F5F7] text-lg">{metric.value}</span>
+                            </motion.div>
+                        ))}
+                    </div>
+                </motion.div>
+            </motion.div>
+
+            {/* Closing text */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
+                className="max-w-[500px] w-full mx-auto flex flex-col items-center border-t border-white/5 pt-12"
+            >
+                <p className="font-sans text-[#A1A1AA] text-lg italic mb-2">
+                    AURSA doesn’t judge your style.
+                </p>
+                <p className="font-sans text-[#F5F5F7] text-lg font-medium">
+                    It helps you understand it.
+                </p>
+            </motion.div>
+
+        </section>
+    );
+};
+
+// ── Section 7 · Long-Term Vision ──────────────────────────────────────────
+
+const VisionSection = () => {
+    // Animation variants for the timeline nodes
+    const timelineContainer = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.3, // slower stagger for visual weight
+                delayChildren: 0.4,
+            }
+        }
+    };
+
+    const nodeItem = {
+        hidden: { opacity: 0, scale: 0.8, y: 10 },
+        visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    };
+
+    return (
+        <section className="py-32 px-6 bg-[#16161C] flex flex-col items-center text-center overflow-hidden">
+            <div className="max-w-[700px] w-full mx-auto flex flex-col items-center gap-16">
+
+                {/* Text Narrative */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                >
+                    <h2
+                        className="font-serif text-[#F5F5F7] mb-8 leading-tight"
+                        style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
+                    >
+                        Over time, <br className="hidden md:block" /> AURSA learns your style.
+                    </h2>
+
+                    <div className="flex flex-col gap-2 font-sans text-[#A1A1AA] text-lg md:text-xl font-light mb-6">
+                        <p>Every outfit analysis reveals patterns.</p>
+                    </div>
+
+                    <div className="flex flex-col gap-1 font-sans text-[#A1A1AA] text-base md:text-lg italic font-light">
+                        <p>Your color tendencies.</p>
+                        <p>Your contrast preferences.</p>
+                        <p>Your layering habits.</p>
+                    </div>
+
+                    <p className="font-sans text-[#F5F5F7] text-lg md:text-xl font-medium mt-8">
+                        Gradually revealing your personal style identity.
+                    </p>
+                </motion.div>
+
+                {/* Timeline Visual */}
+                <motion.div
+                    variants={timelineContainer}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="relative w-full max-w-[500px] h-32 flex items-center justify-between mt-4 mb-4"
+                >
+                    {/* Connecting straight line */}
+                    <div className="absolute left-6 right-6 h-px bg-white/10 top-1/2 -translate-y-1/2 z-0" />
+
+                    {/* Active line drawing animation */}
+                    <motion.div
+                        initial={{ scaleX: 0 }}
+                        whileInView={{ scaleX: 1 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+                        className="absolute left-6 right-6 h-px bg-[#D88A3D] top-1/2 -translate-y-1/2 z-0 origin-left"
+                    />
+
+                    {/* Timeline Nodes */}
+                    {[
+                        { label: 'Day 1', desc: 'First Look', size: 'w-3 h-3' },
+                        { label: 'Week 2', desc: 'Patterns Emerge', size: 'w-4 h-4' },
+                        { label: 'Month 1', desc: 'Style Identity', size: 'w-5 h-5' }
+                    ].map((node, idx) => (
+                        <motion.div
+                            key={idx}
+                            variants={nodeItem}
+                            className="relative z-10 flex flex-col items-center justify-center gap-3"
+                        >
+                            <span className="text-[#6B6B75] text-[10px] uppercase tracking-widest absolute -top-8 whitespace-nowrap">{node.label}</span>
+
+                            {/* Node Dot */}
+                            <div className={`${node.size} rounded-full bg-[#1C1C23] border-2 border-[#D88A3D] shadow-[0_0_15px_rgba(216,138,61,0.4)] flex items-center justify-center`}>
+                                {idx === 2 && <div className="w-1.5 h-1.5 bg-[#D88A3D] rounded-full" />}
+                            </div>
+
+                            <span className="text-[#A1A1AA] text-xs font-medium absolute -bottom-8 whitespace-nowrap">{node.desc}</span>
+                        </motion.div>
+                    ))}
+                </motion.div>
+
+                {/* Closing Statement */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: 1.8, ease: "easeOut" }}
+                    className="flex flex-col gap-2 mt-8"
+                >
+                    <p className="font-sans text-[#A1A1AA] text-lg italic">
+                        Not just outfit analysis.
+                    </p>
+                    <p className="font-sans text-[#D88A3D] text-[13px] uppercase tracking-[0.2em] font-bold">
+                        Personal style intelligence.
+                    </p>
+                </motion.div>
+
+            </div>
+        </section>
+    );
+};
 
 // ── Section 9 · Download Section ─────────────────────────────────────────────
 
+// ── Section 8 · Download Section ─────────────────────────────────────────────
+
 const DownloadSection = () => (
-    <section id="download" className="py-32 px-8 bg-[#1C1C23] border-t border-white/10">
-        <div className="max-w-2xl mx-auto text-center flex flex-col items-center">
-            <p className="text-[#D88A3D] uppercase tracking-[0.35em] text-[10px] font-bold mb-4">
-                Available Now
-            </p>
-            <h2 className="text-4xl md:text-6xl font-serif mb-8 text-[#F5F5F7] leading-tight">
-                Start discovering your vibe.
-            </h2>
-            <p className="text-[#A1A1AA] text-lg mb-16 max-w-xl mx-auto font-light leading-relaxed">
-                Download Aursa and see what your outfit says about you.
-            </p>
+    <section id="download" className="py-32 px-8 bg-[#1C1C23] border-t border-white/10 flex flex-col items-center justify-center text-center">
+        <div className="max-w-xl mx-auto flex flex-col items-center">
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-                <motion.a
-                    href="https://testflight.apple.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 flex items-center justify-center gap-3 bg-[#D88A3D] hover:bg-[#F0B67F] text-[#0F0F13] px-6 py-5 transition-colors duration-200"
-                >
-                    <Apple size={18} />
-                    <span className="text-xs font-bold uppercase tracking-[0.3em]">iPhone</span>
-                </motion.a>
+            <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="text-4xl md:text-6xl font-serif mb-6 text-[#F5F5F7] leading-tight"
+            >
+                AURSA is launching soon.
+            </motion.h2>
 
-                <motion.a
-                    href="https://play.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="flex-1 flex items-center justify-center gap-3 bg-[#D88A3D] hover:bg-[#F0B67F] text-[#0F0F13] px-6 py-5 transition-colors duration-200"
-                >
-                    <Smartphone size={18} />
-                    <span className="text-xs font-bold uppercase tracking-[0.3em]">Android</span>
-                </motion.a>
-            </div>
+            <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                className="text-[#A1A1AA] text-lg md:text-xl mb-12 font-light leading-relaxed"
+            >
+                Be among the first to experience AI-powered style intelligence.
+            </motion.p>
 
-            <p className="text-[#6B6B75] text-[9px] uppercase tracking-[0.4em] mt-8 opacity-50">
-                Available on iOS and Android.
-            </p>
+            <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                whileHover={{
+                    scale: 1.04,
+                    boxShadow: "0px 0px 30px rgba(216, 138, 61, 0.4)",
+                    transition: { duration: 0.2, ease: "easeOut" }
+                }}
+                className="bg-[#D88A3D] text-[#0F0F13] px-10 py-5 font-bold uppercase tracking-[0.2em] rounded-full"
+            >
+                Coming Soon
+            </motion.button>
+
+            <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="text-[#6B6B75] text-[11px] uppercase tracking-[0.3em] font-medium mt-6"
+            >
+                Launching on iOS and Android.
+            </motion.p>
+
         </div>
     </section>
 );
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 
-const Footer = () => (
-    <footer className="py-12 px-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[#6B6B75] text-[10px] uppercase tracking-[0.3em]">
-        <div>© 2026 AURSA. All rights reserved.</div>
-        <div className="flex gap-8">
-            <a href="#" className="hover:text-[#D88A3D] transition-colors">Privacy</a>
-            <a href="#" className="hover:text-[#D88A3D] transition-colors">Terms</a>
-            <a href="#" className="hover:text-[#D88A3D] transition-colors">Instagram</a>
-        </div>
-    </footer>
-);
+const Footer = () => {
+    const letters = "AURSA".split('');
+
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: { staggerChildren: 0.08 }
+        }
+    };
+
+    const letterAnim = {
+        hidden: { opacity: 0, y: 120 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 1.2,
+                ease: [0.22, 1, 0.36, 1]
+            }
+        }
+    };
+
+    return (
+        <footer className="w-full bg-[#0F0F13] flex flex-col justify-between overflow-hidden relative" style={{ paddingTop: '140px', paddingBottom: '0px' }}>
+            {/* Top Area */}
+            <div className="w-full px-6 flex flex-col items-center text-center justify-center mb-16 md:mb-24 max-w-[1400px] mx-auto gap-8 z-10 w-full">
+                {/* Text */}
+                <div className="flex flex-col gap-2">
+                    <h3 className="font-sans text-[#F5F5F7] text-xl md:text-2xl font-medium">
+                        Stay connected with AURSA.
+                    </h3>
+                    <p className="font-sans text-[#A1A1AA] text-sm md:text-base font-light">
+                        Follow the journey of personal style intelligence.
+                    </p>
+                </div>
+
+                {/* Social links */}
+                <div className="flex items-center justify-center gap-6 md:gap-8 flex-wrap">
+                    {[
+                        { name: 'Instagram', url: 'https://www.instagram.com/aursa.ai/' },
+                        { name: 'LinkedIn', url: 'https://www.linkedin.com/company/aursa' },
+                        { name: 'X', url: 'https://x.com/AursaAI' }
+                    ].map((link) => (
+                        <a
+                            key={link.name}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group relative font-sans text-[16px] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-300"
+                        >
+                            {link.name}
+                            <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
+                        </a>
+                    ))}
+                </div>
+            </div>
+
+            {/* Bottom Area: Large Brand Typography */}
+            <div className="w-full flex justify-center items-end relative mt-20 px-4">
+                <motion.h1
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "0px" }}
+                    className="font-serif text-[#F5F5F7] text-center w-full flex justify-center"
+                    style={{
+                        fontSize: '26vw',
+                        fontWeight: 400,
+                        letterSpacing: '-0.02em',
+                        lineHeight: 0.9,
+                        margin: 0,
+                        padding: 0
+                    }}
+                >
+                    {letters.map((char, index) => (
+                        <motion.span key={index} variants={letterAnim} className="inline-block relative z-10">
+                            {char}
+                        </motion.span>
+                    ))}
+                </motion.h1>
+
+                {/* Cinematic subtle gradient fade toward the bottom */}
+                <div
+                    className="absolute bottom-0 left-0 w-full h-[60%] pointer-events-none z-20"
+                    style={{ background: 'linear-gradient(180deg, transparent 0%, #0F0F13 70%)' }}
+                />
+            </div>
+        </footer>
+    );
+};
 
 // ── Root App ──────────────────────────────────────────────────────────────────
 
@@ -925,23 +1373,23 @@ const App = () => (
         <HeroSection />
 
 
-        {/* 3 · Relatable Moment */}
-        <RelatableSection />
+        {/* 2 · Mirror Moment */}
+        <MirrorMomentSection />
 
-        {/* 4 · How It Works */}
-        <HowItWorksSection />
+        {/* 3 · AI Mirror Explanation */}
+        <AIMirrorSection />
 
-        {/* 5 · Vibe Examples */}
-        <VibeExamplesSection />
+        {/* 4 · Personal Style Patterns */}
+        <StylePatternsSection />
 
-        {/* 6 · Wardrobe Feature */}
-        <WardrobeSection />
+        {/* 5 · Feature Explanation (Visual Elements) */}
+        <FeatureExplanationSection />
 
-        {/* 7 · Share Vibe */}
-        <ShareVibeSection />
+        {/* 6 · Result Card Display */}
+        <ResultCardSection />
 
-        {/* 8 · Editorial Statement */}
-        <EditorialSection />
+        {/* 7 · Long-Term Vision */}
+        <VisionSection />
 
         {/* 9 · Download */}
         <DownloadSection />
