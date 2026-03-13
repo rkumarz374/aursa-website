@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring } from 'framer-motion';
 import { Camera, Sparkles, Layers, Share2, ArrowRight, Archive, Smartphone, Apple } from 'lucide-react';
 
@@ -89,7 +93,7 @@ const NavLink = ({ href, children }) => (
         className="relative group text-[10px] uppercase tracking-[0.4em] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-200 px-3 py-1"
     >
         {children}
-        <span className="absolute inset-0 rounded-lg bg-white/0 group-hover:bg-white/5 transition-all duration-200" />
+        <span className="absolute left-0 -bottom-[4px] h-[1px] w-0 bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
     </a>
 );
 
@@ -124,10 +128,10 @@ const Navbar = () => {
                         WebkitBackdropFilter: 'blur(14px)',
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '16px',
-                        padding: '10px 18px',
+                        padding: '10px 16px',
                         width: '100%',
-                        maxWidth: '900px',
-                        margin: '0 24px',
+                        maxWidth: '1100px',
+                        margin: '0 auto',
                     }}
                 >
                     {/* Logo */}
@@ -142,32 +146,16 @@ const Navbar = () => {
                         />
                     </a>
 
-                    {/* Center links (desktop) */}
-                    <div className="hidden md:flex items-center gap-1">
-                        <NavLink href="#how">How It Works</NavLink>
-                        <NavLink href="#vibe">The Vibe</NavLink>
-                        <NavLink href="#download">Download</NavLink>
+                    {/* Right side navigation */}
+                    <div className="hidden md:flex items-center gap-2 ml-auto">
+                        <NavLink href="/about">About</NavLink>
+                        <NavLink href="/contact">Contact</NavLink>
                     </div>
 
-                    {/* Right CTA */}
-                    <div className="flex items-center gap-3">
-                        <a
-                            href="#download"
-                            className="hidden md:inline-flex items-center text-[10px] font-bold uppercase tracking-widest text-[#0F0F13] transition-colors duration-200 whitespace-nowrap"
-                            style={{
-                                background: '#D88A3D',
-                                borderRadius: '10px',
-                                padding: '10px 18px',
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#F0B67F'}
-                            onMouseLeave={e => e.currentTarget.style.background = '#D88A3D'}
-                        >
-                            Download App
-                        </a>
-
-                        {/* Mobile hamburger */}
+                    {/* Mobile hamburger */}
+                    <div className="flex items-center md:hidden">
                         <button
-                            className="md:hidden flex flex-col gap-[5px] p-2"
+                            className="flex flex-col gap-[5px] p-2"
                             onClick={() => setMenuOpen(v => !v)}
                             aria-label="Toggle menu"
                         >
@@ -210,7 +198,7 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['#how', 'How It Works'], ['#vibe', 'The Vibe'], ['#download', 'Download']].map(([href, label]) => (
+                        {[['/about', 'About'], ['/contact', 'Contact']].map(([href, label]) => (
                             <a
                                 key={href}
                                 href={href}
@@ -220,14 +208,6 @@ const Navbar = () => {
                                 {label}
                             </a>
                         ))}
-                        <a
-                            href="#download"
-                            onClick={() => setMenuOpen(false)}
-                            className="mt-2 w-full text-center text-[10px] font-bold uppercase tracking-widest text-[#0F0F13] py-3 transition-colors duration-200"
-                            style={{ background: '#D88A3D', borderRadius: '10px' }}
-                        >
-                            Download App
-                        </a>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -408,9 +388,20 @@ const HeroSection = () => {
                 }}
             />
 
+            {/* Layer 5: Bottom gradient fade — smooth transition into next section */}
+            <div
+                className="absolute left-0 w-full pointer-events-none"
+                style={{
+                    bottom: 0,
+                    height: '180px',
+                    background: 'linear-gradient(180deg, rgba(15,15,19,0) 0%, rgba(15,15,19,0.7) 70%, rgba(15,15,19,1) 100%)',
+                    zIndex: 5,
+                }}
+            />
+
             {/* Layer 4: Two-column split layout */}
-            <div className="relative h-full flex items-center justify-center z-10 px-6 py-20 w-full pt-32">
-                <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 h-full">
+            <div className="relative h-full flex items-center justify-center z-10 px-5 md:px-8 lg:px-12 py-[70px] md:py-[90px] lg:py-[120px] w-full pt-32 md:pt-32">
+                <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 h-full mt-12 md:mt-0">
                     {/* ── LEFT 60% — Brand visual area + Card ── */}
                     <div className="relative flex flex-col items-center justify-center w-full md:w-[60%] h-full min-h-[400px]">
                         {/* Layer A: Zodiac SVG — centered within its column */}
@@ -422,7 +413,7 @@ const HeroSection = () => {
                             <motion.img
                                 src="/assets/zodiac.svg"
                                 alt=""
-                                className="w-[100%] max-w-[500px] md:max-w-[750px] relative z-10"
+                                className="w-[120%] md:w-[120%] max-w-[420px] md:max-w-[850px] relative z-10 mx-auto"
                                 style={{
                                     height: 'auto',
                                     opacity: 0.4,
@@ -436,41 +427,55 @@ const HeroSection = () => {
                             />
                         </motion.div>
 
+                        {/* Copper glow vignette behind the harmony card */}
+                        <div
+                            className="absolute pointer-events-none"
+                            style={{
+                                bottom: 'calc(5% + 20px)',
+                                right: '20px',
+                                width: '260px',
+                                height: '260px',
+                                background: 'radial-gradient(circle, rgba(216,138,61,0.25) 0%, transparent 70%)',
+                                filter: 'blur(40px)',
+                                opacity: 0.5,
+                                zIndex: 18,
+                            }}
+                        />
+
                         {/* Floating Harmony Check Card */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.7, delay: 0.3 }}
                             whileHover={{ y: -6 }}
-                            className="absolute z-20 bg-[#1C1C23] p-[24px]"
+                            className="absolute z-20 bg-[#1C1C23] p-[16px] md:p-[24px] mt-0 w-[92vw] max-w-[280px] md:w-auto md:max-w-none md:min-w-[300px] bottom-[6%] md:bottom-[5%] right-[4%] md:right-0 left-auto md:left-auto translate-x-0"
                             style={{
                                 border: '1px solid #D88A3D',
                                 borderRadius: '16px',
-                                minWidth: '300px',
-                                bottom: '5%',
-                                right: '0',
                                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
                             }}
                         >
-                            <p className="text-[#A1A1AA] uppercase tracking-[0.2em] text-[10px] mb-6 font-bold">Harmony Check</p>
+                            <div className="h-full flex flex-col justify-center">
+                                <p className="text-[#A1A1AA] uppercase tracking-[0.2em] text-[8px] md:text-[10px] mb-4 md:mb-6 font-bold">Harmony Check</p>
 
-                            <div className="flex justify-between items-end mb-5 border-b border-white/5 pb-5">
-                                <span className="text-[#F5F5F7] font-sans text-sm">Harmony</span>
-                                <span className="text-[#D88A3D] font-serif text-[42px] leading-none"><AnimatedNumber value={82} />%</span>
-                            </div>
+                                <div className="flex justify-between items-end mb-4 md:mb-5 border-b border-white/5 pb-4 md:pb-5">
+                                    <span className="text-[#F5F5F7] font-sans text-xs md:text-sm">Harmony</span>
+                                    <span className="text-[#D88A3D] font-serif text-[28px] md:text-[42px] leading-none"><AnimatedNumber value={82} />%</span>
+                                </div>
 
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Style Energy</span>
-                                    <span className="text-[#F5F5F7] text-sm font-medium">Libra Balance</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Contrast</span>
-                                    <span className="text-[#F5F5F7] text-sm font-medium">Medium</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Layering</span>
-                                    <span className="text-[#F5F5F7] text-sm font-medium">Structured</span>
+                                <div className="space-y-3 md:space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[#A1A1AA] text-[10px] md:text-xs uppercase tracking-wider">Style Energy</span>
+                                        <span className="text-[#F5F5F7] text-xs md:text-sm font-medium">Libra Balance</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[#A1A1AA] text-[10px] md:text-xs uppercase tracking-wider">Contrast</span>
+                                        <span className="text-[#F5F5F7] text-xs md:text-sm font-medium">Medium</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[#A1A1AA] text-[10px] md:text-xs uppercase tracking-wider">Layering</span>
+                                        <span className="text-[#F5F5F7] text-xs md:text-sm font-medium">Structured</span>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
@@ -486,7 +491,7 @@ const HeroSection = () => {
                         {/* Headline */}
                         <h1
                             className="font-serif text-[#F5F5F7]"
-                            style={{ fontSize: 'clamp(44px, 5vw, 64px)', lineHeight: 1.1 }}
+                            style={{ fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.1 }}
                         >
                             Your outfit says<br className="hidden md:block" /> more than you think.
                         </h1>
@@ -494,7 +499,7 @@ const HeroSection = () => {
                         {/* Subheadline */}
                         <p
                             className="font-sans text-[#F5F5F7]"
-                            style={{ fontWeight: 400, fontSize: 'clamp(20px, 2vw, 24px)', lineHeight: 1.3, marginTop: '24px' }}
+                            style={{ fontWeight: 400, fontSize: 'clamp(18px, 2vw, 24px)', lineHeight: 1.3, marginTop: '24px' }}
                         >
                             Understand the signals your style sends.
                         </p>
@@ -569,20 +574,20 @@ const MirrorMomentSection = () => {
     return (
         <section
             id="mirror-moment"
-            className="w-full bg-[#0F0F13] flex flex-col items-center justify-center text-center px-6"
-            style={{ paddingTop: '160px', paddingBottom: '160px' }}
+            className="w-full bg-[#FFFFFF] flex flex-col items-center justify-center text-center px-5 md:px-8 lg:px-12 py-[70px] md:py-[90px] lg:py-[120px]"
+            style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}
         >
             <div className="w-full mx-auto flex flex-col items-center gap-16 md:gap-24">
 
                 {/* Paragraph Container (max 640px) */}
-                <div className="max-w-[640px] w-full flex flex-col items-center gap-12">
+                <div className="max-w-[540px] md:max-w-[640px] w-full flex flex-col items-center gap-12">
                     {/* Headline */}
                     <motion.h2
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, margin: "-100px" }}
                         variants={headlineVariants}
-                        className="font-serif text-[#F5F5F7] leading-tight"
+                        className="font-serif text-[#0B0F1A] leading-tight"
                         style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}
                     >
                         Before stepping out,<br />
@@ -599,7 +604,7 @@ const MirrorMomentSection = () => {
                     >
                         <motion.p
                             variants={textVariants}
-                            className="font-sans text-[#F5F5F7]"
+                            className="font-sans text-[#374151]"
                             style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
                         >
                             You look in the mirror and wonder.
@@ -608,21 +613,21 @@ const MirrorMomentSection = () => {
                         <div className="flex flex-col gap-2">
                             <motion.p
                                 variants={textVariants}
-                                className="font-sans text-[#A1A1AA]"
+                                className="font-sans text-[#374151]"
                                 style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
                             >
                                 Do these colors actually work together?
                             </motion.p>
                             <motion.p
                                 variants={textVariants}
-                                className="font-sans text-[#A1A1AA]"
+                                className="font-sans text-[#374151]"
                                 style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
                             >
                                 Does this outfit feel balanced?
                             </motion.p>
                             <motion.p
                                 variants={textVariants}
-                                className="font-sans text-[#A1A1AA]"
+                                className="font-sans text-[#374151]"
                                 style={{ fontSize: '18px', lineHeight: 1.6, fontWeight: 300 }}
                             >
                                 Does this look like me?
@@ -642,14 +647,14 @@ const MirrorMomentSection = () => {
                     <p
                         className="font-serif"
                         style={{
-                            fontSize: 'clamp(40px, 6vw, 72px)',
+                            fontSize: 'clamp(36px, 6vw, 72px)',
                             lineHeight: 1.1,
                             fontWeight: 500,
                             letterSpacing: '0.01em'
                         }}
                     >
                         <span className="text-[#D88A3D]">AURSA</span>
-                        <span className="text-[#F5F5F7]"> is built for that moment.</span>
+                        <span className="text-[#0B0F1A]"> is built for that moment.</span>
                     </p>
                 </motion.div>
 
@@ -678,8 +683,8 @@ const AIMirrorSection = () => {
     };
 
     return (
-        <section id="how" className="py-24 md:py-32 px-6 bg-[#0F0F13]">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16 md:gap-24">
+        <section id="how" className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
 
                 {/* ── LEFT COLUMN: Text Explanation ── */}
                 <motion.div
@@ -690,14 +695,14 @@ const AIMirrorSection = () => {
                     className="w-full md:w-1/2 flex flex-col items-start text-left"
                 >
                     <h2
-                        className="font-serif text-[#F5F5F7] mb-8"
+                        className="font-serif text-[#FFFFFF] mb-8"
                         style={{ fontSize: 'clamp(40px, 4vw, 56px)', lineHeight: 1.1 }}
                     >
                         An AI mirror for <br className="hidden md:block" /> your personal style.
                     </h2>
 
                     <div className="space-y-6">
-                        <p className="font-sans text-[#F5F5F7] text-lg md:text-xl font-medium">
+                        <p className="font-sans text-[#D1D5DB] text-lg md:text-xl font-medium">
                             Upload your outfit.
                         </p>
 
@@ -727,7 +732,7 @@ const AIMirrorSection = () => {
                     transition={{ duration: 0.8 }}
                     className="w-full md:w-1/2 relative flex justify-center items-center"
                 >
-                    <div className="relative w-[300px] h-[450px] md:w-[400px] md:h-[600px] rounded-2xl overflow-hidden bg-[#1C1C23]">
+                    <div className="relative w-full max-w-[360px] md:w-[400px] h-[450px] md:h-[600px] rounded-2xl overflow-hidden bg-[#1C1C23] mx-auto">
                         {/* Placeholder image for outfit — using a gradient block if actual image is missing */}
                         <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a35] to-[#1C1C23]" />
                         <img
@@ -812,7 +817,7 @@ const StylePatternsSection = () => {
     };
 
     return (
-        <section className="relative py-32 px-6 bg-[#0F0F13] flex flex-col items-center justify-center text-center overflow-hidden min-h-[80vh]">
+        <section className="relative py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center text-center overflow-hidden min-h-[80vh]" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
 
             {/* Subtle Background Pattern */}
             <motion.div
@@ -822,8 +827,9 @@ const StylePatternsSection = () => {
                 transition={{ duration: 1.5 }}
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)',
+                    backgroundImage: 'radial-gradient(#0B0F1A 1px, transparent 1px)',
                     backgroundSize: '48px 48px',
+                    opacity: 0.04,
                 }}
             />
 
@@ -835,7 +841,7 @@ const StylePatternsSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
-                    className="font-serif text-[#F5F5F7] leading-tight"
+                    className="font-serif text-[#0B0F1A] leading-tight"
                     style={{ fontSize: 'clamp(40px, 5vw, 56px)' }}
                 >
                     Your style is not random.
@@ -847,7 +853,7 @@ const StylePatternsSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                    className="flex flex-col gap-4 text-[#A1A1AA] font-sans text-lg md:text-xl font-light"
+                    className="flex flex-col gap-4 text-[#374151] font-sans text-lg md:text-xl font-light"
                 >
                     <p>Most people believe their style changes constantly.</p>
                     <p>But when multiple outfits are analyzed,<br className="hidden md:block" /> patterns begin to appear.</p>
@@ -859,7 +865,7 @@ const StylePatternsSection = () => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
-                    className="flex flex-col gap-4 w-full max-w-[400px] mx-auto text-left"
+                    className="flex flex-col gap-3 md:gap-4 w-full max-w-[360px] md:max-w-[400px] mx-auto text-left"
                 >
                     {[
                         'Color palette patterns',
@@ -870,9 +876,10 @@ const StylePatternsSection = () => {
                         <motion.li
                             key={idx}
                             variants={listItem}
-                            className="bg-[#1C1C23] border border-white/5 rounded-xl px-6 py-4 flex items-center justify-between shadow-lg"
+                            className="bg-[#F9FAFB] border rounded-[16px] px-6 py-4 flex items-center justify-between"
+                            style={{ borderColor: 'rgba(0,0,0,0.06)' }}
                         >
-                            <span className="font-sans text-[#F5F5F7] font-medium tracking-wide">{item}</span>
+                            <span className="font-sans text-[#374151] font-medium tracking-wide">{item}</span>
                             <div className="w-2 h-2 rounded-full bg-[#D88A3D]" />
                         </motion.li>
                     ))}
@@ -886,7 +893,7 @@ const StylePatternsSection = () => {
                     transition={{ duration: 0.7, delay: 0.8, ease: "easeOut" }}
                     className="mt-8 flex flex-col gap-2"
                 >
-                    <p className="font-sans text-[#F5F5F7] text-lg font-medium">
+                    <p className="font-sans text-[#374151] text-lg font-medium">
                         These patterns form a visual fingerprint.
                     </p>
                     <p className="font-sans text-[#D88A3D] text-sm uppercase tracking-widest font-bold mt-2">
@@ -918,7 +925,7 @@ const FeatureExplanationSection = () => {
     };
 
     return (
-        <section className="py-24 md:py-32 px-6 bg-[#0F0F13]">
+        <section className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="max-w-[800px] w-full mx-auto flex flex-col items-center">
 
                 <motion.div
@@ -955,12 +962,12 @@ const FeatureExplanationSection = () => {
                                 boxShadow: "0px 10px 30px rgba(216, 138, 61, 0.15)",
                                 transition: { duration: 0.2, ease: "easeOut" }
                             }}
-                            className="bg-[#1C1C23] border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center cursor-default h-full"
+                            className="bg-[#1C1C23] border border-white/5 rounded-2xl p-8 flex flex-col items-center text-center cursor-default h-full w-full max-w-[420px] mx-auto"
                         >
-                            <h3 className="font-serif text-[#F5F5F7] text-2xl mb-4 leading-tight">
+                            <h3 className="font-serif text-[#FFFFFF] text-2xl mb-4 leading-tight">
                                 {feature.title}
                             </h3>
-                            <p className="font-sans text-[#A1A1AA] text-base leading-relaxed">
+                            <p className="font-sans text-[#9CA3AF] text-base leading-relaxed">
                                 {feature.desc}
                             </p>
                         </motion.div>
@@ -991,8 +998,23 @@ const ResultCardSection = () => {
         visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
     };
 
+    const labelsContainer = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.2,
+                delayChildren: 0.6,
+            }
+        }
+    };
+
+    const labelAnim = {
+        hidden: { opacity: 0, y: 10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    };
+
     return (
-        <section className="py-24 md:py-32 px-6 bg-[#0F0F13] flex flex-col items-center justify-center text-center">
+        <section id="vibe-section" className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -1002,71 +1024,124 @@ const ResultCardSection = () => {
                 className="max-w-[600px] w-full mx-auto mb-16"
             >
                 <h2
-                    className="font-serif text-[#F5F5F7] mb-6 leading-tight"
+                    className="font-serif text-[#0B0F1A] mb-6 leading-tight"
                     style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
                 >
-                    A clear reflection <br className="hidden md:block" /> of your style.
+                    A clear reflection of your style. <br className="hidden md:block" />
                 </h2>
-                <p className="font-sans text-[#A1A1AA] text-lg md:text-xl font-light">
+                <p className="font-sans text-[#374151] text-lg md:text-xl font-light">
                     AURSA translates visual analysis into an intuitive result.
                 </p>
             </motion.div>
 
-            {/* The Floating Result Card */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                whileHover={{ y: -8, transition: { duration: 0.4, ease: "easeOut" } }}
-                className="relative z-10 w-full max-w-[320px] bg-[#1C1C23] border border-[#D88A3D]/30 p-6 md:p-8 flex flex-col gap-8 shadow-[0_20px_40px_rgba(216,138,61,0.08)] mb-16"
-                style={{ borderRadius: '24px' }}
-            >
-                {/* Header Profile - purely visual context */}
-                <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                    <span className="font-serif text-[#F5F5F7] text-lg">Your Vibe</span>
-                    <span className="text-[#D88A3D] text-[10px] uppercase tracking-[0.3em] font-bold">Analysis Complete</span>
-                </div>
+            {/* The Floating Result Card Area */}
+            <div className="relative w-full flex justify-center mb-16">
 
+                {/* Glow Behind the Card */}
                 <motion.div
-                    variants={metricsContainer}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 0.6 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                    style={{
+                        width: '420px',
+                        height: '420px',
+                        background: 'radial-gradient(circle, rgba(216,138,61,0.08) 0%, transparent 70%)',
+                        filter: 'blur(60px)',
+                        zIndex: 0
+                    }}
+                />
+
+                {/* Floating Labels */}
+                <motion.div
+                    variants={labelsContainer}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true }}
-                    className="flex flex-col gap-6"
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="absolute inset-0 pointer-events-none z-10"
                 >
-                    {/* Primary Metric: Harmony */}
-                    <div className="flex flex-col gap-2 items-start border-b border-white/5 pb-6">
-                        <span className="text-[#A1A1AA] text-[11px] uppercase tracking-widest font-semibold flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                            Harmony
-                        </span>
-                        <div className="flex items-baseline gap-1">
-                            {/* Reusing the AnimatedNumber logic for 82% */}
-                            <AnimatedNumber end={82} duration={900} />
-                            <span className="text-4xl font-serif text-[#F5F5F7]">%</span>
-                        </div>
+                    {/* Top Left */}
+                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ top: '20%', right: 'calc(50% + 180px)' }}>
+                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Color Harmony</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                    </motion.div>
+
+                    {/* Top Right */}
+                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ top: '30%', left: 'calc(50% + 180px)' }}>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Contrast Energy</span>
+                    </motion.div>
+
+                    {/* Bottom Left */}
+                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ bottom: '25%', right: 'calc(50% + 180px)' }}>
+                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Layering Structure</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                    </motion.div>
+
+                    {/* Bottom Right */}
+                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ bottom: '15%', left: 'calc(50% + 180px)' }}>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Visual Balance</span>
+                    </motion.div>
+                </motion.div>
+
+                {/* The Floating Result Card */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    whileHover={{ y: -8, transition: { duration: 0.4, ease: "easeOut" } }}
+                    className="relative z-20 w-full max-w-[320px] bg-[#FFFFFF] p-6 md:p-8 flex flex-col gap-8"
+                    style={{ borderRadius: '24px', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 20px 40px rgba(0,0,0,0.08)' }}
+                >
+                    {/* Header Profile - purely visual context */}
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                        <span className="font-serif text-[#0B0F1A] text-lg">Your Vibe</span>
+                        <span className="text-[#D88A3D] text-[10px] uppercase tracking-[0.3em] font-bold">Analysis Complete</span>
                     </div>
 
-                    {/* Secondary Metrics */}
-                    <div className="flex flex-col gap-5">
-                        {[
-                            { label: 'Style Energy', value: 'Libra Balance' },
-                            { label: 'Contrast', value: 'Medium' },
-                            { label: 'Layering', value: 'Structured' }
-                        ].map((metric, idx) => (
-                            <motion.div
-                                key={idx}
-                                variants={metricItem}
-                                className="flex items-center justify-between"
-                            >
-                                <span className="text-[#6B6B75] text-xs uppercase tracking-wider font-medium">{metric.label}</span>
-                                <span className="font-serif text-[#F5F5F7] text-lg">{metric.value}</span>
-                            </motion.div>
-                        ))}
-                    </div>
+                    <motion.div
+                        variants={metricsContainer}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="flex flex-col gap-6"
+                    >
+                        {/* Primary Metric: Harmony */}
+                        <div className="flex flex-col gap-2 items-start border-b border-black/5 pb-6">
+                            <span className="text-[#6B7280] text-[11px] uppercase tracking-widest font-semibold flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                                Harmony
+                            </span>
+                            <div className="flex items-baseline gap-1">
+                                {/* Reusing the AnimatedNumber logic for 82% */}
+                                <AnimatedNumber end={82} duration={900} />
+                                <span className="text-4xl font-serif text-[#0B0F1A]">%</span>
+                            </div>
+                        </div>
+
+                        {/* Secondary Metrics */}
+                        <div className="flex flex-col gap-5">
+                            {[
+                                { label: 'Style Energy', value: 'Libra Balance' },
+                                { label: 'Contrast', value: 'Medium' },
+                                { label: 'Layering', value: 'Structured' }
+                            ].map((metric, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    variants={metricItem}
+                                    className="flex items-center justify-between"
+                                >
+                                    <span className="text-[#6B7280] text-xs uppercase tracking-wider font-medium">{metric.label}</span>
+                                    <span className="font-serif text-[#0B0F1A] text-lg">{metric.value}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
                 </motion.div>
-            </motion.div>
+            </div>
 
             {/* Closing text */}
             <motion.div
@@ -1074,16 +1149,213 @@ const ResultCardSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.7, delay: 0.6, ease: "easeOut" }}
-                className="max-w-[500px] w-full mx-auto flex flex-col items-center border-t border-white/5 pt-12"
+                className="max-w-[500px] w-full mx-auto flex flex-col items-center border-t border-black/5 pt-12"
             >
-                <p className="font-sans text-[#A1A1AA] text-lg italic mb-2">
-                    AURSA doesn’t judge your style.
+                <p className="font-sans text-[#374151] text-lg italic mb-2">
+                    AURSA doesn't judge your style.
                 </p>
-                <p className="font-sans text-[#F5F5F7] text-lg font-medium">
+                <p className="font-sans text-[#0B0F1A] text-lg font-medium">
                     It helps you understand it.
                 </p>
             </motion.div>
 
+        </section>
+    );
+};
+
+// ── Section 6.5 · Save Your Vibe ──────────────────────────────────────────
+
+const SaveVibeSection = () => {
+    return (
+        <section className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
+
+                {/* ── LEFT COLUMN: Visual Stacked Cards ── */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="w-full md:w-1/2 flex justify-center items-center"
+                >
+                    <div className="relative w-full max-w-[320px] h-[320px] flex items-center justify-center">
+
+                        {/* Card 3 (Back) */}
+                        <div
+                            className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl p-6 shadow-lg w-full max-w-[260px]"
+                            style={{
+                                transform: 'translateX(20px) translateY(20px) rotate(3deg)',
+                                opacity: 0.4,
+                                zIndex: 1
+                            }}
+                        >
+                            <div className="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                                <span className="font-serif text-[#F5F5F7] text-sm">Vibe Saved</span>
+                            </div>
+                            <div className="space-y-2">
+                                <div className="h-2 w-full bg-white/5 rounded" />
+                                <div className="h-2 w-3/4 bg-white/5 rounded" />
+                                <div className="h-2 w-5/6 bg-white/5 rounded" />
+                                <div className="h-2 w-2/3 bg-white/5 rounded" />
+                            </div>
+                        </div>
+
+                        {/* Card 2 (Middle) */}
+                        <div
+                            className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl p-6 shadow-lg w-full max-w-[260px]"
+                            style={{
+                                transform: 'translateX(-20px) translateY(20px) rotate(-3deg)',
+                                opacity: 0.6,
+                                zIndex: 2
+                            }}
+                        >
+                            <div className="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
+                                <span className="font-serif text-[#F5F5F7] text-sm">Vibe Saved</span>
+                            </div>
+                            <div className="space-y-2">
+                                <div className="h-2 w-full bg-white/10 rounded" />
+                                <div className="h-2 w-3/4 bg-white/10 rounded" />
+                                <div className="h-2 w-5/6 bg-white/10 rounded" />
+                                <div className="h-2 w-2/3 bg-white/10 rounded" />
+                            </div>
+                        </div>
+
+                        {/* Card 1 (Front) */}
+                        <motion.div
+                            whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                            className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl overflow-hidden shadow-xl w-full max-w-[280px]"
+                            style={{
+                                zIndex: 3
+                            }}
+                        >
+                            {/* Top Image Area */}
+                            <div className="relative overflow-hidden">
+                                <img
+                                    src="https://images.pexels.com/photos/1310524/pexels-photo-1310524.jpeg"
+                                    alt="Person outfit"
+                                    className="w-full h-[260px] object-cover"
+                                />
+
+                                {/* Dark Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                                {/* Vibe Tag */}
+                                <div className="absolute bottom-14 left-4 bg-[#1C1C23]/80 backdrop-blur-md border border-[#D88A3D]/30 rounded-full px-4 py-1 text-[10px] uppercase tracking-[0.25em] text-[#D88A3D] font-bold">
+                                    Soft Precision
+                                </div>
+
+                                {/* Harmony Score */}
+                                <div className="absolute bottom-12 right-4 text-[#D88A3D] font-serif text-4xl">
+                                    88%
+                                </div>
+                            </div>
+
+                            {/* Bottom Stats Area */}
+                            <div className="p-6 pt-2">
+                                <div className="flex justify-between items-center text-sm text-[#A1A1AA] mt-4">
+                                    <span>Layering</span> <span className="text-[#F5F5F7] font-medium">Layered</span>
+                                </div>
+
+                                <div className="flex justify-between items-center text-sm text-[#A1A1AA] mt-3">
+                                    <span>Contrast</span> <span className="text-[#F5F5F7] font-medium">Low</span>
+                                </div>
+
+                                {/* Insight Quote */}
+                                <p className="text-[#A1A1AA] text-sm italic mt-4 border-t border-white/5 pt-4">
+                                    "The focused color palette creates a strong, unified statement."
+                                </p>
+                            </div>
+                        </motion.div>
+
+                    </div>
+                </motion.div>
+
+                {/* ── RIGHT COLUMN: Text Explanation ── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7 }}
+                    className="w-full md:w-1/2 flex flex-col items-start text-left"
+                >
+                    <h2 
+                        className="font-serif text-[#FFFFFF] mb-6 leading-tight" 
+                        style={{ fontSize: 'clamp(40px, 4vw, 56px)' }}
+                    >
+                        Save the looks that feel right.
+                    </h2>
+
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed max-w-md">
+                        Sometimes an outfit just clicks.
+                    </p>
+
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed max-w-md mt-3">
+                        The colors feel right. The balance feels effortless. The vibe feels like you.
+                    </p>
+
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed max-w-md mt-3">
+                        When that happens, AURSA lets you save the moment.
+                    </p>
+
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed max-w-md mt-3">
+                        Your best looks become part of a personal style library you can revisit, refine, and build on.
+                    </p>
+
+                    <p className="font-sans text-[#D88A3D] text-sm uppercase tracking-[0.2em] font-bold mt-6">
+                        Your strongest looks. Your evolving style.
+                    </p>
+                </motion.div>
+
+            </div>
+        </section>
+    );
+};
+
+// ── Section 6.75 · Wardrobe Archive ──────────────────────────────────────────
+
+const WardrobeSection = () => {
+    return (
+        <section
+            className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center"
+            style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}
+        >
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
+
+                {/* LEFT COLUMN — TEXT */}
+                <div className="w-full md:w-1/2 flex flex-col items-start text-left">
+                    <h2
+                        className="font-serif text-[#0B0F1A] mb-6 leading-tight"
+                        style={{ fontSize: 'clamp(40px,4vw,56px)' }}
+                    >
+                        Your wardrobe becomes a style archive.
+                    </h2>
+
+                    <p className="font-sans text-[#374151] text-lg md:text-xl leading-relaxed max-w-md">
+                        Every outfit you analyze becomes part of your personal wardrobe.
+                    </p>
+
+                    <p className="font-sans text-[#374151] text-lg md:text-xl leading-relaxed max-w-md mt-4">
+                        Over time AURSA reveals patterns in how you actually dress.
+                    </p>
+
+                    <p className="font-sans text-[#D88A3D] text-sm uppercase tracking-[0.2em] font-bold mt-6">
+                        Your colors. Your contrast. Your layering habits.
+                    </p>
+                </div>
+
+                {/* RIGHT COLUMN — WARDROBE GRID */}
+                <div className="w-full md:w-1/2 flex justify-center">
+                    <div className="grid grid-cols-3 gap-3 w-full max-w-[320px]">
+                        {[...Array(9)].map((_, i) => (
+                            <div
+                                key={i}
+                                className="aspect-square rounded-xl bg-[#E5E7EB] hover:scale-105 transition duration-200"
+                            />
+                        ))}
+                    </div>
+                </div>
+
+            </div>
         </section>
     );
 };
@@ -1108,7 +1380,7 @@ const VisionSection = () => {
     };
 
     return (
-        <section className="py-32 px-6 bg-[#16161C] flex flex-col items-center text-center overflow-hidden">
+        <section className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A] flex flex-col items-center text-center overflow-hidden" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="max-w-[700px] w-full mx-auto flex flex-col items-center gap-16">
 
                 {/* Text Narrative */}
@@ -1119,23 +1391,23 @@ const VisionSection = () => {
                     transition={{ duration: 0.7, ease: "easeOut" }}
                 >
                     <h2
-                        className="font-serif text-[#F5F5F7] mb-8 leading-tight"
+                        className="font-serif text-[#FFFFFF] mb-8 leading-tight"
                         style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
                     >
                         Over time, <br className="hidden md:block" /> AURSA learns your style.
                     </h2>
 
-                    <div className="flex flex-col gap-2 font-sans text-[#A1A1AA] text-lg md:text-xl font-light mb-6">
+                    <div className="flex flex-col gap-2 font-sans text-[#D1D5DB] text-lg md:text-xl font-light mb-6">
                         <p>Every outfit analysis reveals patterns.</p>
                     </div>
 
-                    <div className="flex flex-col gap-1 font-sans text-[#A1A1AA] text-base md:text-lg italic font-light">
+                    <div className="flex flex-col gap-1 font-sans text-[#9CA3AF] text-base md:text-lg italic font-light">
                         <p>Your color tendencies.</p>
                         <p>Your contrast preferences.</p>
                         <p>Your layering habits.</p>
                     </div>
 
-                    <p className="font-sans text-[#F5F5F7] text-lg md:text-xl font-medium mt-8">
+                    <p className="font-sans text-[#D1D5DB] text-lg md:text-xl font-medium mt-8">
                         Gradually revealing your personal style identity.
                     </p>
                 </motion.div>
@@ -1146,10 +1418,11 @@ const VisionSection = () => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
-                    className="relative w-full max-w-[500px] h-32 flex items-center justify-between mt-4 mb-4"
+                    className="relative w-full max-w-[500px] h-auto md:h-32 flex flex-col md:flex-row items-center justify-between mt-8 md:mt-4 mb-4 gap-20 md:gap-0"
                 >
                     {/* Connecting straight line */}
-                    <div className="absolute left-6 right-6 h-px bg-white/10 top-1/2 -translate-y-1/2 z-0" />
+                    <div className="absolute hidden md:block left-6 right-6 h-px bg-white/10 top-1/2 -translate-y-1/2 z-0" />
+                    <div className="absolute md:hidden top-6 bottom-6 w-px bg-white/10 left-1/2 -translate-x-1/2 z-0" />
 
                     {/* Active line drawing animation */}
                     <motion.div
@@ -1157,7 +1430,14 @@ const VisionSection = () => {
                         whileInView={{ scaleX: 1 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
-                        className="absolute left-6 right-6 h-px bg-[#D88A3D] top-1/2 -translate-y-1/2 z-0 origin-left"
+                        className="absolute hidden md:block left-6 right-6 h-px bg-[#D88A3D] top-1/2 -translate-y-1/2 z-0 origin-left"
+                    />
+                    <motion.div
+                        initial={{ scaleY: 0 }}
+                        whileInView={{ scaleY: 1 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
+                        className="absolute md:hidden top-6 bottom-6 w-px bg-[#D88A3D] left-1/2 -translate-x-1/2 z-0 origin-top"
                     />
 
                     {/* Timeline Nodes */}
@@ -1171,14 +1451,14 @@ const VisionSection = () => {
                             variants={nodeItem}
                             className="relative z-10 flex flex-col items-center justify-center gap-3"
                         >
-                            <span className="text-[#6B6B75] text-[10px] uppercase tracking-widest absolute -top-8 whitespace-nowrap">{node.label}</span>
+                            <span className="text-[#6B6B75] text-[10px] uppercase tracking-widest absolute -top-8 md:-top-8 md:relative md:top-auto whitespace-nowrap md:min-w-max mb-0 md:mb-1">{node.label}</span>
 
                             {/* Node Dot */}
-                            <div className={`${node.size} rounded-full bg-[#1C1C23] border-2 border-[#D88A3D] shadow-[0_0_15px_rgba(216,138,61,0.4)] flex items-center justify-center`}>
+                            <div className={`${node.size} rounded-full bg-[#1C1C23] border-2 border-[#D88A3D] shadow-[0_0_15px_rgba(216,138,61,0.4)] flex items-center justify-center relative z-20 mx-auto my-0`}>
                                 {idx === 2 && <div className="w-1.5 h-1.5 bg-[#D88A3D] rounded-full" />}
                             </div>
 
-                            <span className="text-[#A1A1AA] text-xs font-medium absolute -bottom-8 whitespace-nowrap">{node.desc}</span>
+                            <span className="text-[#A1A1AA] text-xs font-medium absolute -bottom-8 md:-bottom-8 md:relative md:bottom-auto whitespace-nowrap md:min-w-max mt-0 md:mt-1">{node.desc}</span>
                         </motion.div>
                     ))}
                 </motion.div>
@@ -1209,7 +1489,7 @@ const VisionSection = () => {
 // ── Section 8 · Download Section ─────────────────────────────────────────────
 
 const DownloadSection = () => (
-    <section id="download" className="py-32 px-8 bg-[#1C1C23] border-t border-white/10 flex flex-col items-center justify-center text-center">
+    <section id="download" className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
         <div className="max-w-xl mx-auto flex flex-col items-center">
 
             <motion.h2
@@ -1217,7 +1497,7 @@ const DownloadSection = () => (
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="text-4xl md:text-6xl font-serif mb-6 text-[#F5F5F7] leading-tight"
+                className="text-4xl md:text-6xl font-serif mb-6 text-[#0B0F1A] leading-tight"
             >
                 AURSA is launching soon.
             </motion.h2>
@@ -1227,7 +1507,7 @@ const DownloadSection = () => (
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                className="text-[#A1A1AA] text-lg md:text-xl mb-12 font-light leading-relaxed"
+                className="text-[#374151] text-lg md:text-xl mb-12 font-light leading-relaxed"
             >
                 Be among the first to experience AI-powered style intelligence.
             </motion.p>
@@ -1242,7 +1522,7 @@ const DownloadSection = () => (
                     boxShadow: "0px 0px 30px rgba(216, 138, 61, 0.4)",
                     transition: { duration: 0.2, ease: "easeOut" }
                 }}
-                className="bg-[#D88A3D] text-[#0F0F13] px-10 py-5 font-bold uppercase tracking-[0.2em] rounded-full"
+                className="bg-[#D88A3D] text-[#0F0F13] px-8 py-4 md:px-10 md:py-5 font-bold uppercase tracking-[0.2em] rounded-full text-sm md:text-base"
             >
                 Coming Soon
             </motion.button>
@@ -1252,7 +1532,7 @@ const DownloadSection = () => (
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="text-[#6B6B75] text-[11px] uppercase tracking-[0.3em] font-medium mt-6"
+                className="text-[#6B7280] text-[11px] uppercase tracking-[0.3em] font-medium mt-6"
             >
                 Launching on iOS and Android.
             </motion.p>
@@ -1286,7 +1566,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="w-full bg-[#0F0F13] flex flex-col justify-between overflow-hidden relative" style={{ paddingTop: '140px', paddingBottom: '0px' }}>
+        <footer className="w-full bg-[#0F0F13] flex flex-col justify-between overflow-hidden relative pt-[70px] md:pt-[100px] lg:pt-[140px] pb-0">
             {/* Top Area */}
             <div className="w-full px-6 flex flex-col items-center text-center justify-center mb-16 md:mb-24 max-w-[1400px] mx-auto gap-8 z-10 w-full">
                 {/* Text */}
@@ -1304,13 +1584,14 @@ const Footer = () => {
                     {[
                         { name: 'Instagram', url: 'https://www.instagram.com/aursa.ai/' },
                         { name: 'LinkedIn', url: 'https://www.linkedin.com/company/aursa' },
-                        { name: 'X', url: 'https://x.com/AursaAI' }
+                        { name: 'X', url: 'https://x.com/AursaAI' },
+                        { name: 'Privacy Policy', url: '/privacy-policy' }
                     ].map((link) => (
                         <a
                             key={link.name}
                             href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            target={link.url.startsWith('/') ? "_self" : "_blank"}
+                            rel={link.url.startsWith('/') ? undefined : "noopener noreferrer"}
                             className="group relative font-sans text-[16px] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-300"
                         >
                             {link.name}
@@ -1327,9 +1608,8 @@ const Footer = () => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "0px" }}
-                    className="font-serif text-[#F5F5F7] text-center w-full flex justify-center"
+                    className="font-serif text-[#F5F5F7] text-center w-full flex justify-center text-[22vw] md:text-[26vw]"
                     style={{
-                        fontSize: '26vw',
                         fontWeight: 400,
                         letterSpacing: '-0.02em',
                         lineHeight: 0.9,
@@ -1357,7 +1637,7 @@ const Footer = () => {
 // ── Root App ──────────────────────────────────────────────────────────────────
 
 const App = () => (
-    <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30">
+    <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden">
         <style>{`
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Questrial&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Instrument+Serif:ital@0;1&display=swap');
 
@@ -1367,34 +1647,52 @@ const App = () => (
             .font-hatton { font-family: 'Fraunces', serif; }
         `}</style>
 
-        <Navbar />
+        <Router>
+            <Navbar />
 
-        {/* 1 · Hero */}
-        <HeroSection />
+            <Routes>
+                <Route path="/" element={
+                    <>
+                        {/* 1 · Hero */}
+                        <HeroSection />
 
 
-        {/* 2 · Mirror Moment */}
-        <MirrorMomentSection />
+                        {/* 2 · Mirror Moment */}
+                        <MirrorMomentSection />
 
-        {/* 3 · AI Mirror Explanation */}
-        <AIMirrorSection />
+                        {/* 3 · AI Mirror Explanation */}
+                        <AIMirrorSection />
 
-        {/* 4 · Personal Style Patterns */}
-        <StylePatternsSection />
+                        {/* 4 · Personal Style Patterns */}
+                        <StylePatternsSection />
 
-        {/* 5 · Feature Explanation (Visual Elements) */}
-        <FeatureExplanationSection />
+                        {/* 5 · Feature Explanation (Visual Elements) */}
+                        <FeatureExplanationSection />
 
-        {/* 6 · Result Card Display */}
-        <ResultCardSection />
+                        {/* 6 · Result Card Display */}
+                        <ResultCardSection />
 
-        {/* 7 · Long-Term Vision */}
-        <VisionSection />
+                        {/* 6.5 · Save Your Vibe */}
+                        <SaveVibeSection />
 
-        {/* 9 · Download */}
-        <DownloadSection />
+                        {/* 6.75 · Wardrobe Archive */}
+                        <WardrobeSection />
 
-        <Footer />
+                        {/* 7 · Long-Term Vision */}
+                        <VisionSection />
+
+                        {/* 9 · Download */}
+                        <DownloadSection />
+                    </>
+                } />
+
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            </Routes>
+
+            <Footer />
+        </Router>
     </div>
 );
 
