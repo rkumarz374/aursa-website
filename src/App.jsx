@@ -1286,6 +1286,8 @@ const SaveVibeSection = () => {
 // ── Section 6.75 · Wardrobe Archive ──────────────────────────────────────────
 
 const WardrobeSection = () => {
+    const [showUnlockMsg, setShowUnlockMsg] = React.useState(false);
+
     const wardrobeImages = [
         { src: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80', dot: true },
         { src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80', dot: false },
@@ -1363,7 +1365,18 @@ const WardrobeSection = () => {
                                     src={src}
                                     alt="Outfit from wardrobe"
                                     className="w-full h-full object-cover rounded-xl"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextElementSibling.style.display = 'flex';
+                                    }}
                                 />
+                                {/* Fallback Placeholder */}
+                                <div className="hidden absolute inset-0 bg-[#f4f4f4] rounded-xl flex-col items-center justify-center p-4 text-center">
+                                    <svg className="w-8 h-8 text-neutral-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Outfit from<br />wardrobe</span>
+                                </div>
                                 {/* Dark gradient overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60" />
                                 {/* Analysis dot */}
@@ -1374,12 +1387,20 @@ const WardrobeSection = () => {
                         ))}
                     </motion.div>
 
-                    {/* AI Wardrobe Search */}
-                    <p className="text-xs uppercase tracking-[0.2em] text-neutral-500 mt-6 mb-3">
-                        Search your wardrobe
-                    </p>
-                    <div className="flex items-center gap-3 flex-wrap">
-                        <select className="flex items-center justify-between px-4 py-2 rounded-xl border border-neutral-300 hover:border-neutral-400 bg-white text-sm text-[#374151] min-w-[140px] shadow-sm focus:outline-none cursor-pointer">
+                </div>
+
+            </div>
+
+            {/* AI Wardrobe Search (Centered below grid) */}
+            <div className="w-full flex flex-col items-center justify-center mt-6">
+                <p className="text-[15px] opacity-90 text-[#555] text-center mb-[18px] max-w-[520px] leading-relaxed mx-auto">
+                    Choose your mood and the occasion — AURSA will find the best outfit from your wardrobe.
+                </p>
+                <div className="flex items-center justify-center gap-[14px] flex-wrap w-full mt-[10px]">
+                    
+                    {/* Occasion Dropdown */}
+                    <div className="relative w-full md:w-auto group">
+                        <select className="appearance-none w-full md:w-auto h-[48px] pl-[18px] pr-[36px] rounded-[28px] border border-black/10 bg-white text-[15px] text-[#333] min-w-[170px] outline-none transition-all duration-300 ease-out shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-black/15 hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] focus:border-[#c9822f] focus:shadow-[0_0_0_3px_rgba(201,130,47,0.12)] cursor-pointer">
                             <option value="">Occasion</option>
                             <option>Work</option>
                             <option>Casual</option>
@@ -1387,7 +1408,16 @@ const WardrobeSection = () => {
                             <option>Party</option>
                             <option>Travel</option>
                         </select>
-                        <select className="flex items-center justify-between px-4 py-2 rounded-xl border border-neutral-300 hover:border-neutral-400 bg-white text-sm text-[#374151] min-w-[140px] shadow-sm focus:outline-none cursor-pointer">
+                        <div className="absolute right-[16px] top-1/2 -translate-y-1/2 pointer-events-none opacity-60">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+
+                    {/* Mood Dropdown */}
+                    <div className="relative w-full md:w-auto group">
+                        <select className="appearance-none w-full md:w-auto h-[48px] pl-[18px] pr-[36px] rounded-[28px] border border-black/10 bg-white text-[15px] text-[#333] min-w-[170px] outline-none transition-all duration-300 ease-out shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-black/15 hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] focus:border-[#c9822f] focus:shadow-[0_0_0_3px_rgba(201,130,47,0.12)] cursor-pointer">
                             <option value="">Mood</option>
                             <option>Minimal</option>
                             <option>Bold</option>
@@ -1395,12 +1425,41 @@ const WardrobeSection = () => {
                             <option>Elegant</option>
                             <option>Confident</option>
                         </select>
-                        <button className="px-5 py-2 rounded-xl bg-[#D08A3C] text-white text-sm font-medium shadow-sm hover:opacity-90 transition">
-                            Find Outfit
-                        </button>
+                        <div className="absolute right-[16px] top-1/2 -translate-y-1/2 pointer-events-none opacity-60">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
                     </div>
 
+                    {/* Submit Button */}
+                    <button
+                        onClick={() => setShowUnlockMsg(true)}
+                        className="w-full md:w-auto h-[48px] px-[22px] rounded-[28px] bg-[#D08A3C] text-white text-[15px] font-medium transition-all duration-300 shadow-[0_6px_18px_rgba(201,130,47,0.25)] hover:-translate-y-[1px] hover:shadow-[0_10px_24px_rgba(201,130,47,0.30)] flex items-center justify-center">
+                        Find Outfit
+                    </button>
+
                 </div>
+
+                {/* Unlock Message */}
+                {showUnlockMsg && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                        className="flex flex-col items-center mt-[14px]"
+                    >
+                        <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', letterSpacing: '0.3px', opacity: 0.9 }}>
+                            Unlock this in the AURSA app.
+                        </p>
+                        <a
+                            href="#download"
+                            className="mt-3 h-[40px] px-[18px] rounded-[20px] bg-neutral-800 text-white text-[13px] font-medium flex items-center justify-center hover:bg-neutral-700 transition-colors"
+                        >
+                            Download the App
+                        </a>
+                    </motion.div>
+                )}
 
             </div>
 
