@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Linkedin } from 'lucide-react';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -8,121 +9,144 @@ const fadeInUp = {
 
 const AboutPage = () => {
     return (
-        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-24 md:pt-32">
+        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-40 pb-24">
             
-            {/* HER0 - Centered Title */}
-            <motion.section 
-                initial="hidden"
-                animate="visible"
-                variants={fadeInUp}
-                className="py-[70px] md:py-[120px] flex flex-col items-center justify-center text-center px-6"
-            >
-                <h1 className="font-serif text-[#FFFFFF] text-5xl md:text-7xl mb-6 leading-tight">
-                    About AURSA
-                </h1>
-                <p className="font-sans text-[#A1A1AA] text-xl md:text-2xl font-light">
-                    Understanding the identity behind your style.
-                </p>
-            </motion.section>
-
-            {/* Content Sections */}
-            <div className="pb-[70px] md:pb-[140px]">
+            <div className="max-w-xl mx-auto px-6 space-y-16 md:space-y-20">
                 
-                {/* Section 2 — Why We Built AURSA */}
+                {/* Intro Section */}
+                <motion.section 
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeInUp}
+                    className="flex flex-col gap-4"
+                >
+                    <h1 className="font-serif text-[#FFFFFF] text-4xl md:text-5xl leading-tight">
+                        About AURSA
+                    </h1>
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl font-light leading-relaxed max-w-md">
+                        An AI mirror building a bridge between identity and style.
+                    </p>
+                </motion.section>
+
+                {/* The Story Section */}
                 <motion.section 
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
+                    className="space-y-10"
                 >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                Why AURSA Exists
-                            </h2>
+                    <div className="space-y-8 text-[#A1A1AA] text-lg md:text-xl leading-relaxed font-light">
+                        <div className="space-y-1">
+                            <p>I didn’t start AURSA because of fashion.</p>
+                            <p>I started it because of a feeling.</p>
                         </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6 font-light">
-                            <p>Getting dressed is personal.</p>
-                            <p>But most people still rely on mirrors, friends, or guesswork to know if an outfit works.</p>
-                            <p>AURSA was created to answer a simple question:</p>
-                            <p className="text-[#F5F5F7] font-medium">What does your outfit actually communicate?</p>
+
+                        <div className="space-y-1">
+                            <p>That small moment before stepping out —</p>
+                            <p>when you look in the mirror and wonder:</p>
+                            <p className="text-[#F5F5F7] font-normal italic">“Does this actually look right?”</p>
+                        </div>
+                        
+                        <div className="space-y-1">
+                            <p>You adjust something.</p>
+                            <p>Check again.</p>
+                            <p>Maybe ask a friend or your partner.</p>
+                            <div className="pt-1">
+                                <p>And even then,</p>
+                                <p>you’re not fully sure.</p>
+                            </div>
+                        </div>
+
+                        <div className="py-4 opacity-40">—</div>
+
+                        <div className="space-y-1 font-normal">
+                            <p>I kept noticing how common this moment is.</p>
+                            <p>Not a lack of clothes.</p>
+                            <p>Not a lack of inspiration.</p>
+                            <p className="text-[#F5F5F7] font-medium pt-1">But a lack of clarity.</p>
+                        </div>
+
+                        <div className="space-y-1 pt-4">
+                            <p>So I started exploring a different idea.</p>
+                            <p>What if your outfit could be understood —</p>
+                            <p>not judged, not compared —</p>
+                            <p>but analyzed in a way that actually makes sense?</p>
                         </div>
                     </div>
                 </motion.section>
 
-                {/* Section 3 — What AURSA Does */}
+                {/* The Solution Section */}
                 <motion.section 
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
                     variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
+                    className="space-y-8"
                 >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
+                    <div className="space-y-16">
+                        <div className="space-y-6">
                             <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                An AI mirror for your style
+                                The Bridge
                             </h2>
+                            <div className="text-[#A1A1AA] text-lg md:text-xl leading-relaxed space-y-6 font-light">
+                                <div className="space-y-1">
+                                    <p>AURSA is my attempt to build that.</p>
+                                    <p>An AI mirror that helps you understand:</p>
+                                </div>
+                                <ul className="space-y-3 list-none">
+                                    <li className="flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                                        <span className="opacity-90">what’s working</span>
+                                    </li>
+                                    <li className="flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                                        <span className="opacity-90">what feels off</span>
+                                    </li>
+                                    <li className="flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
+                                        <span className="opacity-90">how to improve it</span>
+                                    </li>
+                                </ul>
+                                <p className="pt-2">
+                                    Not based on trends or opinions, <br className="hidden md:block" />
+                                    but based on <span className="text-[#F5F5F7]">visual harmony</span> — <br className="hidden md:block" />
+                                    and your own unique patterns.
+                                </p>
+                            </div>
                         </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6 font-light">
-                            <p>AURSA analyzes your outfit and reveals the visual harmony behind it.</p>
-                            <p>It studies:</p>
-                            <ul className="list-disc pl-6 space-y-2 text-[#D88A3D] font-medium marker:text-[#D88A3D]">
-                                <li><span className="text-[#A1A1AA] font-light">Color harmony</span></li>
-                                <li><span className="text-[#A1A1AA] font-light">Contrast</span></li>
-                                <li><span className="text-[#A1A1AA] font-light">Layering</span></li>
-                                <li><span className="text-[#A1A1AA] font-light">Visual balance</span></li>
-                            </ul>
-                            <p>Then it translates these signals into a clear reflection of your style.</p>
-                        </div>
-                    </div>
-                </motion.section>
 
-                {/* Section 4 — Philosophy */}
-                <motion.section 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
-                    variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
-                >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                Style is identity
-                            </h2>
+                        {/* Final Sign-off */}
+                        <div className="pt-12 border-t border-white/5 space-y-8">
+                            <div className="space-y-4">
+                                <p className="text-[#A1A1AA] text-lg md:text-xl font-light leading-relaxed">
+                                    This is still early. Still learning. Still evolving. <br />
+                                    But the goal is simple:
+                                </p>
+                                <p className="text-[#F5F5F7] text-3xl md:text-4xl font-serif leading-tight">
+                                    To help you step out feeling <br className="hidden md:block" />
+                                    just a little more certain.
+                                </p>
+                            </div>
+                            
+                        <div className="pt-10 space-y-1.5 border-t border-white/5">
+                            <h3 className="text-[#FFFFFF] font-medium text-xl md:text-2xl">
+                                — Rajat Shakya
+                            </h3>
+                            <p className="text-[#A1A1AA] text-sm md:text-base font-light">
+                                Founder
+                            </p>
+                            <div className="pt-1">
+                                <a 
+                                    href="https://www.linkedin.com/in/rajatkumarshakya/" 
+                                    target="_blank" 
+                                    rel="noreferrer"
+                                    className="inline-block text-[#0A66C2] hover:scale-110 transition-transform duration-200"
+                                >
+                                    <Linkedin size={20} fill="currentColor" strokeWidth={0} />
+                                </a>
+                            </div>
                         </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6 font-light">
-                            <p>Style is not about trends.</p>
-                            <p>It is about identity.</p>
-                            <p>Over time, AURSA helps people discover their visual patterns — the colors, contrasts and structures they naturally return to.</p>
-                            <p>Your style is not random.</p>
-                            <p className="text-[#F5F5F7] font-medium">It is a reflection of who you are.</p>
-                        </div>
-                    </div>
-                </motion.section>
-
-                {/* Section 5 — Vision */}
-                <motion.section 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
-                    variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
-                >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                The future of AURSA
-                            </h2>
-                        </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6 font-light">
-                            <p>As you continue uploading outfits, AURSA begins to learn your style patterns.</p>
-                            <p className="text-[#F5F5F7]">Your wardrobe history.</p>
-                            <p className="text-[#F5F5F7]">Your saved vibes.</p>
-                            <p className="text-[#F5F5F7]">Your visual identity.</p>
-                            <p>Over time, AURSA becomes your personal style intelligence system.</p>
                         </div>
                     </div>
                 </motion.section>

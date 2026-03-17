@@ -8,138 +8,69 @@ const fadeInUp = {
 
 const ContactPage = () => {
     return (
-        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-24 md:pt-32">
+        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-48 pb-32">
             
-            <div className="pb-[70px] md:pb-[140px] pt-[70px] md:pt-[100px]">
+            <div className="max-w-xl mx-auto px-6 space-y-24 md:space-y-32">
                 
-                {/* Section 1 */}
+                {/* Heading Section */}
                 <motion.section 
                     initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
+                    animate="visible"
                     variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
+                    className="flex flex-col gap-6"
                 >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                Contact AURSA
-                            </h2>
-                        </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6">
-                            <p>Questions about your style insights?</p>
-                            <p>Feedback about the AURSA experience?</p>
-                            <p>Ideas for improving the product?</p>
-                            <p>We would love to hear from you.</p>
-                            <p>AURSA is being built in public and we welcome feedback from early users and the community.</p>
-                        </div>
-                    </div>
+                    <h1 className="font-serif text-[#FFFFFF] text-4xl md:text-6xl leading-tight">
+                        Get in touch
+                    </h1>
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl font-light leading-relaxed">
+                        Feedback, ideas, or questions about your style journey.
+                    </p>
                 </motion.section>
 
-                {/* Section 2 */}
+                {/* Contact Method */}
                 <motion.section 
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
+                    viewport={{ once: true }}
                     variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
+                    className="space-y-12"
                 >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                Email
-                            </h2>
+                    <div className="space-y-8">
+                        <div className="pt-12 border-t border-white/5 space-y-6">
+                            <p className="text-sm tracking-wider uppercase opacity-40">Reach us at</p>
+                            <a 
+                                href="mailto:aursa.app@gmail.com"
+                                className="inline-block text-2xl md:text-3xl text-[#F5F5F7] hover:text-[#D88A3D] transition-colors duration-300 font-serif"
+                            >
+                                aursa.app@gmail.com
+                            </a>
                         </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6">
-                            <p>For support, feedback, product questions, or collaboration inquiries, reach us at:</p>
-                            <p>
-                                <a 
-                                    href="mailto:aursa.app@gmail.com"
-                                    className="inline-block text-[#F5F5F7] hover:text-[#D88A3D] transition-colors duration-200 font-medium"
-                                >
-                                    aursa.app@gmail.com
-                                </a>
+
+                        <div className="pt-12 border-t border-white/5 space-y-8">
+                            <p className="text-sm tracking-wider uppercase opacity-40">Follow the build</p>
+                            <div className="flex flex-col gap-4">
+                                {[
+                                    { name: 'Instagram', url: 'https://www.instagram.com/aursa.ai/' },
+                                    { name: 'LinkedIn', url: 'https://www.linkedin.com/company/aursa' },
+                                    { name: 'X', url: 'https://x.com/AursaAI' }
+                                ].map((social) => (
+                                    <a 
+                                        key={social.name}
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-lg text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-200 font-light"
+                                    >
+                                        {social.name}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="pt-24 border-t border-white/5">
+                            <p className="text-[#A1A1AA] text-sm md:text-base font-light italic opacity-60">
+                                We usually respond within 24–48 hours.
                             </p>
-                            <div className="mt-8 space-y-2 text-[#A1A1AA]">
-                                <p>Typical topics include:</p>
-                                <ul className="list-disc pl-6 space-y-1">
-                                    <li>Questions about outfit analysis</li>
-                                    <li>Feedback on style insights</li>
-                                    <li>Product suggestions</li>
-                                    <li>Collaboration or partnership inquiries</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </motion.section>
-
-                {/* Section 3 */}
-                <motion.section 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
-                    variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
-                >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                Follow the journey
-                            </h2>
-                        </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-4">
-                            <p className="mb-6">Follow the development of AURSA and stay updated as we continue building the future of personal style intelligence.</p>
-                            <div>
-                                <a 
-                                    href="https://www.instagram.com/aursa.ai/" 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                    className="text-[#A1A1AA] text-sm md:text-base hover:text-[#D88A3D] transition-colors duration-200"
-                                >
-                                    Instagram
-                                </a>
-                            </div>
-                            <div>
-                                <a 
-                                    href="https://www.linkedin.com/company/aursa" 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                    className="text-[#A1A1AA] text-sm md:text-base hover:text-[#D88A3D] transition-colors duration-200"
-                                >
-                                    LinkedIn
-                                </a>
-                            </div>
-                            <div>
-                                <a 
-                                    href="https://x.com/AursaAI" 
-                                    target="_blank" 
-                                    rel="noreferrer"
-                                    className="text-[#A1A1AA] text-sm md:text-base hover:text-[#D88A3D] transition-colors duration-200"
-                                >
-                                    X
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </motion.section>
-
-                {/* Section 4 */}
-                <motion.section 
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
-                    variants={fadeInUp}
-                    className="py-[90px] border-t border-white/5"
-                >
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 px-6">
-                        <div>
-                            <h2 className="font-serif text-3xl md:text-4xl text-[#F5F5F7]">
-                                Response time
-                            </h2>
-                        </div>
-                        <div className="text-[#A1A1AA] text-lg leading-relaxed space-y-6">
-                            <p>We usually respond within <span className="font-medium text-[#F5F5F7]">24–48 hours</span>.</p>
-                            <p>As AURSA is currently in development, responses may occasionally take longer — but we read every message.</p>
                         </div>
                     </div>
                 </motion.section>

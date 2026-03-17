@@ -2039,61 +2039,60 @@ const Footer = () => {
     };
 
     return (
-        <footer className="w-full bg-[#0F0F13] flex flex-col justify-between overflow-hidden relative pt-[70px] md:pt-[100px] lg:pt-[140px] pb-0">
-            {/* Top Area */}
-            <div className="w-full px-6 flex flex-col items-center text-center justify-center mb-16 md:mb-24 max-w-[1400px] mx-auto gap-8 z-10 w-full">
-                {/* Text */}
-                <div className="flex flex-col gap-2">
-                    <h3 className="font-sans text-[#F5F5F7] text-xl md:text-2xl font-medium">
-                        Stay connected with AURSA.
+        <footer className="w-full bg-[#0F0F13] flex flex-col justify-between overflow-hidden relative pt-[80px] md:pt-[120px] pb-0">
+            {/* Top Area: Refined Split Layout */}
+            <div className="w-full px-6 md:px-12 flex flex-col md:flex-row items-center md:items-end justify-between max-w-[1400px] mx-auto gap-8 md:gap-12 z-10">
+
+                {/* Left Column: Mission + Socials */}
+                <div className="flex flex-col items-center md:items-start text-center md:text-left gap-6">
+                    <h3 className="font-serif text-[#F5F5F7] text-xl md:text-2xl max-w-[300px] leading-snug opacity-90">
+                        Understand what your outfit communicates.
                     </h3>
-                    <p className="font-sans text-[#A1A1AA] text-sm md:text-base font-light">
-                        Follow the journey of personal style intelligence.
-                    </p>
-                </div>
 
-                {/* Social links */}
-                <div className="flex items-center justify-center gap-6 md:gap-8 flex-wrap">
-                    {[
-                        { name: 'Instagram', url: 'https://www.instagram.com/aursa.ai/' },
-                        { name: 'LinkedIn', url: 'https://www.linkedin.com/company/aursa' },
-                        { name: 'X', url: 'https://x.com/AursaAI' },
-                        { name: 'Privacy Policy', url: '/privacy-policy' }
-                    ].map((link) => {
-                        const isInternal = link.url.startsWith('/');
-                        const LinkComponent = isInternal ? Link : 'a';
-                        const linkProps = isInternal 
-                            ? { to: link.url } 
-                            : { href: link.url, target: "_blank", rel: "noopener noreferrer" };
-
-                        return (
-                            <LinkComponent
+                    {/* Social links */}
+                    <div className="flex items-center gap-6 md:gap-8">
+                        {[
+                            { name: 'Instagram', url: 'https://www.instagram.com/aursa.ai/' },
+                            { name: 'LinkedIn', url: 'https://www.linkedin.com/company/aursa' },
+                            { name: 'X', url: 'https://x.com/AursaAI' }
+                        ].map((link) => (
+                            <a
                                 key={link.name}
-                                {...linkProps}
-                                className="group relative font-sans text-[16px] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-300"
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group relative font-sans text-[12px] md:text-[13px] uppercase tracking-[0.2em] text-[#A1A1AA] hover:text-[#D88A3D] transition-colors duration-300"
                             >
                                 {link.name}
                                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
-                            </LinkComponent>
-                        );
-                    })}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Right Column: Origin */}
+                <div className="flex flex-col items-center md:items-end">
+                    <p className="font-sans text-[#A1A1AA] text-xs md:text-sm tracking-[0.1em] opacity-60">
+                        Made in India 🇮🇳
+                    </p>
                 </div>
             </div>
 
             {/* Bottom Area: Large Brand Typography */}
-            <div className="w-full flex justify-center items-end relative mt-20 px-4">
+            <div className="w-full flex justify-center items-end relative mt-16 md:mt-24 px-4 overflow-hidden">
                 <motion.h1
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "0px" }}
-                    className="font-serif text-[#F5F5F7] text-center w-full flex justify-center text-[22vw] md:text-[26vw]"
+                    className="font-serif text-[#D88A3D] text-center w-full flex justify-center text-[22vw] md:text-[26vw]"
                     style={{
                         fontWeight: 400,
                         letterSpacing: '-0.02em',
                         lineHeight: 0.9,
                         margin: 0,
-                        padding: 0
+                        padding: 0,
+                        opacity: 0.8 // Copper tone with reduced opacity
                     }}
                 >
                     {letters.map((char, index) => (
@@ -2105,8 +2104,8 @@ const Footer = () => {
 
                 {/* Cinematic subtle gradient fade toward the bottom */}
                 <div
-                    className="absolute bottom-0 left-0 w-full h-[60%] pointer-events-none z-20"
-                    style={{ background: 'linear-gradient(180deg, transparent 0%, #0F0F13 70%)' }}
+                    className="absolute bottom-0 left-0 w-full h-full pointer-events-none z-20"
+                    style={{ background: 'linear-gradient(180deg, transparent 40%, #0F0F13 95%)' }}
                 />
             </div>
         </footer>
