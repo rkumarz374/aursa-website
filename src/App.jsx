@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
@@ -380,13 +380,13 @@ const VibeCard = ({ title, harmony, contrast, layering, insight }) => {
 // ── Navbar ────────────────────────────────────────────────────────────────────
 
 const NavLink = ({ href, children }) => (
-    <a
-        href={href}
+    <Link
+        to={href}
         className="relative group text-[10px] uppercase tracking-[0.4em] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-200 px-3 py-1"
     >
         {children}
         <span className="absolute left-0 -bottom-[4px] h-[1px] w-0 bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
-    </a>
+    </Link>
 );
 
 const Navbar = () => {
@@ -427,8 +427,8 @@ const Navbar = () => {
                     }}
                 >
                     {/* Logo */}
-                    <a
-                        href="/"
+                    <Link
+                        to="/"
                         className="flex items-center shrink-0 opacity-90 hover:opacity-100 transition-opacity duration-200"
                     >
                         <img
@@ -436,7 +436,7 @@ const Navbar = () => {
                             alt="Aursa logo"
                             style={{ height: '28px', width: 'auto' }}
                         />
-                    </a>
+                    </Link>
 
                     {/* Right side navigation */}
                     <div className="hidden md:flex items-center gap-2 ml-auto">
@@ -2059,18 +2059,24 @@ const Footer = () => {
                         { name: 'LinkedIn', url: 'https://www.linkedin.com/company/aursa' },
                         { name: 'X', url: 'https://x.com/AursaAI' },
                         { name: 'Privacy Policy', url: '/privacy-policy' }
-                    ].map((link) => (
-                        <a
-                            key={link.name}
-                            href={link.url}
-                            target={link.url.startsWith('/') ? "_self" : "_blank"}
-                            rel={link.url.startsWith('/') ? undefined : "noopener noreferrer"}
-                            className="group relative font-sans text-[16px] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-300"
-                        >
-                            {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
-                        </a>
-                    ))}
+                    ].map((link) => {
+                        const isInternal = link.url.startsWith('/');
+                        const LinkComponent = isInternal ? Link : 'a';
+                        const linkProps = isInternal 
+                            ? { to: link.url } 
+                            : { href: link.url, target: "_blank", rel: "noopener noreferrer" };
+
+                        return (
+                            <LinkComponent
+                                key={link.name}
+                                {...linkProps}
+                                className="group relative font-sans text-[16px] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-300"
+                            >
+                                {link.name}
+                                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
+                            </LinkComponent>
+                        );
+                    })}
                 </div>
             </div>
 
@@ -2109,9 +2115,18 @@ const Footer = () => {
 
 // ── Root App ──────────────────────────────────────────────────────────────────
 
-const App = () => (
-    <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden">
-        <style>{`
+const App = () => {
+    useEffect(() => {
+        const redirect = sessionStorage.getItem("redirect");
+        if (redirect) {
+            sessionStorage.removeItem("redirect");
+            window.location.hash = redirect;
+        }
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden">
+            <style>{`
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Questrial&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Instrument+Serif:ital@0;1&display=swap');
 
             .font-serif  { font-family: 'Instrument Serif', serif; }
@@ -2120,50 +2135,51 @@ const App = () => (
             .font-hatton { font-family: 'Fraunces', serif; }
         `}</style>
 
-        <Router>
-            <Navbar />
+            <Router>
+                <Navbar />
 
-            <Routes>
-                <Route path="/" element={
-                    <>
-                        {/* 1 · Hero */}
-                        <HeroSection />
+                <Routes>
+                    <Route path="/" element={
+                        <>
+                            {/* 1 · Hero */}
+                            <HeroSection />
 
 
-                        {/* 2 · Mirror Moment */}
-                        <MirrorMomentSection />
+                            {/* 2 · Mirror Moment */}
+                            <MirrorMomentSection />
 
-                        {/* 3 · AI Mirror Explanation */}
-                        <AIMirrorSection />
+                            {/* 3 · AI Mirror Explanation */}
+                            <AIMirrorSection />
 
-                        {/* 4+5 · Style Analysis (merged) */}
-                        <StyleAnalysisSection />
+                            {/* 4+5 · Style Analysis (merged) */}
+                            <StyleAnalysisSection />
 
-                        {/* 6 · Result Card Display */}
-                        <ResultCardSection />
+                            {/* 6 · Result Card Display */}
+                            <ResultCardSection />
 
-                        {/* 6.5 · Save Your Vibe */}
-                        <SaveVibeSection />
+                            {/* 6.5 · Save Your Vibe */}
+                            <SaveVibeSection />
 
-                        {/* 6.75 · Wardrobe Archive */}
-                        <WardrobeSection />
+                            {/* 6.75 · Wardrobe Archive */}
+                            <WardrobeSection />
 
-                        {/* 7 · Long-Term Vision */}
-                        <VisionSection />
+                            {/* 7 · Long-Term Vision */}
+                            <VisionSection />
 
-                        {/* 9 · Download */}
-                        <DownloadSection />
-                    </>
-                } />
+                            {/* 9 · Download */}
+                            <DownloadSection />
+                        </>
+                    } />
 
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-            </Routes>
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                </Routes>
 
-            <Footer />
-        </Router>
-    </div>
-);
+                <Footer />
+            </Router>
+        </div>
+    );
+};
 
 export default App;
