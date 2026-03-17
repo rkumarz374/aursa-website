@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
@@ -14,7 +14,7 @@ function generateCode() {
 }
 
 const AursaButton = ({ text, onClick, href = '#', className = '', variant = 'outline', type = 'a' }) => {
-    const cls = `relative inline-flex items-center justify-center gap-3 px-10 py-5 text-xs font-bold uppercase tracking-[0.4em] transition-all duration-300 ${variant === 'solid'
+    const cls = `relative inline-flex items-center justify-center gap-3 px-10 py-5 text-xs font-bold uppercase tracking-[0.4em] transition-all duration-150 ${variant === 'solid'
         ? 'bg-[#D88A3D] border border-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13]'
         : 'border border-white/20 bg-transparent hover:bg-[#D88A3D] hover:border-[#D88A3D] text-white'
         } ${className}`;
@@ -80,7 +80,7 @@ const WaitlistModal = ({ data, onClose }) => {
                     initial={{ opacity: 0, y: 24, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 12, scale: 0.97 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
                     className="bg-[#16161C] border border-white/8 rounded-[20px] p-6 md:p-8 max-w-[380px] w-full max-h-[90vh] overflow-y-auto flex flex-col items-center text-center"
                     onClick={e => e.stopPropagation()}
                 >
@@ -231,7 +231,6 @@ const WaitlistForm = ({ theme = 'dark' }) => {
 
             setEmail('');
         } catch (err) {
-            console.error("Waitlist error:", err);
             alert("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
@@ -241,8 +240,8 @@ const WaitlistForm = ({ theme = 'dark' }) => {
     const isHero = theme === 'dark'; // The dark theme is used in the hero 
     const isDark = theme === 'dark';
     const inputCls = isDark
-        ? 'flex-1 h-[50px] px-5 rounded-[10px] border border-white/15 text-[14px] text-[#F5F5F7] outline-none transition-all duration-200 placeholder-[#A1A1AA] focus:border-[#D88A3D]/60'
-        : 'flex-1 h-[50px] px-5 rounded-[10px] border border-black/10 bg-white text-[14px] text-[#0B0F1A] outline-none transition-all duration-200 placeholder-[#A1A1AA] focus:border-[#D88A3D]';
+        ? 'flex-1 h-[50px] px-5 rounded-[10px] border border-white/15 text-[14px] text-[#F5F5F7] outline-none transition-all duration-150 placeholder-[#A1A1AA] focus:border-[#D88A3D]/60'
+        : 'flex-1 h-[50px] px-5 rounded-[10px] border border-black/10 bg-white text-[14px] text-[#0B0F1A] outline-none transition-all duration-150 placeholder-[#A1A1AA] focus:border-[#D88A3D]';
 
     return (
         <>
@@ -298,7 +297,7 @@ const WaitlistForm = ({ theme = 'dark' }) => {
                         disabled={loading}
                         whileHover={{ scale: loading ? 1 : 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="h-[50px] w-full sm:w-auto px-7 rounded-[10px] font-bold uppercase tracking-[0.2em] text-[11px] whitespace-nowrap transition-all duration-200"
+                        className="h-[50px] w-full sm:w-auto px-7 rounded-[10px] font-bold uppercase tracking-[0.2em] text-[11px] whitespace-nowrap transition-all duration-150"
                         style={{
                             background: '#D88A3D',
                             color: '#0F0F13',
@@ -361,8 +360,8 @@ const VibeCard = ({ title, harmony, contrast, layering, insight }) => {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="bg-[#16161C] p-[28px] rounded-[16px] border border-white/5 relative overflow-hidden w-full max-w-[380px] mx-auto transition-all duration-200 ease-in-out hover:-translate-y-[6px] hover:border-[#D88A3D]"
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="bg-[#16161C] p-[28px] rounded-[16px] border border-white/5 relative overflow-hidden w-full max-w-[380px] mx-auto transition-all duration-150 ease-in-out hover:-translate-y-[6px] hover:border-[#D88A3D]"
         >
             <h3 className="text-2xl font-serif text-[#F5F5F7] mb-8">{title}</h3>
             <div className="space-y-1 mb-8">
@@ -385,7 +384,7 @@ const NavLink = ({ href, children }) => (
         className="relative group text-[10px] uppercase tracking-[0.4em] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-200 px-3 py-1"
     >
         {children}
-        <span className="absolute left-0 -bottom-[4px] h-[1px] w-0 bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
+        <span className="absolute left-0 -bottom-[4px] h-[1px] w-0 bg-[#D88A3D] transition-all duration-150 group-hover:w-full" />
     </Link>
 );
 
@@ -408,12 +407,12 @@ const Navbar = () => {
             <motion.header
                 initial={{ opacity: 0, y: -16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: 'easeOut' }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
                 className="fixed top-0 left-0 right-0 z-50 flex justify-center"
                 style={{ paddingTop: '24px' }}
             >
                 <nav
-                    className="flex items-center justify-between transition-all duration-500"
+                    className="flex items-center justify-between transition-all duration-150"
                     style={{
                         background: navBg,
                         backdropFilter: 'blur(14px)',
@@ -453,17 +452,17 @@ const Navbar = () => {
                         >
                             <motion.span
                                 animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="block w-5 h-px bg-[#F5F5F7]"
-                            />
-                            <motion.span
-                                animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
                                 transition={{ duration: 0.15 }}
                                 className="block w-5 h-px bg-[#F5F5F7]"
                             />
                             <motion.span
+                                animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+                                transition={{ duration: 0.12 }}
+                                className="block w-5 h-px bg-[#F5F5F7]"
+                            />
+                            <motion.span
                                 animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
-                                transition={{ duration: 0.2 }}
+                                transition={{ duration: 0.15 }}
                                 className="block w-5 h-px bg-[#F5F5F7]"
                             />
                         </button>
@@ -478,7 +477,7 @@ const Navbar = () => {
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.15 }}
                         className="md:hidden fixed z-40 flex flex-col items-start gap-2 px-6 py-4"
                         style={{
                             top: '90px',
@@ -734,7 +733,7 @@ const HeroSection = () => {
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.7, delay: 0.3 }}
+                                transition={{ duration: 0.15 }}
                                 className="absolute z-2 bg-[#1C1C23] p-[16px] w-[240px] bottom-[-10px] right-[-10px] sm:right-[-20px]"
                                 style={{
                                     border: '1px solid #D88A3D',
@@ -830,7 +829,8 @@ const HeroSection = () => {
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.7, delay: 0.3 }}
+                                transition={{ duration: 0.18, ease: 'easeOut' }}
+                                exit={{ opacity: 0, y: 10, transition: { duration: 0.12, ease: 'easeOut' } }}
                                 whileHover={{ y: -6 }}
                                 className="absolute z-20 bg-[#1C1C23] p-[24px] w-auto min-w-[300px] bottom-[5%] right-0 translate-x-0"
                                 style={{
@@ -867,7 +867,7 @@ const HeroSection = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
+                            transition={{ duration: 0.18, ease: 'easeOut' }}
                             className="flex flex-col justify-center items-start text-left w-[40%]"
                         >
                             <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.1 }}>
@@ -945,7 +945,7 @@ const MirrorMomentSection = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+                        transition={{ duration: 0.15, ease: 'easeOut' }}
                         className="font-sans text-[#6B7280] text-lg font-light"
                     >
                         You look in the mirror and wonder.
@@ -982,7 +982,7 @@ const MirrorMomentSection = () => {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
                 className="w-full max-w-[1000px] mx-auto px-4 text-center"
             >
                 <p
@@ -1179,7 +1179,7 @@ const StyleAnalysisSection = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+                        transition={{ duration: 0.15, ease: 'easeOut' }}
                         className="flex flex-col gap-4 text-[#374151] font-sans text-lg md:text-xl font-light"
                     >
                         <p>Most people believe their style changes constantly.</p>
@@ -1215,7 +1215,7 @@ const StyleAnalysisSection = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.7, delay: 0.8, ease: 'easeOut' }}
+                        transition={{ duration: 0.15, ease: 'easeOut' }}
                         className="flex flex-col gap-2"
                     >
                         <p className="font-sans text-[#374151] text-lg font-medium">
@@ -1312,7 +1312,7 @@ const ResultCardSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
                 className="max-w-[600px] w-full mx-auto mb-16"
             >
                 <h2
@@ -1387,8 +1387,8 @@ const ResultCardSection = () => {
                     initial={{ opacity: 0, scale: 0.95, y: 30 }}
                     whileInView={{ opacity: 1, scale: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    whileHover={{ y: -8, transition: { duration: 0.4, ease: "easeOut" } }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    whileHover={{ y: -8, transition: { duration: 0.12, ease: "easeOut" } }}
                     className="relative z-20 w-full max-w-[360px] bg-[#FFFFFF] p-6 md:p-8 flex flex-col gap-8 transition duration-300 ease-out hover:scale-[1.03] hover:shadow-xl"
                     style={{ borderRadius: '24px', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 25px 60px rgba(0,0,0,0.12)' }}
                 >
@@ -1469,7 +1469,7 @@ const SaveVibeSection = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
                     className="w-full md:w-1/2 flex justify-center items-center"
                 >
                     <div className="relative w-full max-w-[320px] h-[320px] flex items-center justify-center">
@@ -1516,7 +1516,11 @@ const SaveVibeSection = () => {
 
                         {/* Card 1 (Front) — overflow visible so pill can bleed outside */}
                         <motion.div
-                            whileHover={{ y: -5, transition: { duration: 0.3 } }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.18, ease: 'easeOut' }}
+                            whileHover={{ y: -5, transition: { duration: 0.12 } }}
                             className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl shadow-xl w-full max-w-[280px]"
                             style={{ zIndex: 3, overflow: 'visible' }}
                         >
@@ -1783,7 +1787,7 @@ const WardrobeSection = () => {
                     {/* Submit Button */}
                     <button
                         onClick={() => setShowUnlockMsg(true)}
-                        className="w-full md:w-auto h-[48px] px-[22px] rounded-[28px] bg-[#D08A3C] text-white text-[15px] font-medium transition-all duration-300 shadow-[0_6px_18px_rgba(201,130,47,0.25)] hover:-translate-y-[1px] hover:shadow-[0_10px_24px_rgba(201,130,47,0.30)] flex items-center justify-center">
+                        className="w-full md:w-auto h-[48px] px-[22px] rounded-[28px] bg-[#D08A3C] text-white text-[15px] font-medium transition-all duration-150 shadow-[0_6px_18px_rgba(201,130,47,0.25)] hover:-translate-y-[1px] hover:shadow-[0_10px_24px_rgba(201,130,47,0.30)] flex items-center justify-center">
                         Find Outfit
                     </button>
 
@@ -1832,11 +1836,11 @@ const WardrobeSection = () => {
 const VisionSection = () => {
     const cardContainer = {
         hidden: {},
-        visible: { transition: { staggerChildren: 0.2, delayChildren: 0.3 } }
+        visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
     };
     const cardAnim = {
         hidden: { opacity: 0, y: 24 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
     };
 
     const stages = [
@@ -1942,7 +1946,7 @@ const VisionSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
                 className="mt-20 text-center"
             >
                 {/* Copper divider */}
@@ -1970,7 +1974,7 @@ const DownloadSection = () => (
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.18 }}
                 className="text-[11px] uppercase tracking-[0.3em] text-[#999] mb-5 font-medium"
             >
                 Early Access
@@ -1980,7 +1984,7 @@ const DownloadSection = () => (
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
                 className="text-4xl md:text-5xl font-serif mb-4 text-[#0B0F1A] leading-tight"
             >
                 Be the first to try AURSA.
@@ -1990,7 +1994,7 @@ const DownloadSection = () => (
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
                 className="text-[#555] text-[16px] mb-0 font-light leading-relaxed max-w-[440px]"
             >
                 Join the waitlist and get early access before public launch.
@@ -2003,7 +2007,7 @@ const DownloadSection = () => (
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.5 }}
+                transition={{ duration: 0.15 }}
                 className="text-[#aaa] text-[11px] uppercase tracking-[0.3em] font-medium mt-6"
             >
                 Launching on iOS and Android
@@ -2112,6 +2116,21 @@ const Footer = () => {
     );
 };
 
+// ── Google Analytics Tracker ────────────────────────────────────────────────
+const AnalyticsTracker = () => {
+    const location = useLocation();
+
+    useEffect(() => {
+        if (window.gtag) {
+            window.gtag('config', 'G-F79C288E06', {
+                page_path: location.pathname,
+            });
+        }
+    }, [location]);
+
+    return null;
+};
+
 // ── Root App ──────────────────────────────────────────────────────────────────
 
 const App = () => {
@@ -2135,6 +2154,7 @@ const App = () => {
         `}</style>
 
             <Router>
+                <AnalyticsTracker />
                 <Navbar />
 
                 <Routes>
