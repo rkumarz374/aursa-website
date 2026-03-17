@@ -5,8 +5,13 @@ import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring } from 'framer-motion';
 import { Camera, Sparkles, Layers, Share2, ArrowRight, Archive, Smartphone, Apple } from 'lucide-react';
+import { supabase } from "./lib/supabase";
 
 // ── Shared Utilities ──────────────────────────────────────────────────────────
+
+function generateCode() {
+    return "AURSA-" + Math.random().toString(36).substring(2, 7).toUpperCase();
+}
 
 const AursaButton = ({ text, onClick, href = '#', className = '', variant = 'outline', type = 'a' }) => {
     const cls = `relative inline-flex items-center justify-center gap-3 px-10 py-5 text-xs font-bold uppercase tracking-[0.4em] transition-all duration-300 ${variant === 'solid'
@@ -46,6 +51,293 @@ const SectionHeading = ({ small, title, subtitle, mb = 'mb-16', centered = true 
         )}
     </div>
 );
+
+// ── Waitlist Modal ────────────────────────────────────────────────────────────
+
+const WAITLIST_API = 'https://script.google.com/macros/s/AKfycbyEYsfwBsfqxKVy5tufmBfpA9VYNzA5_XlVb0e6sqW3jwzG5xyFPEBVw0ZoYxRp6LMEww/exec';
+
+const WaitlistModal = ({ data, onClose }) => {
+    if (!data) return null;
+
+    // Support both the previous backend format and the new Google Form format
+    const title = data.title || (data.status === 'new' ? "You're in. ✨" : "Already in. ✨");
+    const subTitle = data.message || (data.status === 'new' ? 'Priority early access' : 'Your priority spot');
+    const number = data.number ? `#${data.number}` : null;
+
+    return (
+        <AnimatePresence>
+            <motion.div
+                key="overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[9999] flex items-center justify-center px-4"
+                style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)' }}
+                onClick={onClose}
+            >
+                <motion.div
+                    key="card"
+                    initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className="bg-[#16161C] border border-white/8 rounded-[20px] p-6 md:p-8 max-w-[380px] w-full max-h-[90vh] overflow-y-auto flex flex-col items-center text-center"
+                    onClick={e => e.stopPropagation()}
+                >
+                    {/* Title */}
+                    <p className="text-[#D88A3D] text-[10px] font-bold uppercase tracking-[0.35em] mb-4">
+                        {title}
+                    </p>
+
+                    {/* Waitlist number or Icon */}
+                    {number ? (
+                        <p className="font-serif text-[#F5F5F7] text-5xl mb-1">
+                            {number}
+                        </p>
+                    ) : (
+                        <div className="w-16 h-16 rounded-full bg-[#D88A3D]/10 flex items-center justify-center mb-2">
+                            <span className="text-[#D88A3D] text-3xl font-serif">A</span>
+                        </div>
+                    )}
+
+                    <p className="text-[#A1A1AA] text-[11px] uppercase tracking-[0.2em] mb-8">
+                        {subTitle}
+                    </p>
+
+                    {/* Unique code */}
+                    <div className="w-full bg-[#0B0F1A] rounded-[12px] px-5 py-4 mb-4 border border-white/6">
+                        <p className="text-[#A1A1AA] text-[9px] uppercase tracking-[0.3em] mb-2">Your Priority Access Code</p>
+                        <p className="font-mono text-[#D88A3D] text-xl tracking-[0.15em] font-semibold">
+                            {data.code}
+                        </p>
+                    </div>
+                    <p className="text-[#A1A1AA] text-[11px] tracking-[0.05em] mb-8" style={{ opacity: 0.7 }}>
+                        We’ll notify you before the public launch.
+                    </p>
+
+                    {/* Close */}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={onClose}
+                        className="h-[44px] px-8 rounded-[10px] font-bold uppercase tracking-[0.2em] text-[10px] transition-colors duration-200"
+                        style={{ background: '#D88A3D', color: '#0F0F13' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#F0B67F'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#D88A3D'; }}
+                    >
+                        Got it
+                    </motion.button>
+                </motion.div>
+            </motion.div>
+        </AnimatePresence>
+    );
+};
+
+// ── Waitlist Form ─────────────────────────────────────────────────────────────
+
+const WaitlistForm = ({ theme = 'dark' }) => {
+    const [email, setEmail] = React.useState('');
+    const [loading, setLoading] = React.useState(false);
+    const [modalData, setModalData] = React.useState(null);
+    const [waitlistCount, setWaitlistCount] = React.useState(47);
+    const [error, setError] = React.useState('');
+
+    const validateEmail = (email) => {
+        return String(email)
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+    };
+
+    const fetchCount = async () => {
+        const { count, error } = await supabase
+            .from('waitlist')
+            .select('*', { count: 'exact', head: true });
+        if (!error && count !== null) {
+            const base = 47;
+            setWaitlistCount(base + count);
+        }
+    };
+
+    React.useEffect(() => {
+        fetchCount();
+    }, []);
+
+    const handleWaitlistSubmit = async (e) => {
+        e.preventDefault();
+        const trimmedEmail = email.trim();
+
+        if (!trimmedEmail) {
+            setError('Enter your email');
+            return;
+        }
+
+        if (!validateEmail(trimmedEmail)) {
+            setError('Enter a valid email');
+            return;
+        }
+
+        setError('');
+        setLoading(true);
+
+        try {
+            // Check if user already exists
+            const { data: existingUser, error: checkError } = await supabase
+                .from("waitlist")
+                .select("*")
+                .eq("email", trimmedEmail)
+                .maybeSingle();
+
+            if (checkError) throw checkError;
+
+            let user;
+
+            if (existingUser) {
+                user = existingUser;
+            } else {
+                // Get current count to determine next position
+                const { count: currentTotal } = await supabase
+                    .from("waitlist")
+                    .select("*", { count: "exact", head: true });
+
+                const position = (currentTotal || 0) + 1;
+                const code = generateCode();
+
+                const { data: newUser, error: insertError } = await supabase
+                    .from("waitlist")
+                    .insert([{ email: trimmedEmail, code, position }])
+                    .select()
+                    .single();
+
+                if (insertError) throw insertError;
+                user = newUser;
+            }
+
+            const base = 47;
+            const number = base + (user.position || 0);
+
+            setModalData({
+                title: existingUser ? `Already in. You're #${number} ✨` : `You're in. You're #${number} ✨`,
+                number: number,
+                code: user.code,
+                message: "This code gives you early access priority. Keep it safe.",
+                status: existingUser ? 'exists' : 'new'
+            });
+
+            if (!existingUser) {
+                setWaitlistCount(prev => prev + 1);
+            }
+
+            setEmail('');
+        } catch (err) {
+            console.error("Waitlist error:", err);
+            alert("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const isHero = theme === 'dark'; // The dark theme is used in the hero 
+    const isDark = theme === 'dark';
+    const inputCls = isDark
+        ? 'flex-1 h-[50px] px-5 rounded-[10px] border border-white/15 text-[14px] text-[#F5F5F7] outline-none transition-all duration-200 placeholder-[#A1A1AA] focus:border-[#D88A3D]/60'
+        : 'flex-1 h-[50px] px-5 rounded-[10px] border border-black/10 bg-white text-[14px] text-[#0B0F1A] outline-none transition-all duration-200 placeholder-[#A1A1AA] focus:border-[#D88A3D]';
+
+    return (
+        <>
+            <WaitlistModal data={modalData} onClose={() => setModalData(null)} />
+
+            <div className="mt-6 md:mt-10 flex flex-col items-center md:items-start w-full">
+
+                {/* Coming Soon label */}
+                <p className="text-[#D88A3D] text-[24px] font-bold uppercase tracking-[0.45em] mb-1">
+                    Coming Soon
+                </p>
+
+                {/* Platform subtext */}
+                <p
+                    className={`text-[11px] uppercase tracking-[0.2em] mb-[40px] md:mb-[52px] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                    style={{ opacity: 0.75 }}
+                >
+                    Launching on iOS and Android
+                </p>
+
+                {/* Action label */}
+                <p className={`text-[12px] font-bold uppercase tracking-[0.2em] mb-4 ${isDark ? 'text-[#F5F5F7]' : 'text-[#0B0F1A]'}`}>
+                    Get early access
+                </p>
+
+                {/* Input + button */}
+                <form
+                    onSubmit={handleWaitlistSubmit}
+                    className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-[440px]"
+                >
+                    <div className="relative flex-1 w-full">
+                        <input
+                            type="email"
+                            required
+                            autoFocus={isHero}
+                            value={email}
+                            onChange={e => {
+                                setEmail(e.target.value);
+                                if (error) setError('');
+                            }}
+                            placeholder="Enter your email for early access"
+                            className={`${inputCls} w-full ${error ? 'border-red-500/50' : ''}`}
+                            style={isDark ? { background: 'rgba(255,255,255,0.07)' } : {}}
+                        />
+                        {error && (
+                            <p className="absolute -bottom-6 left-0 text-[10px] text-red-500 font-medium tracking-wide">
+                                {error}
+                            </p>
+                        )}
+                    </div>
+                    <motion.button
+                        type="submit"
+                        disabled={loading}
+                        whileHover={{ scale: loading ? 1 : 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="h-[50px] w-full sm:w-auto px-7 rounded-[10px] font-bold uppercase tracking-[0.2em] text-[11px] whitespace-nowrap transition-all duration-200"
+                        style={{
+                            background: '#D88A3D',
+                            color: '#0F0F13',
+                            opacity: loading ? 0.7 : 1,
+                        }}
+                        onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#F0B67F'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#D88A3D'; }}
+                    >
+                        {loading ? 'Joining...' : 'Join Waitlist'}
+                    </motion.button>
+                </form>
+
+                {/* Count */}
+                <p
+                    className={`mt-3 text-[12px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                    style={{ opacity: 0.8 }}
+                >
+                    {waitlistCount} people already waiting
+                </p>
+
+                {/* Urgency */}
+                <p
+                    className={`mt-1 text-[11px] font-medium tracking-[0.05em] ${isDark ? 'text-[#D88A3D]' : 'text-[#D88A3D]'}`}
+                >
+                    Early users get priority access
+                </p>
+
+                {/* Microcopy */}
+                <p
+                    className={`mt-1 text-[11px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                    style={{ opacity: 0.45 }}
+                >
+                    Limited early access. No spam.
+                </p>
+
+            </div>
+        </>
+    );
+};
 
 // ── Vibe Card ─────────────────────────────────────────────────────────────────
 
@@ -366,7 +658,7 @@ const HeroSection = () => {
 
     return (
         <section
-            className="relative h-screen overflow-hidden bg-[#0F0F13]"
+            className="relative min-h-screen md:h-screen overflow-hidden bg-[#0F0F13]"
             onMouseMove={handleMouseMove}
         >
             {/* Layer 1: copper radial glow */}
@@ -399,141 +691,197 @@ const HeroSection = () => {
                 }}
             />
 
-            {/* Layer 4: Two-column split layout */}
-            <div className="relative h-full flex items-center justify-center z-10 px-5 md:px-8 lg:px-12 py-[70px] md:py-[90px] lg:py-[120px] w-full pt-32 md:pt-32">
-                <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 h-full mt-12 md:mt-0">
-                    {/* ── LEFT 60% — Brand visual area + Card ── */}
-                    <div className="relative flex flex-col items-center justify-center w-full md:w-[60%] h-full min-h-[400px]">
-                        {/* Layer A: Zodiac SVG — centered within its column */}
-                        <motion.div
-                            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                            style={{ x: zodiacX, y: zodiacY }}
-                        >
-                            {/* Rotating Zodiac Wheel */}
-                            <motion.img
-                                src="/zodiac.svg"
-                                alt=""
-                                className="w-[120%] md:w-[120%] max-w-[420px] md:max-w-[850px] relative z-10 mx-auto"
+            {/* Layer 4: Content Layout */}
+            <div className="relative z-10 w-full px-5 md:px-8 lg:px-12 py-10 md:py-[90px] lg:py-[120px] pt-28 md:pt-32">
+                <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+
+                    {/* MOBILE-ONLY STORYTELLING FLOW (Visual -> Text -> Scroll Guide -> CTA) */}
+                    <div className="flex md:hidden flex-col items-center text-center w-full">
+                        {/* 1. Zodiac Visual + Card Group */}
+                        <div className="relative w-full max-w-[280px] flex flex-col items-center justify-center mb-8 mt-6">
+                            {/* Layer A: Zodiac SVG */}
+                            <div className="relative w-[115%] aspect-square flex items-center justify-center z-1">
+                                <motion.img
+                                    src="/zodiac.svg"
+                                    alt=""
+                                    className="w-full h-auto"
+                                    style={{ opacity: 0.3, scale: 1.1 }}
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+                                />
+                                <div
+                                    className="absolute bg-[#D88A3D]/20 rounded-full blur-[40px]"
+                                    style={{ width: '140px', height: '140px' }}
+                                />
+                            </div>
+
+                            {/* Copper glow vignette behind the harmony card (mobile) */}
+                            <div
+                                className="absolute pointer-events-none"
                                 style={{
-                                    height: 'auto',
+                                    bottom: '-20px',
+                                    right: '0',
+                                    width: '180px',
+                                    height: '180px',
+                                    background: 'radial-gradient(circle, rgba(216,138,61,0.2) 0%, transparent 70%)',
+                                    filter: 'blur(30px)',
                                     opacity: 0.4,
-                                }}
-                                animate={{ rotate: 360 }}
-                                transition={{
-                                    duration: 120,
-                                    repeat: Infinity,
-                                    ease: "linear"
+                                    zIndex: 1,
                                 }}
                             />
+
+                            {/* Layer B: Style Harmony Card (mobile version) */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.7, delay: 0.3 }}
+                                className="absolute z-2 bg-[#1C1C23] p-[16px] w-[240px] bottom-[-10px] right-[-10px] sm:right-[-20px]"
+                                style={{
+                                    border: '1px solid #D88A3D',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.6)',
+                                    scale: 0.85
+                                }}
+                            >
+                                <div className="h-full flex flex-col justify-center">
+                                    <p className="text-[#A1A1AA] uppercase tracking-[0.2em] text-[8px] mb-3 font-bold">Harmony Check</p>
+                                    <div className="flex justify-between items-end mb-3 border-b border-white/5 pb-3">
+                                        <span className="text-[#F5F5F7] font-sans text-xs">Harmony</span>
+                                        <span className="text-[#D88A3D] font-serif text-[28px] leading-none"><AnimatedNumber value={82} />%</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between items-center text-[10px]">
+                                            <span className="text-[#A1A1AA] uppercase tracking-wider">Style Energy</span>
+                                            <span className="text-[#F5F5F7] font-medium">Libra Balance</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[10px]">
+                                            <span className="text-[#A1A1AA] uppercase tracking-wider">Contrast</span>
+                                            <span className="text-[#F5F5F7] font-medium">Medium</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        {/* 2. Text Content */}
+                        <div className="space-y-3">
+                            <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: '32px', lineHeight: 1.15 }}>
+                                Your outfit says<br /> more than you think.
+                            </h1>
+                            <p className="font-sans text-[#F5F5F7] text-[18px] font-medium leading-[1.4] px-4">
+                                Understand what your outfit communicates — before you step out.
+                            </p>
+                            <p className="font-sans text-[#A1A1AA] text-[15px] font-light leading-[1.6] px-6">
+                                AURSA is an AI mirror that analyzes your outfit — revealing balance, contrast, and visual harmony.
+                            </p>
+                        </div>
+
+                        {/* 3. Scroll Guidance */}
+                        <motion.div
+                            className="mt-6 flex flex-col items-center gap-2 opacity-60"
+                            animate={{ y: [0, 6, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Join early access</span>
+                            <ArrowRight className="w-4 h-4 rotate-90 text-[#D88A3D]" />
                         </motion.div>
 
-                        {/* Copper glow vignette behind the harmony card */}
-                        <div
-                            className="absolute pointer-events-none"
-                            style={{
-                                bottom: 'calc(5% + 20px)',
-                                right: '20px',
-                                width: '260px',
-                                height: '260px',
-                                background: 'radial-gradient(circle, rgba(216,138,61,0.25) 0%, transparent 70%)',
-                                filter: 'blur(40px)',
-                                opacity: 0.5,
-                                zIndex: 18,
-                            }}
-                        />
+                        {/* 4. Waitlist CTA (Below Fold Context) */}
+                        <div className="mt-12 w-full">
+                            <WaitlistForm theme="dark" />
+                        </div>
+                    </div>
 
-                        {/* Floating Harmony Check Card */}
+                    {/* DESKTOP-ONLY LAYOUT (Unchanged) */}
+                    <div className="hidden md:flex w-full items-center justify-between gap-12">
+                        {/* ── LEFT 60% — Brand visual area + Card ── */}
+                        <div className="relative flex flex-col items-center justify-center w-[60%] h-full min-h-[400px]">
+                            {/* Layer A: Zodiac SVG */}
+                            <motion.div
+                                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                                style={{ x: zodiacX, y: zodiacY }}
+                            >
+                                <motion.img
+                                    src="/zodiac.svg"
+                                    alt=""
+                                    className="w-[120%] max-w-[850px] relative z-10 mx-auto"
+                                    style={{ height: 'auto', opacity: 0.4 }}
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+                                />
+                            </motion.div>
+
+                            {/* Copper glow behind the harmony card */}
+                            <div
+                                className="absolute pointer-events-none"
+                                style={{
+                                    bottom: 'calc(5% + 20px)',
+                                    right: '20px',
+                                    width: '260px',
+                                    height: '260px',
+                                    background: 'radial-gradient(circle, rgba(216,138,61,0.25) 0%, transparent 70%)',
+                                    filter: 'blur(40px)',
+                                    opacity: 0.5,
+                                    zIndex: 18,
+                                }}
+                            />
+
+                            {/* Floating Harmony Check Card */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.7, delay: 0.3 }}
+                                whileHover={{ y: -6 }}
+                                className="absolute z-20 bg-[#1C1C23] p-[24px] w-auto min-w-[300px] bottom-[5%] right-0 translate-x-0"
+                                style={{
+                                    border: '1px solid #D88A3D',
+                                    borderRadius: '16px',
+                                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                                }}
+                            >
+                                <div className="h-full flex flex-col justify-center">
+                                    <p className="text-[#A1A1AA] uppercase tracking-[0.2em] text-[10px] mb-6 font-bold">Harmony Check</p>
+                                    <div className="flex justify-between items-end mb-5 border-b border-white/5 pb-5">
+                                        <span className="text-[#F5F5F7] font-sans text-sm">Harmony</span>
+                                        <span className="text-[#D88A3D] font-serif text-[42px] leading-none"><AnimatedNumber value={82} />%</span>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Style Energy</span>
+                                            <span className="text-[#F5F5F7] text-sm font-medium">Libra Balance</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Contrast</span>
+                                            <span className="text-[#F5F5F7] text-sm font-medium">Medium</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-[#A1A1AA] text-xs uppercase tracking-wider">Layering</span>
+                                            <span className="text-[#F5F5F7] text-sm font-medium">Structured</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        {/* ── RIGHT 40% — Text + CTA ── */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.7, delay: 0.3 }}
-                            whileHover={{ y: -6 }}
-                            className="absolute z-20 bg-[#1C1C23] p-[16px] md:p-[24px] mt-0 w-[92vw] max-w-[280px] md:w-auto md:max-w-none md:min-w-[300px] bottom-[6%] md:bottom-[5%] right-[4%] md:right-0 left-auto md:left-auto translate-x-0"
-                            style={{
-                                border: '1px solid #D88A3D',
-                                borderRadius: '16px',
-                                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-                            }}
+                            transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
+                            className="flex flex-col justify-center items-start text-left w-[40%]"
                         >
-                            <div className="h-full flex flex-col justify-center">
-                                <p className="text-[#A1A1AA] uppercase tracking-[0.2em] text-[8px] md:text-[10px] mb-4 md:mb-6 font-bold">Harmony Check</p>
-
-                                <div className="flex justify-between items-end mb-4 md:mb-5 border-b border-white/5 pb-4 md:pb-5">
-                                    <span className="text-[#F5F5F7] font-sans text-xs md:text-sm">Harmony</span>
-                                    <span className="text-[#D88A3D] font-serif text-[28px] md:text-[42px] leading-none"><AnimatedNumber value={82} />%</span>
-                                </div>
-
-                                <div className="space-y-3 md:space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-[#A1A1AA] text-[10px] md:text-xs uppercase tracking-wider">Style Energy</span>
-                                        <span className="text-[#F5F5F7] text-xs md:text-sm font-medium">Libra Balance</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-[#A1A1AA] text-[10px] md:text-xs uppercase tracking-wider">Contrast</span>
-                                        <span className="text-[#F5F5F7] text-xs md:text-sm font-medium">Medium</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-[#A1A1AA] text-[10px] md:text-xs uppercase tracking-wider">Layering</span>
-                                        <span className="text-[#F5F5F7] text-xs md:text-sm font-medium">Structured</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.1 }}>
+                                Your outfit says<br className="hidden md:block" /> more than you think.
+                            </h1>
+                            <p className="font-sans text-[#F5F5F7]" style={{ fontWeight: 400, fontSize: '24px', lineHeight: 1.3, marginTop: '24px' }}>
+                                Understand what your outfit communicates — before you step out.
+                            </p>
+                            <p className="font-sans text-[#A1A1AA]" style={{ fontWeight: 300, fontSize: '18px', lineHeight: 1.6, marginTop: '24px', maxWidth: '440px' }}>
+                                AURSA is an AI mirror that analyzes your outfit — revealing balance, contrast, and visual harmony — so you know what it says before you step out.
+                            </p>
+                            <WaitlistForm theme="dark" />
                         </motion.div>
                     </div>
-
-                    {/* ── RIGHT 40% — Text + CTA ── */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
-                        className="flex flex-col justify-center items-center md:items-start text-center md:text-left w-full md:w-[40%]"
-                    >
-                        {/* Headline */}
-                        <h1
-                            className="font-serif text-[#F5F5F7]"
-                            style={{ fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.1 }}
-                        >
-                            Your outfit says<br className="hidden md:block" /> more than you think.
-                        </h1>
-
-                        {/* Subheadline */}
-                        <p
-                            className="font-sans text-[#F5F5F7]"
-                            style={{ fontWeight: 400, fontSize: 'clamp(18px, 2vw, 24px)', lineHeight: 1.3, marginTop: '24px' }}
-                        >
-                            Understand the signals your style sends.
-                        </p>
-
-                        {/* Supporting text */}
-                        <p
-                            className="font-sans text-[#A1A1AA]"
-                            style={{ fontWeight: 300, fontSize: 'clamp(16px, 1.2vw, 18px)', lineHeight: 1.6, marginTop: '24px', maxWidth: '440px' }}
-                        >
-                            AURSA is an AI mirror that analyzes your outfit and reveals the visual harmony and identity behind it — before you step out.
-                        </p>
-
-                        {/* CTA */}
-                        <div className="mt-12 flex flex-col items-center md:items-start">
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="inline-flex items-center justify-center font-sans font-bold uppercase tracking-widest text-[#0F0F13] transition-colors duration-200"
-                                style={{
-                                    fontSize: '12px',
-                                    background: '#D88A3D',
-                                    borderRadius: '10px',
-                                    padding: '18px 40px',
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.background = '#F0B67F'}
-                                onMouseLeave={e => e.currentTarget.style.background = '#D88A3D'}
-                            >
-                                Coming Soon
-                            </motion.button>
-                            <p className="text-[#A1A1AA] text-[10px] font-medium tracking-[0.1em] mt-4 uppercase">
-                                Launching on iOS and Android
-                            </p>
-                        </div>
-                    </motion.div>
                 </div>
             </div>
         </section>
@@ -1397,7 +1745,7 @@ const WardrobeSection = () => {
                     Choose your mood and the occasion — AURSA will find the best outfit from your wardrobe.
                 </p>
                 <div className="flex items-center justify-center gap-[14px] flex-wrap w-full mt-[10px]">
-                    
+
                     {/* Occasion Dropdown */}
                     <div className="relative w-full md:w-auto group">
                         <select className="appearance-none w-full md:w-auto h-[48px] pl-[18px] pr-[36px] rounded-[28px] border border-black/10 bg-white text-[15px] text-[#333] min-w-[170px] outline-none transition-all duration-300 ease-out shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-black/15 hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] focus:border-[#c9822f] focus:shadow-[0_0_0_3px_rgba(201,130,47,0.12)] cursor-pointer">
@@ -1615,57 +1963,56 @@ const VisionSection = () => {
 // ── Section 8 · Download Section ─────────────────────────────────────────────
 
 const DownloadSection = () => (
-    <section id="download" className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+    <section id="download" className="py-[80px] md:py-[120px] px-5 md:px-8 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
         <div className="max-w-xl mx-auto flex flex-col items-center">
+
+            <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="text-[11px] uppercase tracking-[0.3em] text-[#999] mb-5 font-medium"
+            >
+                Early Access
+            </motion.p>
 
             <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="text-4xl md:text-6xl font-serif mb-6 text-[#0B0F1A] leading-tight"
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="text-4xl md:text-5xl font-serif mb-4 text-[#0B0F1A] leading-tight"
             >
-                AURSA is launching soon.
+                Be the first to try AURSA.
             </motion.h2>
 
             <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                className="text-[#374151] text-lg md:text-xl mb-12 font-light leading-relaxed"
+                transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+                className="text-[#555] text-[16px] mb-0 font-light leading-relaxed max-w-[440px]"
             >
-                Be among the first to experience AI-powered style intelligence.
+                Join the waitlist and get early access before public launch.
             </motion.p>
 
-            <motion.button
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                whileHover={{
-                    scale: 1.04,
-                    boxShadow: "0px 0px 30px rgba(216, 138, 61, 0.4)",
-                    transition: { duration: 0.2, ease: "easeOut" }
-                }}
-                className="bg-[#D88A3D] text-[#0F0F13] px-8 py-4 md:px-10 md:py-5 font-bold uppercase tracking-[0.2em] rounded-full text-sm md:text-base"
-            >
-                Coming Soon
-            </motion.button>
+            {/* Shared waitlist form — light theme, same backend */}
+            <WaitlistForm theme="light" />
 
             <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="text-[#6B7280] text-[11px] uppercase tracking-[0.3em] font-medium mt-6"
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="text-[#aaa] text-[11px] uppercase tracking-[0.3em] font-medium mt-6"
             >
-                Launching on iOS and Android.
+                Launching on iOS and Android
             </motion.p>
 
         </div>
     </section>
 );
+
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 
