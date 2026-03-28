@@ -43,7 +43,7 @@ const InvestorsPage = () => {
                     </h2>
                     <div className="max-w-xl space-y-6 text-[#A1A1AA] text-lg md:text-xl leading-relaxed font-light">
                         <p>Every day, people experience a small but repeated moment of uncertainty before leaving home.</p>
-                        
+
                         <div className="space-y-1 py-4">
                             <p className="text-[#F5F5F7] font-normal italic">They look in the mirror and wonder:</p>
                             <p>Does this actually look right?</p>
@@ -80,19 +80,19 @@ const InvestorsPage = () => {
                         <ul className="space-y-3 list-none">
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">color harmony</span>
+                                <span className="opacity-90">Color harmony</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">contrast</span>
+                                <span className="opacity-90">Contrast</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">layering</span>
+                                <span className="opacity-90">Layering</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">visual balance</span>
+                                <span className="opacity-90">Visual balance</span>
                             </li>
                         </ul>
                         <p>
@@ -121,15 +121,15 @@ const InvestorsPage = () => {
                         <ul className="space-y-3 list-none">
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">color preferences</span>
+                                <span className="opacity-90">Color preferences</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">contrast tendencies</span>
+                                <span className="opacity-90">Contrast tendencies</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                <span className="opacity-90">layering habits</span>
+                                <span className="opacity-90">Layering habits</span>
                             </li>
                         </ul>
                         <p>
@@ -137,9 +137,9 @@ const InvestorsPage = () => {
                         </p>
                         <p>This allows the system to:</p>
                         <ul className="space-y-2 text-[#F5F5F7] font-medium opacity-90">
-                            <li>• detect patterns</li>
-                            <li>• predict alignment</li>
-                            <li>• guide future decisions</li>
+                            <li>• Detect patterns</li>
+                            <li>• Predict alignment</li>
+                            <li>• Guide future decisions</li>
                         </ul>
                         <p className="pt-2">
                             This transforms AURSA from a tool into a personal style intelligence system.
@@ -159,7 +159,7 @@ const InvestorsPage = () => {
                     className="space-y-6 pt-12 border-t border-white/5"
                 >
                     <h2 className="font-serif text-2xl md:text-3xl text-[#F5F5F7]">
-                        Why now
+                        Why now?
                     </h2>
                     <div className="max-w-xl space-y-6 text-[#A1A1AA] text-lg md:text-xl leading-relaxed font-light">
                         <p>
@@ -235,7 +235,7 @@ const InvestorsPage = () => {
                         <p className="text-[#A1A1AA] text-lg md:text-xl font-light">
                             If you're interested in investing in AURSA, reach out at:
                         </p>
-                        <a 
+                        <a
                             href="mailto:hello@aursa.app"
                             className="inline-block text-[#F5F5F7] hover:text-[#D88A3D] transition-colors duration-200 text-xl font-medium border-b border-[#D88A3D]/30"
                         >
