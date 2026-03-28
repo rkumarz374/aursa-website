@@ -3,6 +3,9 @@ import { HashRouter as Router, Routes, Route, Link, useLocation } from "react-ro
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import InvestorsPage from "./pages/InvestorsPage";
+import ScrollToTop from "./components/ScrollToTop";
+import ScrollProgress from "./components/ScrollProgress";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring } from 'framer-motion';
 import { Camera, Sparkles, Layers, Share2, ArrowRight, Archive, Smartphone, Apple } from 'lucide-react';
 import { supabase } from "./lib/supabase";
@@ -246,28 +249,27 @@ const WaitlistForm = ({ theme = 'dark' }) => {
     return (
         <>
             <WaitlistModal data={modalData} onClose={() => setModalData(null)} />
+            <div id="waitlist" className="mt-4 md:mt-6 flex flex-col items-center md:items-start w-full">
 
-            <div className="mt-6 md:mt-10 flex flex-col items-center md:items-start w-full">
+            {/* Coming Soon label - Made less dominant */}
+            <p className="text-[#D88A3D]/40 text-[16px] md:text-[18px] font-bold uppercase tracking-[0.4em] mb-1">
+                Coming Soon
+            </p>
 
-                {/* Coming Soon label */}
-                <p className="text-[#D88A3D] text-[24px] font-bold uppercase tracking-[0.45em] mb-1">
-                    Coming Soon
-                </p>
+            {/* Platform subtext */}
+            <p
+                className={`text-[10px] uppercase tracking-[0.2em] mb-8 md:mb-10 ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                style={{ opacity: 0.6 }}
+            >
+                Launching on iOS and Android
+            </p>
 
-                {/* Platform subtext */}
-                <p
-                    className={`text-[11px] uppercase tracking-[0.2em] mb-[40px] md:mb-[52px] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
-                    style={{ opacity: 0.75 }}
-                >
-                    Launching on iOS and Android
-                </p>
-
-                {/* Action label */}
-                <p className={`text-[12px] font-bold uppercase tracking-[0.2em] mb-4 ${isDark ? 'text-[#F5F5F7]' : 'text-[#0B0F1A]'}`}>
+            {/* CTA Group - Tightly packed */}
+            <div className="space-y-4 w-full">
+                <p className={`text-[12px] font-bold uppercase tracking-[0.2em] ${isDark ? 'text-[#F5F5F7]' : 'text-[#0B0F1A]'}`}>
                     Get early access
                 </p>
 
-                {/* Input + button */}
                 <form
                     onSubmit={handleWaitlistSubmit}
                     className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-[440px]"
@@ -310,30 +312,30 @@ const WaitlistForm = ({ theme = 'dark' }) => {
                     </motion.button>
                 </form>
 
-                {/* Count */}
-                <p
-                    className={`mt-3 text-[12px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
-                    style={{ opacity: 0.8 }}
-                >
-                    {waitlistCount} people already waiting
-                </p>
+                <div className="space-y-1">
+                    <p
+                        className={`text-[12px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                        style={{ opacity: 0.8 }}
+                    >
+                        Join {waitlistCount}+ people getting early access
+                    </p>
 
-                {/* Urgency */}
-                <p
-                    className={`mt-1 text-[11px] font-medium tracking-[0.05em] ${isDark ? 'text-[#D88A3D]' : 'text-[#D88A3D]'}`}
-                >
-                    Early users get priority access
-                </p>
+                    <p
+                        className={`text-[11px] font-medium tracking-[0.05em] text-[#D88A3D]`}
+                    >
+                        Early users get priority access
+                    </p>
 
-                {/* Microcopy */}
-                <p
-                    className={`mt-1 text-[11px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
-                    style={{ opacity: 0.45 }}
-                >
-                    Limited early access. No spam.
-                </p>
-
+                    <p
+                        className={`text-[11px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                        style={{ opacity: 0.45 }}
+                    >
+                        Limited early access. No spam.
+                    </p>
+                </div>
             </div>
+
+        </div>
         </>
     );
 };
@@ -440,6 +442,7 @@ const Navbar = () => {
                     {/* Right side navigation */}
                     <div className="hidden md:flex items-center gap-2 ml-auto">
                         <NavLink href="/about">About</NavLink>
+                        <NavLink href="/investors">Investors</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
                     </div>
 
@@ -489,15 +492,15 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['/about', 'About'], ['/contact', 'Contact']].map(([href, label]) => (
-                            <a
+                        {[['/about', 'About'], ['/investors', 'Investors'], ['/contact', 'Contact']].map(([href, label]) => (
+                            <Link
                                 key={href}
-                                href={href}
+                                to={href}
                                 onClick={() => setMenuOpen(false)}
                                 className="w-full text-[11px] uppercase tracking-[0.35em] text-[#A1A1AA] hover:text-[#F5F5F7] py-3 border-b border-white/5 last:border-0 transition-colors duration-200"
                             >
                                 {label}
-                            </a>
+                            </Link>
                         ))}
                     </motion.div>
                 )}
@@ -763,15 +766,16 @@ const HeroSection = () => {
                         </div>
 
                         {/* 2. Text Content */}
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: '32px', lineHeight: 1.15 }}>
-                                Your outfit says<br /> more than you think.
+                                You know when an outfit feels right.<br />And when it doesn’t.
                             </h1>
                             <p className="font-sans text-[#F5F5F7] text-[18px] font-medium leading-[1.4] px-4">
-                                Understand what your outfit communicates — before you step out.
+                                Before you step out, there’s always a moment of doubt.
+                                AURSA helps you see your outfit clearly — and feel confident in it.
                             </p>
-                            <p className="font-sans text-[#A1A1AA] text-[15px] font-light leading-[1.6] px-6">
-                                AURSA is an AI mirror that analyzes your outfit — revealing balance, contrast, and visual harmony.
+                            <p className="font-sans text-white/80 text-[16px] md:text-lg mt-6 px-6">
+                                Not trends. Not opinions. Just clarity.
                             </p>
                         </div>
 
@@ -868,16 +872,17 @@ const HeroSection = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.18, ease: 'easeOut' }}
-                            className="flex flex-col justify-center items-start text-left w-[40%]"
+                            className="flex flex-col justify-center items-start text-left w-[40%] max-w-xl"
                         >
                             <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.1 }}>
-                                Your outfit says<br className="hidden md:block" /> more than you think.
+                                You know when an outfit feels right.<br className="hidden md:block" />And when it doesn’t.
                             </h1>
                             <p className="font-sans text-[#F5F5F7]" style={{ fontWeight: 400, fontSize: '24px', lineHeight: 1.3, marginTop: '24px' }}>
-                                Understand what your outfit communicates — before you step out.
+                                Before you step out, there’s always a moment of doubt.<br />
+                                AURSA helps you see your outfit clearly — and feel confident in it.
                             </p>
-                            <p className="font-sans text-[#A1A1AA]" style={{ fontWeight: 300, fontSize: '18px', lineHeight: 1.6, marginTop: '24px', maxWidth: '440px' }}>
-                                AURSA is an AI mirror that analyzes your outfit — revealing balance, contrast, and visual harmony — so you know what it says before you step out.
+                            <p className="font-sans text-white/80 mt-6" style={{ fontWeight: 400, fontSize: '18px', lineHeight: 1.6 }}>
+                                Not trends. Not opinions. Just clarity.
                             </p>
                             <WaitlistForm theme="dark" />
                         </motion.div>
@@ -885,6 +890,17 @@ const HeroSection = () => {
                 </div>
             </div>
         </section>
+    );
+};
+
+
+const ReinforcementStrip = () => {
+    return (
+        <div className="w-full flex justify-center text-center py-8 md:py-10 px-4 bg-[#0F0F13] border-t border-white/5">
+            <p className="font-sans text-[#D88A3D] uppercase tracking-[0.2em] font-medium text-center max-w-4xl text-sm md:text-base leading-relaxed">
+                AURSA IS AN AI MIRROR THAT ANALYZES YOUR OUTFIT — REVEALING BALANCE, CONTRAST, AND VISUAL HARMONY IN SECONDS.
+            </p>
+        </div>
     );
 };
 
@@ -902,7 +918,7 @@ const MirrorMomentSection = () => {
     };
     const thoughts = [
         'Do these colors actually work together?',
-        'Does this outfit feel balanced?',
+        'Does this feel balanced — or slightly off?',
         'Does this look like me?'
     ];
 
@@ -936,8 +952,7 @@ const MirrorMomentSection = () => {
                         className="font-serif text-[#0B0F1A] leading-tight"
                         style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}
                     >
-                        Before stepping out,<br />
-                        there's always a moment of doubt.
+                        That 10-second moment before you leave
                     </motion.h2>
 
                     {/* Subtext */}
@@ -995,7 +1010,7 @@ const MirrorMomentSection = () => {
                     }}
                 >
                     <span className="text-[#D88A3D]">AURSA</span>
-                    <span className="text-[#0B0F1A]"> is built for that moment.</span>
+                    <span className="text-[#0B0F1A]"> is built exactly for this moment.</span>
                 </p>
             </motion.div>
 
@@ -1039,7 +1054,7 @@ const AIMirrorSection = () => {
                         className="font-serif text-[#FFFFFF] mb-8"
                         style={{ fontSize: 'clamp(40px, 4vw, 56px)', lineHeight: 1.1 }}
                     >
-                        An AI mirror for <br className="hidden md:block" /> your personal style.
+                        A mirror that <br className="hidden md:block" /> understands your style
                     </h2>
 
                     <div className="space-y-6">
@@ -1059,8 +1074,8 @@ const AIMirrorSection = () => {
                     <div className="mt-12 pt-12 border-t border-white/10">
                         <p className="font-sans text-[#A1A1AA] text-sm md:text-base leading-relaxed italic border-l-2 border-[#D88A3D] pl-4">
                             Not trends.<br />
-                            Not fashion rules.<br />
-                            <span className="text-[#F5F5F7] font-medium not-italic block mt-3">Just understanding your style.</span>
+                            Not rules.<br />
+                            <span className="text-[#F5F5F7] font-medium not-italic block mt-3">Just understanding.</span>
                         </p>
                     </div>
                 </motion.div>
@@ -1172,7 +1187,7 @@ const StyleAnalysisSection = () => {
                         className="font-serif text-[#0B0F1A] leading-tight"
                         style={{ fontSize: 'clamp(40px, 5vw, 56px)' }}
                     >
-                        Your style is not random.
+                        Your style isn’t random
                     </motion.h2>
 
                     <motion.div
@@ -1182,8 +1197,8 @@ const StyleAnalysisSection = () => {
                         transition={{ duration: 0.15, ease: 'easeOut' }}
                         className="flex flex-col gap-4 text-[#374151] font-sans text-lg md:text-xl font-light"
                     >
-                        <p>Most people believe their style changes constantly.</p>
-                        <p>But when multiple outfits are analyzed, patterns begin to appear.</p>
+                        <p>Most people think their style changes constantly.</p>
+                        <p>But when you look closely — patterns repeat.</p>
                     </motion.div>
 
                     <motion.ul
@@ -1219,10 +1234,7 @@ const StyleAnalysisSection = () => {
                         className="flex flex-col gap-2"
                     >
                         <p className="font-sans text-[#374151] text-lg font-medium">
-                            These patterns form a visual fingerprint.
-                        </p>
-                        <p className="font-sans text-[#D88A3D] text-sm uppercase tracking-widest font-bold mt-2">
-                            AURSA helps you discover yours.
+                            AURSA helps you see those patterns clearly.
                         </p>
                     </motion.div>
 
@@ -1265,6 +1277,13 @@ const StyleAnalysisSection = () => {
                     </motion.div>
                 </div>
 
+            </div>
+
+            {/* Closing focus statement */}
+            <div className="w-full flex justify-center text-center mt-16">
+                <p className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center text-[24px]">
+                    OVER TIME, THIS BECOMES YOUR STYLE FINGERPRINT.
+                </p>
             </div>
         </section>
     );
@@ -1319,10 +1338,10 @@ const ResultCardSection = () => {
                     className="font-serif text-[#0B0F1A] mb-6 leading-tight"
                     style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
                 >
-                    A clear reflection of your style. <br className="hidden md:block" />
+                    Clarity in seconds <br className="hidden md:block" />
                 </h2>
                 <p className="font-sans text-[#374151] text-lg md:text-xl font-light">
-                    AURSA translates visual analysis into an intuitive result.
+                    AURSA turns your outfit into something you can understand instantly.
                 </p>
             </motion.div>
 
@@ -1416,12 +1435,12 @@ const ResultCardSection = () => {
                             </div>
                         </div>
 
-                        {/* Secondary Metrics */}
+                        {/* Secondary Metrics / Supporting Points */}
                         <div className="flex flex-col gap-5">
                             {[
-                                { label: 'Style Energy', value: 'Libra Balance' },
-                                { label: 'Contrast', value: 'Medium' },
-                                { label: 'Layering', value: 'Structured' }
+                                { label: 'What stood out', value: 'Harmony' },
+                                { label: 'What can improve', value: 'Balance' },
+                                { label: 'What already works', value: 'Contrast' }
                             ].map((metric, idx) => (
                                 <motion.div
                                     key={idx}
@@ -1449,7 +1468,7 @@ const ResultCardSection = () => {
                     className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center"
                     style={{ fontSize: "24px" }}
                 >
-                    AURSA doesn't judge your style. It helps you understand it.
+                    No guessing. No overthinking. Just clarity.
                 </p>
             </div>
 
@@ -1597,7 +1616,7 @@ const SaveVibeSection = () => {
                         className="font-serif text-[#F5F5F7] leading-tight mb-6"
                         style={{ fontSize: 'clamp(34px, 4vw, 42px)' }}
                     >
-                        Save the looks that feel right.
+                        Save what feels right
                     </h2>
 
                     {/* Body Copy */}
@@ -1628,7 +1647,7 @@ const SaveVibeSection = () => {
                     className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center"
                     style={{ fontSize: '24px' }}
                 >
-                    Your Strongest Looks. Your Evolving Style.
+                    Your strongest looks. Your evolving style.
                 </p>
             </div>
         </section>
@@ -1677,7 +1696,7 @@ const WardrobeSection = () => {
                         className="font-serif text-[#0B0F1A] leading-tight"
                         style={{ fontSize: 'clamp(40px,4vw,56px)', marginBottom: '28px' }}
                     >
-                        Your wardrobe becomes a style archive.
+                        Your wardrobe, understood
                     </h2>
 
                     <p className="font-sans text-[#374151] text-lg md:text-xl leading-relaxed max-w-md">
@@ -1746,7 +1765,7 @@ const WardrobeSection = () => {
             {/* AI Wardrobe Search (Centered below grid) */}
             <div className="w-full flex flex-col items-center justify-center mt-6">
                 <p className="text-[15px] opacity-90 text-[#555] text-center mb-[18px] max-w-[520px] leading-relaxed mx-auto">
-                    Choose your mood and the occasion — AURSA will find the best outfit from your wardrobe.
+                    Choose a mood. Choose an occasion.<br />AURSA finds what fits — instantly.
                 </p>
                 <div className="flex items-center justify-center gap-[14px] flex-wrap w-full mt-[10px]">
 
@@ -1821,7 +1840,7 @@ const WardrobeSection = () => {
                     className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center"
                     style={{ fontSize: '24px' }}
                 >
-                    Your Colors. Your Contrast. Your Layering Habits.
+                    Your colors. Your contrast. Your style.
                 </p>
             </div>
 
@@ -1896,7 +1915,7 @@ const VisionSection = () => {
                 transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
                 className="text-neutral-400 text-lg text-center max-w-[600px] mx-auto mb-16"
             >
-                Every outfit you analyze helps AURSA understand how you actually dress.
+                Every outfit you check teaches AURSA something about you.
             </motion.p>
 
             {/* 3-Stage Card Timeline */}
@@ -1926,16 +1945,12 @@ const VisionSection = () => {
                             </div>
                             {/* Subtitle */}
                             <span className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
-                                {stage.subtitle}
+                                {i === 0 ? 'Day 1' : i === 1 ? 'Week 2' : 'Month 1'}
                             </span>
                             {/* Title */}
                             <h3 className="font-serif text-white text-lg leading-tight">
-                                {stage.title}
+                                {i === 0 ? 'You understand your outfit' : i === 1 ? 'Patterns start to appear' : 'Your style becomes clear'}
                             </h3>
-                            {/* Body */}
-                            <p className="text-neutral-400 text-sm leading-relaxed">
-                                {stage.body}
-                            </p>
                         </motion.div>
                     ))}
                 </motion.div>
@@ -1953,8 +1968,8 @@ const VisionSection = () => {
                 <div className="w-16 h-px bg-[#D88A3D] mx-auto mb-6" />
                 {/* Focus text */}
                 <p className="font-serif text-3xl md:text-4xl text-white leading-tight">
-                    Your style was never random.<br />
-                    AURSA simply helps you see it.
+                    Your style was always there.<br />
+                    AURSA just helps you see it.
                 </p>
             </motion.div>
 
@@ -1967,7 +1982,7 @@ const VisionSection = () => {
 // ── Section 8 · Download Section ─────────────────────────────────────────────
 
 const DownloadSection = () => (
-    <section id="download" className="py-[80px] md:py-[120px] px-5 md:px-8 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+    <section id="final-cta" className="py-[80px] md:py-[120px] px-5 md:px-8 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)', scrollMarginTop: '100px' }}>
         <div className="max-w-xl mx-auto flex flex-col items-center">
 
             <motion.p
@@ -1987,7 +2002,7 @@ const DownloadSection = () => (
                 transition={{ duration: 0.18, ease: 'easeOut' }}
                 className="text-4xl md:text-5xl font-serif mb-4 text-[#0B0F1A] leading-tight"
             >
-                Be the first to try AURSA.
+                Step out without second-guessing
             </motion.h2>
 
             <motion.p
@@ -1997,7 +2012,7 @@ const DownloadSection = () => (
                 transition={{ duration: 0.15, ease: 'easeOut' }}
                 className="text-[#555] text-[16px] mb-0 font-light leading-relaxed max-w-[440px]"
             >
-                Join the waitlist and get early access before public launch.
+                Join early access and experience AURSA before everyone else.
             </motion.p>
 
             {/* Shared waitlist form — light theme, same backend */}
@@ -2074,8 +2089,26 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Right Column: Origin */}
-                <div className="flex flex-col items-center md:items-end">
+                {/* Right Column: Origin + Links */}
+                <div className="flex flex-col items-center md:items-end gap-8">
+                    {/* Navigation links */}
+                    <div className="flex items-center gap-6 md:gap-8">
+                        {[
+                            { name: 'About', url: '/about' },
+                            { name: 'Contact', url: '/contact' },
+                            { name: 'Privacy Policy', url: '/privacy-policy' }
+                        ].map((link) => (
+                            <Link
+                                key={link.name}
+                                to={link.url}
+                                className="group relative font-sans text-[12px] md:text-[13px] uppercase tracking-[0.2em] text-[#A1A1AA] hover:text-[#D88A3D] transition-colors duration-300"
+                            >
+                                {link.name}
+                                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#D88A3D] transition-all duration-300 group-hover:w-full" />
+                            </Link>
+                        ))}
+                    </div>
+
                     <p className="font-sans text-[#A1A1AA] text-xs md:text-sm tracking-[0.1em] opacity-60">
                         Made in India 🇮🇳
                     </p>
@@ -2131,6 +2164,68 @@ const AnalyticsTracker = () => {
     return null;
 };
 
+// ── Page Transition Wrapper ──────────────────────────────────────────────────
+const PageWrapper = ({ children }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+        {children}
+    </motion.div>
+);
+
+// ── Animated Routes Component ────────────────────────────────────────────────
+const AnimatedRoutes = () => {
+    const location = useLocation();
+
+    return (
+        <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+                <Route path="/" element={
+                    <PageWrapper>
+                        {/* 1 · Hero */}
+                        <HeroSection />
+
+                        {/* 1.5 · Reinforcement Strip */}
+                        <ReinforcementStrip />
+
+                        {/* 2 · Mirror Moment */}
+                        <MirrorMomentSection />
+
+                        {/* 3 · AI Mirror Explanation */}
+                        <AIMirrorSection />
+
+                        {/* 4+5 · Style Analysis (merged) */}
+                        <StyleAnalysisSection />
+
+                        {/* 6 · Result Card Display */}
+                        <ResultCardSection />
+
+                        {/* 6.5 · Save Your Vibe */}
+                        <SaveVibeSection />
+
+                        {/* 6.75 · Wardrobe Archive */}
+                        <WardrobeSection />
+
+                        {/* 7 · Long-Term Vision */}
+                        <VisionSection />
+
+                        {/* 9 · Download */}
+                        <DownloadSection />
+                    </PageWrapper>
+                } />
+
+                <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+                <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
+                <Route path="/privacy-policy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
+                <Route path="/investors" element={<PageWrapper><InvestorsPage /></PageWrapper>} />
+            </Routes>
+        </AnimatePresence>
+    );
+};
+
 // ── Root App ──────────────────────────────────────────────────────────────────
 
 const App = () => {
@@ -2155,45 +2250,13 @@ const App = () => {
 
             <Router>
                 <AnalyticsTracker />
+                <ScrollToTop />
+                <ScrollProgress />
                 <Navbar />
-
-                <Routes>
-                    <Route path="/" element={
-                        <>
-                            {/* 1 · Hero */}
-                            <HeroSection />
-
-
-                            {/* 2 · Mirror Moment */}
-                            <MirrorMomentSection />
-
-                            {/* 3 · AI Mirror Explanation */}
-                            <AIMirrorSection />
-
-                            {/* 4+5 · Style Analysis (merged) */}
-                            <StyleAnalysisSection />
-
-                            {/* 6 · Result Card Display */}
-                            <ResultCardSection />
-
-                            {/* 6.5 · Save Your Vibe */}
-                            <SaveVibeSection />
-
-                            {/* 6.75 · Wardrobe Archive */}
-                            <WardrobeSection />
-
-                            {/* 7 · Long-Term Vision */}
-                            <VisionSection />
-
-                            {/* 9 · Download */}
-                            <DownloadSection />
-                        </>
-                    } />
-
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                </Routes>
+                
+                <main className="relative z-10">
+                    <AnimatedRoutes />
+                </main>
 
                 <Footer />
             </Router>
