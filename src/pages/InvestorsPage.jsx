@@ -236,10 +236,10 @@ const InvestorsPage = () => {
                             If you're interested in investing in AURSA, reach out at:
                         </p>
                         <a 
-                            href="mailto:aursa.app@gmail.com"
+                            href="mailto:hello@aursa.app"
                             className="inline-block text-[#F5F5F7] hover:text-[#D88A3D] transition-colors duration-200 text-xl font-medium border-b border-[#D88A3D]/30"
                         >
-                            aursa.app@gmail.com
+                            hello@aursa.app
                         </a>
                     </div>
                 </motion.section>
