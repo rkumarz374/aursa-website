@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import InvestorsPage from "./pages/InvestorsPage";
+import Mirror from "./pages/Mirror";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollProgress from "./components/ScrollProgress";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring } from 'framer-motion';
 import { Camera, Sparkles, Layers, Share2, ArrowRight, Archive, Smartphone, Apple } from 'lucide-react';
 import { supabase } from "./lib/supabase";
+import posthog from 'posthog-js';
 
 // ── Shared Utilities ──────────────────────────────────────────────────────────
 
@@ -251,91 +253,105 @@ const WaitlistForm = ({ theme = 'dark' }) => {
             <WaitlistModal data={modalData} onClose={() => setModalData(null)} />
             <div id="waitlist" className="mt-4 md:mt-6 flex flex-col items-center md:items-start w-full">
 
-            {/* Coming Soon label - Made less dominant */}
-            <p className="text-[#D88A3D]/40 text-[16px] md:text-[18px] font-bold uppercase tracking-[0.4em] mb-1">
-                Coming Soon
-            </p>
-
-            {/* Platform subtext */}
-            <p
-                className={`text-[10px] uppercase tracking-[0.2em] mb-8 md:mb-10 ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
-                style={{ opacity: 0.6 }}
-            >
-                Launching on iOS and Android
-            </p>
-
-            {/* CTA Group - Tightly packed */}
-            <div className="space-y-4 w-full">
-                <p className={`text-[12px] font-bold uppercase tracking-[0.2em] ${isDark ? 'text-[#F5F5F7]' : 'text-[#0B0F1A]'}`}>
-                    Get early access
+                {/* Coming Soon label - Made less dominant */}
+                <p className="text-[#D88A3D]/40 text-[16px] md:text-[18px] font-bold uppercase tracking-[0.4em] mb-1">
+                    Coming Soon
                 </p>
 
-                <form
-                    onSubmit={handleWaitlistSubmit}
-                    className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-[440px]"
+                {/* Platform subtext */}
+                <p
+                    className={`text-[10px] uppercase tracking-[0.2em] mb-8 md:mb-10 ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                    style={{ opacity: 0.6 }}
                 >
-                    <div className="relative flex-1 w-full">
-                        <input
-                            type="email"
-                            required
-                            autoFocus={isHero}
-                            value={email}
-                            onChange={e => {
-                                setEmail(e.target.value);
-                                if (error) setError('');
+                    Launching on iOS and Android
+                </p>
+
+                {/* CTA Group - Tightly packed */}
+                <div className="space-y-4 w-full">
+                    <p className={`text-[12px] font-bold uppercase tracking-[0.2em] ${isDark ? 'text-[#F5F5F7]' : 'text-[#0B0F1A]'}`}>
+                        Get early access
+                    </p>
+
+                    <form
+                        onSubmit={handleWaitlistSubmit}
+                        className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-[440px]"
+                    >
+                        <div className="relative flex-1 w-full">
+                            <input
+                                type="email"
+                                required
+                                autoFocus={isHero}
+                                value={email}
+                                onChange={e => {
+                                    setEmail(e.target.value);
+                                    if (error) setError('');
+                                }}
+                                placeholder="Enter your email for early access"
+                                className={`${inputCls} w-full ${error ? 'border-red-500/50' : ''}`}
+                                style={isDark ? { background: 'rgba(255,255,255,0.07)' } : {}}
+                            />
+                            {error && (
+                                <p className="absolute -bottom-6 left-0 text-[10px] text-red-500 font-medium tracking-wide">
+                                    {error}
+                                </p>
+                            )}
+                        </div>
+                        <motion.button
+                            type="submit"
+                            disabled={loading}
+                            whileHover={{ scale: loading ? 1 : 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="h-[50px] w-full sm:w-auto px-7 rounded-[10px] font-bold uppercase tracking-[0.2em] text-[11px] whitespace-nowrap transition-all duration-150"
+                            style={{
+                                background: '#D88A3D',
+                                color: '#0F0F13',
+                                opacity: loading ? 0.7 : 1,
                             }}
-                            placeholder="Enter your email for early access"
-                            className={`${inputCls} w-full ${error ? 'border-red-500/50' : ''}`}
-                            style={isDark ? { background: 'rgba(255,255,255,0.07)' } : {}}
-                        />
-                        {error && (
-                            <p className="absolute -bottom-6 left-0 text-[10px] text-red-500 font-medium tracking-wide">
-                                {error}
+                            onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#F0B67F'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = '#D88A3D'; }}
+                        >
+                            {loading ? 'Joining...' : 'Join Waitlist'}
+                        </motion.button>
+                    </form>
+                    
+                    {isHero && (
+                        <div className="w-full max-w-[440px]">
+                            <button
+                                onClick={() => window.location.hash = "/mirror"}
+                                className="mt-4 w-full px-6 py-3 rounded-full border border-white/20 text-white/80 text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-200 hover:bg-white/5 active:scale-[0.98] bg-transparent"
+                            >
+                                Try AURSA
+                            </button>
+                            <p className="text-white/40 text-[10px] mt-3 text-center uppercase tracking-[0.2em] font-bold">
+                                No install. Try instantly.
                             </p>
-                        )}
+                        </div>
+                    )}
+
+                    <div className="space-y-1">
+                        <p
+                            className={`text-[12px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                            style={{ opacity: 0.8 }}
+                        >
+                            Join {waitlistCount}+ people getting early access
+                        </p>
+
+                        <p
+                            className={`text-[11px] font-medium tracking-[0.05em] text-[#D88A3D]`}
+                        >
+                            Early users get priority access
+                        </p>
+
+                        <p
+                            className={`text-[11px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
+                            style={{ opacity: 0.45 }}
+                        >
+                            Limited early access. No spam.
+                        </p>
                     </div>
-                    <motion.button
-                        type="submit"
-                        disabled={loading}
-                        whileHover={{ scale: loading ? 1 : 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="h-[50px] w-full sm:w-auto px-7 rounded-[10px] font-bold uppercase tracking-[0.2em] text-[11px] whitespace-nowrap transition-all duration-150"
-                        style={{
-                            background: '#D88A3D',
-                            color: '#0F0F13',
-                            opacity: loading ? 0.7 : 1,
-                        }}
-                        onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#F0B67F'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = '#D88A3D'; }}
-                    >
-                        {loading ? 'Joining...' : 'Join Waitlist'}
-                    </motion.button>
-                </form>
-
-                <div className="space-y-1">
-                    <p
-                        className={`text-[12px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
-                        style={{ opacity: 0.8 }}
-                    >
-                        Join {waitlistCount}+ people getting early access
-                    </p>
-
-                    <p
-                        className={`text-[11px] font-medium tracking-[0.05em] text-[#D88A3D]`}
-                    >
-                        Early users get priority access
-                    </p>
-
-                    <p
-                        className={`text-[11px] tracking-[0.05em] ${isDark ? 'text-[#A1A1AA]' : 'text-[#6B7280]'}`}
-                        style={{ opacity: 0.45 }}
-                    >
-                        Limited early access. No spam.
-                    </p>
                 </div>
-            </div>
 
-        </div>
+            </div>
         </>
     );
 };
@@ -444,6 +460,28 @@ const Navbar = () => {
                         <NavLink href="/about">About</NavLink>
                         <NavLink href="/investors">Investors</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
+                        <Link
+                            to="/mirror"
+                            style={{
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                letterSpacing: '0.08em',
+                                textTransform: 'uppercase',
+                                color: '#D88A3D',
+                                border: '1px solid rgba(216,138,61,0.4)',
+                                borderRadius: '10px',
+                                padding: '7px 14px',
+                                marginLeft: '6px',
+                                transition: 'all 0.2s',
+                                textDecoration: 'none',
+                                whiteSpace: 'nowrap',
+                                display: 'inline-block',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(216,138,61,0.1)'; e.currentTarget.style.borderColor = '#D88A3D'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(216,138,61,0.4)'; }}
+                        >
+                            Try AURSA
+                        </Link>
                     </div>
 
                     {/* Mobile hamburger */}
@@ -497,11 +535,19 @@ const Navbar = () => {
                                 key={href}
                                 to={href}
                                 onClick={() => setMenuOpen(false)}
-                                className="w-full text-[11px] uppercase tracking-[0.35em] text-[#A1A1AA] hover:text-[#F5F5F7] py-3 border-b border-white/5 last:border-0 transition-colors duration-200"
+                                className="w-full text-[11px] uppercase tracking-[0.35em] text-[#A1A1AA] hover:text-[#F5F5F7] py-3 border-b border-white/5 transition-colors duration-200"
                             >
                                 {label}
                             </Link>
                         ))}
+                        <Link
+                            to="/mirror"
+                            onClick={() => setMenuOpen(false)}
+                            className="w-full text-center text-[11px] uppercase tracking-[0.35em] font-semibold text-[#D88A3D] py-3 mt-1 rounded-xl"
+                            style={{ border: '1px solid rgba(216,138,61,0.4)', background: 'rgba(216,138,61,0.05)', display: 'block', textDecoration: 'none' }}
+                        >
+                            Try AURSA
+                        </Link>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -640,6 +686,21 @@ const AnimatedNumber = ({ value }) => {
 const HeroSection = () => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const [totalScans, setTotalScans] = React.useState(null);
+
+    // Fetch live PWA scan count
+    React.useEffect(() => {
+        fetch('/api/v1/analytics/pwa-count')
+            .then(res => res.json())
+            .then(data => {
+                if (data?.count && data.count > 0) setTotalScans(data.count);
+            })
+            .catch(() => { }); // Fail silently — fallback text is shown instead
+    }, []);
+
+    const socialProofText = totalScans
+        ? `✨ ${totalScans.toLocaleString()} people checked their look with AURSA this week`
+        : '✨ People are checking their look with AURSA';
 
     // Smooth physics for parallax
     const springConfig = { damping: 25, stiffness: 150 };
@@ -660,6 +721,7 @@ const HeroSection = () => {
 
     return (
         <section
+            id="hero"
             className="relative min-h-screen md:h-screen overflow-hidden bg-[#0F0F13]"
             onMouseMove={handleMouseMove}
         >
@@ -767,10 +829,14 @@ const HeroSection = () => {
 
                         {/* 2. Text Content */}
                         <div className="space-y-4">
+                            {/* Social Proof */}
+                            <p className="font-sans text-white/70 text-[13px] text-center mb-2">
+                                {socialProofText}
+                            </p>
                             <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: '32px', lineHeight: 1.15 }}>
                                 You know when an outfit feels right.<br />And when it doesn’t.
                             </h1>
-                            <p className="font-sans text-[#F5F5F7] text-[18px] font-medium leading-[1.4] px-4">
+                            <p className="font-sans text-[#808080] text-[16px] font-medium leading-[1.4] px-4">
                                 Before you step out, there’s always a moment of doubt.
                                 AURSA helps you see your outfit clearly — and feel confident in it.
                             </p>
@@ -789,7 +855,7 @@ const HeroSection = () => {
                             <ArrowRight className="w-4 h-4 rotate-90 text-[#D88A3D]" />
                         </motion.div>
 
-                        {/* 4. Waitlist CTA (Below Fold Context) */}
+                        {/* 4. Waitlist CTA */}
                         <div className="mt-12 w-full">
                             <WaitlistForm theme="dark" />
                         </div>
@@ -874,6 +940,10 @@ const HeroSection = () => {
                             transition={{ duration: 0.18, ease: 'easeOut' }}
                             className="flex flex-col justify-center items-start text-left w-[40%] max-w-xl"
                         >
+                            {/* Social Proof */}
+                            <p className="font-sans text-white/70 text-[13px] mb-4">
+                                {socialProofText}
+                            </p>
                             <h1 className="font-serif text-[#F5F5F7]" style={{ fontSize: 'clamp(34px, 5vw, 64px)', lineHeight: 1.1 }}>
                                 You know when an outfit feels right.<br className="hidden md:block" />And when it doesn’t.
                             </h1>
@@ -2154,9 +2224,23 @@ const AnalyticsTracker = () => {
     const location = useLocation();
 
     useEffect(() => {
+        const titleMap = {
+            '/': 'AURSA — Your outfit says more than you think',
+            '/about': 'About — AURSA',
+            '/contact': 'Contact — AURSA',
+            '/privacy-policy': 'Privacy Policy — AURSA',
+            '/investors': 'Investors — AURSA',
+            '/mirror': 'AI Mirror — AURSA',
+        };
+
+        const newTitle = titleMap[location.pathname] || 'AURSA';
+        document.title = newTitle;
+
         if (window.gtag) {
-            window.gtag('config', 'G-F79C288E06', {
+            window.gtag('event', 'page_view', {
                 page_path: location.pathname,
+                page_title: newTitle,
+                page_location: window.location.href
             });
         }
     }, [location]);
@@ -2221,6 +2305,7 @@ const AnimatedRoutes = () => {
                 <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
                 <Route path="/privacy-policy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
                 <Route path="/investors" element={<PageWrapper><InvestorsPage /></PageWrapper>} />
+                <Route path="/mirror" element={<Mirror />} />
             </Routes>
         </AnimatePresence>
     );
@@ -2253,7 +2338,7 @@ const App = () => {
                 <ScrollToTop />
                 <ScrollProgress />
                 <Navbar />
-                
+
                 <main className="relative z-10">
                     <AnimatedRoutes />
                 </main>
