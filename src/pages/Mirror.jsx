@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import posthog from 'posthog-js';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // ─── Device ID for Usage Tracking ─────────────────────────────────────────────
 const getDeviceId = () => {
@@ -307,7 +307,7 @@ export default function Mirror() {
             const form = new FormData();
             form.append('image', compressed);
 
-            const res = await fetch(`${API_BASE}/ai/mirror-analyze`, {
+            const res = await fetch(`${API_BASE}/api/v1/ai/mirror-analyze`, {
                 method: 'POST',
                 headers: {
                     'x-client': 'pwa',
