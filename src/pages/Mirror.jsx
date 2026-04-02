@@ -219,6 +219,7 @@ export default function Mirror() {
     const [preview, setPreview] = useState(null);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
+    const [usage, setUsage] = useState(null);
 
     const [animatedScoreOffset, setAnimatedScoreOffset] = useState(0);
     const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
@@ -237,6 +238,25 @@ export default function Mirror() {
         "Aligning with your style…",
         "Almost there…"
     ];
+
+    useEffect(() => {
+        const fetchUsage = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/ai/mirror-usage`, {
+                    headers: {
+                        'x-device-id': getDeviceId(),
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.usage) {
+                        setUsage(data.usage);
+                    }
+                }
+            } catch (err) { /* silent fail */ }
+        };
+        fetchUsage();
+    }, []);
 
     useEffect(() => {
         if (!tracked.current.open) {
@@ -320,6 +340,9 @@ export default function Mirror() {
             if (res.status === 403) {
                 const fault = await res.json();
                 if (fault.error === 'limit_reached') {
+                    if (fault.usage) {
+                        setUsage(fault.usage);
+                    }
                     setStep('limit');
                     return;
                 }
@@ -339,6 +362,9 @@ export default function Mirror() {
                 return;
             }
 
+            if (data.usage) {
+                setUsage(data.usage);
+            }
             setResult(data);
             if (!tracked.current.result) {
                 try {
@@ -382,6 +408,17 @@ export default function Mirror() {
             <div style={S.root}>
                 <div className="noise-layer" />
                 <div className="relative z-10 w-full flex flex-col items-center">
+                    {usage && (
+                        <div style={{
+                            fontSize: '12px',
+                            color: 'rgba(255,255,255,0.4)',
+                            marginBottom: '24px',
+                            fontWeight: '500',
+                            letterSpacing: '0.05em'
+                        }}>
+                            {usage.count} of {usage.limit} looks checked
+                        </div>
+                    )}
                 <style>
                     {`
                     @keyframes pulseSparkle {
@@ -630,6 +667,17 @@ export default function Mirror() {
                     {/* Content Layer */}
                     <div className="relative z-10 flex flex-col items-center w-full" style={{ maxWidth: '440px', paddingBottom: '60px', paddingTop: '80px' }}>
                     <p style={{ ...S.badge, marginBottom: '24px' }}>Result Analysis</p>
+                    {usage && (
+                        <div style={{
+                            fontSize: '12px',
+                            color: 'rgba(255,255,255,0.4)',
+                            marginBottom: '24px',
+                            marginTop: '-12px',
+                            textAlign: 'center'
+                        }}>
+                            {usage.count} of {usage.limit} looks checked
+                        </div>
+                    )}
 
                     {/* 1. Image Card */}
                     <div style={{
