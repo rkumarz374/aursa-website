@@ -722,8 +722,6 @@ export default function Mirror() {
                         const score = Math.floor(result.harmonyScore);
                         const radius = 28;
                         const circumference = 2 * Math.PI * radius;
-                        const offset = circumference - (score / 100) * circumference;
-                        const checksUsed = Number(localStorage.getItem('aursa_pwa_count') || 0);
 
                         return (
                             <div className="w-full p-6 mb-6 rounded-2xl border border-white/10 bg-white/5 shadow-[0_0_20px_rgba(0,0,0,0.2)] flex items-center justify-between result-card-interaction">
@@ -731,9 +729,6 @@ export default function Mirror() {
                                 <div>
                                     <p className="text-white text-base font-medium">Harmony Score</p>
                                     <p className="text-white/60 text-sm mt-1">{getScoreSubtext(score)}</p>
-                                    <div className="mt-4 inline-block px-3 py-1 text-[11px] font-semibold tracking-wider rounded-full bg-[#D88A3D]/20 text-[#D88A3D] uppercase">
-                                        {checksUsed} / 3 checks used
-                                    </div>
                                 </div>
 
                                 {/* RIGHT SIDE: Circular Ring */}
