@@ -824,7 +824,7 @@ export default function Mirror() {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <p style={S.badge}>Daily Alignment Used</p>
                     <h1 style={{ ...S.heading, fontSize: '28px', marginBottom: '16px' }}>
-                        You’ve checked a few looks today.
+                        You’ve explored AURSA.
                     </h1>
                     <p style={{
                         fontSize: '16px',
@@ -835,7 +835,7 @@ export default function Mirror() {
                         margin: '0 0 40px 0',
                         fontWeight: '300'
                     }}>
-                        AURSA works best when it understands your patterns over time.
+                        Continue your style journey in the full app for deeper analysis.
                     </p>
                     <button 
                         style={S.primaryBtn}
