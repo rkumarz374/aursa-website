@@ -5,6 +5,8 @@ import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import InvestorsPage from "./pages/InvestorsPage";
 import Mirror from "./pages/Mirror";
+import BlogPage from "./pages/blog/BlogPage";
+import BlogPostPage from "./pages/blog/BlogPostPage";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollProgress from "./components/ScrollProgress";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring } from 'framer-motion';
@@ -158,6 +160,7 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center gap-2 ml-auto">
                         <NavLink href="/about">About</NavLink>
                         <NavLink href="/investors">Investors</NavLink>
+                        <NavLink href="/blog">Journal</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
                         <Link
                             to="/mirror"
@@ -229,7 +232,7 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['/about', 'About'], ['/investors', 'Investors'], ['/contact', 'Contact']].map(([href, label]) => (
+                        {[['/about', 'About'], ['/investors', 'Investors'], ['/blog', 'Journal'], ['/contact', 'Contact']].map(([href, label]) => (
                             <Link
                                 key={href}
                                 to={href}
@@ -1744,7 +1747,12 @@ const AnalyticsTracker = () => {
             '/privacy-policy': 'Privacy Policy — AURSA',
             '/investors': 'Investors — AURSA',
             '/mirror': 'AI Mirror — AURSA',
+            '/blog': 'AURSA Journal',
         };
+
+        if (location.pathname.startsWith('/blog/')) {
+            return;
+        }
 
         const newTitle = titleMap[location.pathname] || 'AURSA';
         document.title = newTitle;
@@ -1821,6 +1829,8 @@ const AnimatedRoutes = () => {
                 <Route path="/privacy-policy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
                 <Route path="/investors" element={<PageWrapper><InvestorsPage /></PageWrapper>} />
                 <Route path="/mirror" element={<Mirror />} />
+                <Route path="/blog" element={<PageWrapper><BlogPage /></PageWrapper>} />
+                <Route path="/blog/:slug" element={<PageWrapper><BlogPostPage /></PageWrapper>} />
             </Routes>
         </AnimatePresence>
     );
