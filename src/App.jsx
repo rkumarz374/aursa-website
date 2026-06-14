@@ -159,7 +159,6 @@ const Navbar = () => {
                     {/* Right side navigation */}
                     <div className="hidden md:flex items-center gap-2 ml-auto">
                         <NavLink href="/about">About</NavLink>
-                        <NavLink href="/investors">Investors</NavLink>
                         <NavLink href="/blog">Journal</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
                         <Link
@@ -232,7 +231,7 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['/about', 'About'], ['/investors', 'Investors'], ['/blog', 'Journal'], ['/contact', 'Contact']].map(([href, label]) => (
+                        {[['/about', 'About'], ['/blog', 'Journal'], ['/contact', 'Contact']].map(([href, label]) => (
                             <Link
                                 key={href}
                                 to={href}
@@ -461,14 +460,30 @@ const HeroSection = () => {
                     </p>
 
                     <div className="flex flex-col items-center gap-8 w-full">
-                        <div className="flex items-center justify-center w-full">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
                             <a
                                 href="https://apps.apple.com/in/app/aursa/id6761254001"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="opacity-80 hover:opacity-100 transition-opacity duration-200"
                             >
-                                <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="App Store" className="h-[74px] md:h-[84px] w-auto" />
+                                <img 
+                                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" 
+                                    alt="App Store" 
+                                    className="h-[74px] md:h-[84px] w-auto object-contain" 
+                                />
+                            </a>
+                            <a
+                                href="https://play.google.com/store/apps/details?id=com.aursa.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="opacity-80 hover:opacity-100 transition-opacity duration-200"
+                            >
+                                <img 
+                                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                                    alt="Google Play" 
+                                    className="h-[66px] md:h-[75px] w-auto object-contain" 
+                                />
                             </a>
                         </div>
                     </div>
@@ -1602,7 +1617,7 @@ const DownloadSection = () => (
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.2 }}
-                className="flex flex-col items-center gap-6"
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full"
             >
                 <a 
                     href="https://apps.apple.com/in/app/aursa/id6761254001" 
@@ -1610,7 +1625,15 @@ const DownloadSection = () => (
                     rel="noopener noreferrer"
                     className="opacity-90 hover:opacity-100 transition-opacity duration-200"
                 >
-                    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="App Store" className="h-[60px] md:h-[84px] w-auto" />
+                    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="App Store" className="h-[60px] md:h-[84px] w-auto object-contain" />
+                </a>
+                <a 
+                    href="https://play.google.com/store/apps/details?id=com.aursa.app" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="opacity-90 hover:opacity-100 transition-opacity duration-200"
+                >
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-[53px] md:h-[75px] w-auto object-contain" />
                 </a>
             </motion.div>
 
