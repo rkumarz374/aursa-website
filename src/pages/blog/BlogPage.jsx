@@ -24,7 +24,7 @@ const BlogPage = () => {
     const archivePosts = blogPosts.slice(1);
 
     useEffect(() => {
-        document.title = 'AURSA Journal';
+        document.title = 'The AURSA Journal — Style, Confidence & Identity';
 
         // Helper to update or create a meta tag safely
         const updateMetaTag = (name, value, isProperty = false) => {
@@ -44,21 +44,21 @@ const BlogPage = () => {
             el.setAttribute('content', value);
         };
 
-        const listDescription = 'Thoughts on personal style, identity, visual harmony, and the future of AI style intelligence.';
-        const currentUrl = window.location.origin + '/#/blog';
+        const listDescription = 'Thoughts on style, confidence, identity, and the moments before we step out.';
+        const currentUrl = window.location.origin + '/#/journal';
         const fallbackImage = 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80';
         const listImage = featuredPost ? featuredPost.coverImage : fallbackImage;
 
         updateMetaTag('description', listDescription);
         
-        updateMetaTag('og:title', 'AURSA Journal', true);
+        updateMetaTag('og:title', 'The AURSA Journal — Style, Confidence & Identity', true);
         updateMetaTag('og:description', listDescription, true);
         updateMetaTag('og:type', 'website', true);
         updateMetaTag('og:url', currentUrl, true);
         updateMetaTag('og:image', listImage, true);
 
         updateMetaTag('twitter:card', 'summary_large_image');
-        updateMetaTag('twitter:title', 'AURSA Journal');
+        updateMetaTag('twitter:title', 'The AURSA Journal — Style, Confidence & Identity');
         updateMetaTag('twitter:description', listDescription);
         updateMetaTag('twitter:image', listImage);
 
@@ -127,11 +127,11 @@ const BlogPage = () => {
                     </div>
 
                     <h1 className="font-serif text-[#FFFFFF] text-5xl md:text-7xl leading-[1.1] tracking-wide mt-2">
-                        Style Intelligence
+                        The AURSA Journal
                     </h1>
 
                     <p className="font-sans text-[#A1A1AA] text-lg md:text-xl font-light leading-relaxed max-w-2xl mt-4">
-                        Thoughts on personal style, identity, visual harmony, and the future of AI style intelligence.
+                        Thoughts on style, confidence, identity, and the moments before we step out.
                     </p>
                 </motion.section>
 

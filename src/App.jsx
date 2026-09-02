@@ -28,6 +28,15 @@ const AursaButton = ({ text, onClick, href = '#', className = '', variant = 'out
             </motion.button>
         );
     }
+    if (href.startsWith('/')) {
+        return (
+            <Link to={href} onClick={onClick} className="inline-block">
+                <motion.span whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={cls}>
+                    {text}
+                </motion.span>
+            </Link>
+        );
+    }
     return (
         <motion.a href={href} onClick={onClick} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={cls}>
             {text}
@@ -159,7 +168,7 @@ const Navbar = () => {
                     {/* Right side navigation */}
                     <div className="hidden md:flex items-center gap-2 ml-auto">
                         <NavLink href="/about">About</NavLink>
-                        <NavLink href="/blog">Journal</NavLink>
+                        <NavLink href="/journal">Journal</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
                         <Link
                             to="/mirror"
@@ -231,7 +240,7 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['/about', 'About'], ['/blog', 'Journal'], ['/contact', 'Contact']].map(([href, label]) => (
+                        {[['/about', 'About'], ['/journal', 'Journal'], ['/contact', 'Contact']].map(([href, label]) => (
                             <Link
                                 key={href}
                                 to={href}
@@ -387,21 +396,6 @@ const AnimatedNumber = ({ value }) => {
 const HeroSection = () => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
-    const [totalScans, setTotalScans] = React.useState(null);
-
-    // Fetch live PWA scan count
-    React.useEffect(() => {
-        fetch('/api/v1/analytics/pwa-count')
-            .then(res => res.json())
-            .then(data => {
-                if (data?.count && data.count > 0) setTotalScans(data.count);
-            })
-            .catch(() => { }); // Fail silently — fallback text is shown instead
-    }, []);
-
-    const socialProofText = totalScans
-        ? `✨ ${totalScans.toLocaleString()} people checked their look this week`
-        : '✨ People are checking their look with AURSA';
 
     const handleMouseMove = (e) => {
         const { clientX, clientY } = e;
@@ -413,7 +407,7 @@ const HeroSection = () => {
     return (
         <section
             id="hero"
-            className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0F0F13] py-24 md:py-32"
+            className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0F0F13] pt-28 md:pt-36 pb-16 md:pb-20"
             onMouseMove={handleMouseMove}
         >
             {/* Layer 1: Ambient Glow */}
@@ -436,30 +430,32 @@ const HeroSection = () => {
             </div>
 
             {/* Layer 4: Content Layout */}
-            <div className="relative z-10 w-full px-6 md:px-12">
+            <div className="relative z-10 w-full px-6 md:px-12 flex justify-center items-center">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className="max-w-[640px] mx-auto flex flex-col items-center text-center"
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="max-w-[760px] w-full mx-auto flex flex-col items-center text-center"
                 >
-                    <p className="font-sans text-[#D88A3D] text-[13px] uppercase tracking-[0.35em] font-bold mb-8">
-                        {socialProofText}
+                    <p className="font-sans text-[#D88A3D] text-[12px] md:text-[13px] uppercase tracking-[0.4em] font-bold mb-5 md:mb-6">
+                        AURSA
                     </p>
 
-                    <h1 className="font-serif text-[#F5F5F7] mb-6 leading-[1.1]" style={{ fontSize: 'clamp(52px, 8vw, 84px)' }}>
-                        not sure about <br />your outfit?
+                    <h1 className="font-serif text-[#F5F5F7] mb-4 md:mb-5 leading-[1.1]" style={{ fontSize: 'clamp(48px, 7.5vw, 84px)' }}>
+                        Wear with Confidence
                     </h1>
 
-                    <h2 className="font-serif text-[#D88A3D] italic mb-10 leading-tight" style={{ fontSize: 'clamp(36px, 5vw, 60px)' }}>
-                        check it before you step out
+                    <h2 className="font-serif text-[#D88A3D] italic mb-8 md:mb-10 leading-tight" style={{ fontSize: 'clamp(28px, 4.5vw, 48px)' }}>
+                        Know what works before you step out.
                     </h2>
 
-                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed mb-14 font-light opacity-80">
-                        AURSA analyzes your look and shows what works, what feels off, and how to improve it.
+                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed mb-10 md:mb-12 font-light opacity-90 max-w-[660px]">
+                        AURSA gives you instant AI-powered feedback on your outfit — helping you understand your look and make it feel more like you.
                     </p>
 
-                    <div className="flex flex-col items-center gap-8 w-full">
+                    <div className="flex flex-col items-center gap-8 md:gap-10 w-full">
+                        <AursaButton text="CHECK YOUR LOOK →" href="/mirror" variant="solid" />
+
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
                             <a
                                 href="https://apps.apple.com/in/app/aursa/id6761254001"
@@ -470,7 +466,7 @@ const HeroSection = () => {
                                 <img 
                                     src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" 
                                     alt="App Store" 
-                                    className="h-[74px] md:h-[84px] w-auto object-contain" 
+                                    className="h-[60px] md:h-[72px] w-auto object-contain" 
                                 />
                             </a>
                             <a
@@ -482,7 +478,7 @@ const HeroSection = () => {
                                 <img 
                                     src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
                                     alt="Google Play" 
-                                    className="h-[66px] md:h-[75px] w-auto object-contain" 
+                                    className="h-[53px] md:h-[64px] w-auto object-contain" 
                                 />
                             </a>
                         </div>
@@ -491,7 +487,57 @@ const HeroSection = () => {
             </div>
 
             {/* Minimal bottom fade */}
-            <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-[#0F0F13] to-transparent pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0F0F13] to-transparent pointer-events-none" />
+        </section>
+    );
+};
+
+// ── Section 2 · Value Proposition ─────────────────────────────────────────────
+
+const ValuePropSection = () => {
+    const props = [
+        {
+            title: "Understand Your Look",
+            description: "Get a clearer perspective on how your outfit comes together."
+        },
+        {
+            title: "Make It More You",
+            description: "See whether the look feels aligned with your personal style."
+        },
+        {
+            title: "Step Out With Confidence",
+            description: "Get useful guidance before you leave."
+        }
+    ];
+
+    return (
+        <section className="relative py-24 md:py-36 px-6 md:px-12 bg-[#0F0F13] border-t border-white/5">
+            <div className="max-w-[1200px] mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+                    {props.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: index * 0.15, ease: 'easeOut' }}
+                            className="bg-[#16161C] p-8 md:p-10 rounded-[20px] border border-white/5 relative overflow-hidden flex flex-col justify-between transition-all duration-300 hover:border-[#D88A3D]/30 hover:-translate-y-1"
+                        >
+                            <div>
+                                <div className="w-10 h-10 rounded-full bg-[#D88A3D]/10 border border-[#D88A3D]/20 flex items-center justify-center mb-8">
+                                    <span className="font-serif text-[#D88A3D] text-lg">0{index + 1}</span>
+                                </div>
+                                <h3 className="text-2xl md:text-3xl font-serif text-[#F5F5F7] mb-4 leading-snug">
+                                    {item.title}
+                                </h3>
+                                <p className="text-[#A1A1AA] text-base md:text-lg leading-relaxed font-light">
+                                    {item.description}
+                                </p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
         </section>
     );
 };
@@ -1764,16 +1810,17 @@ const AnalyticsTracker = () => {
 
     useEffect(() => {
         const titleMap = {
-            '/': 'AURSA — Your outfit says more than you think',
+            '/': 'AURSA — Wear with Confidence',
             '/about': 'About — AURSA',
             '/contact': 'Contact — AURSA',
             '/privacy-policy': 'Privacy Policy — AURSA',
             '/investors': 'Investors — AURSA',
             '/mirror': 'AI Mirror — AURSA',
-            '/blog': 'AURSA Journal',
+            '/journal': 'The AURSA Journal — Style, Confidence & Identity',
+            '/blog': 'The AURSA Journal — Style, Confidence & Identity',
         };
 
-        if (location.pathname.startsWith('/blog/')) {
+        if (location.pathname.startsWith('/blog/') || location.pathname.startsWith('/journal/')) {
             return;
         }
 
@@ -1816,34 +1863,8 @@ const AnimatedRoutes = () => {
                         {/* 1 · Hero */}
                         <HeroSection />
 
-                        {/* 1.5 · Reinforcement Strip */}
-                        <ReinforcementStrip />
-
-
-
-                        {/* 2 · Mirror Moment */}
-                        <MirrorMomentSection />
-
-                        {/* 3 · AI Mirror Explanation */}
-                        <AIMirrorSection />
-
-                        {/* 4+5 · Style Analysis (merged) */}
-                        <StyleAnalysisSection />
-
-                        {/* 6 · Result Card Display */}
-                        <ResultCardSection />
-
-                        {/* 6.5 · Save Your Vibe */}
-                        <SaveVibeSection />
-
-                        {/* 6.75 · Wardrobe Archive */}
-                        <WardrobeSection />
-
-                        {/* 7 · Long-Term Vision */}
-                        <VisionSection />
-
-                        {/* 9 · Download */}
-                        <DownloadSection />
+                        {/* 2 · Value Proposition */}
+                        <ValuePropSection />
                     </PageWrapper>
                 } />
 
@@ -1852,6 +1873,7 @@ const AnimatedRoutes = () => {
                 <Route path="/privacy-policy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
                 <Route path="/investors" element={<PageWrapper><InvestorsPage /></PageWrapper>} />
                 <Route path="/mirror" element={<Mirror />} />
+                <Route path="/journal" element={<PageWrapper><BlogPage /></PageWrapper>} />
                 <Route path="/blog" element={<PageWrapper><BlogPage /></PageWrapper>} />
                 <Route path="/blog/:slug" element={<PageWrapper><BlogPostPage /></PageWrapper>} />
             </Routes>

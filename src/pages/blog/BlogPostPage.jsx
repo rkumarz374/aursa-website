@@ -195,7 +195,7 @@ const BlogPostPage = () => {
                     We couldn't locate that journal entry. It may have been archived or moved.
                 </p>
                 <Link
-                    to="/blog"
+                    to="/journal"
                     className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 bg-transparent hover:bg-[#D88A3D] hover:border-[#D88A3D] text-white rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all duration-200"
                 >
                     <ArrowLeft size={14} />
@@ -216,7 +216,7 @@ const BlogPostPage = () => {
                 {/* Back Link */}
                 <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="mb-12">
                     <Link
-                        to="/blog"
+                        to="/journal"
                         className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#A1A1AA] hover:text-[#D88A3D] transition-colors duration-200 group"
                     >
                         <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform duration-200" />
@@ -439,7 +439,7 @@ const BlogPostPage = () => {
                     )}
 
                     <Link
-                        to="/blog"
+                        to="/journal"
                         className="text-[#A1A1AA] hover:text-[#D88A3D] transition-colors duration-200"
                     >
                         Journal
