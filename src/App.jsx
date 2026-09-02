@@ -170,28 +170,6 @@ const Navbar = () => {
                         <NavLink href="/about">About</NavLink>
                         <NavLink href="/journal">Journal</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
-                        <Link
-                            to="/mirror"
-                            style={{
-                                fontSize: '11px',
-                                fontWeight: '600',
-                                letterSpacing: '0.08em',
-                                textTransform: 'uppercase',
-                                color: '#D88A3D',
-                                border: '1px solid rgba(216,138,61,0.4)',
-                                borderRadius: '10px',
-                                padding: '7px 14px',
-                                marginLeft: '6px',
-                                transition: 'all 0.2s',
-                                textDecoration: 'none',
-                                whiteSpace: 'nowrap',
-                                display: 'inline-block',
-                            }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(216,138,61,0.1)'; e.currentTarget.style.borderColor = '#D88A3D'; }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(216,138,61,0.4)'; }}
-                        >
-                            Try AURSA
-                        </Link>
                     </div>
 
                     {/* Mobile hamburger */}
@@ -250,14 +228,6 @@ const Navbar = () => {
                                 {label}
                             </Link>
                         ))}
-                        <Link
-                            to="/mirror"
-                            onClick={() => setMenuOpen(false)}
-                            className="w-full text-center text-[11px] uppercase tracking-[0.35em] font-semibold text-[#D88A3D] py-3 mt-1 rounded-xl"
-                            style={{ border: '1px solid rgba(216,138,61,0.4)', background: 'rgba(216,138,61,0.05)', display: 'block', textDecoration: 'none' }}
-                        >
-                            Try AURSA
-                        </Link>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -453,9 +423,7 @@ const HeroSection = () => {
                         AURSA gives you instant AI-powered feedback on your outfit — helping you understand your look and make it feel more like you.
                     </p>
 
-                    <div className="flex flex-col items-center gap-8 md:gap-10 w-full">
-                        <AursaButton text="CHECK YOUR LOOK →" href="/mirror" variant="solid" />
-
+                    <div className="flex flex-col items-center justify-center w-full">
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
                             <a
                                 href="https://apps.apple.com/in/app/aursa/id6761254001"
