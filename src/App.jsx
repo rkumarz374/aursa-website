@@ -9,7 +9,7 @@ import BlogPage from "./pages/blog/BlogPage";
 import BlogPostPage from "./pages/blog/BlogPostPage";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollProgress from "./components/ScrollProgress";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
 import { Camera, Sparkles, Layers, Share2, ArrowRight, Archive, Smartphone, Apple } from 'lucide-react';
 import posthog from 'posthog-js';
 
@@ -136,21 +136,17 @@ const Navbar = () => {
                 initial={{ opacity: 0, y: -16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.18, ease: 'easeOut' }}
-                className="fixed top-0 left-0 right-0 z-50 flex justify-center"
-                style={{ paddingTop: '24px' }}
+                className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 sm:px-6"
+                style={{ paddingTop: '16px' }}
             >
                 <nav
-                    className="flex items-center justify-between transition-all duration-150"
+                    className="flex items-center justify-between transition-all duration-150 w-full max-w-[1100px] mx-auto px-4 py-2.5 sm:px-6 sm:py-3"
                     style={{
                         background: navBg,
                         backdropFilter: 'blur(14px)',
                         WebkitBackdropFilter: 'blur(14px)',
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '16px',
-                        padding: '10px 16px',
-                        width: '100%',
-                        maxWidth: '1100px',
-                        margin: '0 auto',
                     }}
                 >
                     {/* Logo */}
@@ -161,11 +157,11 @@ const Navbar = () => {
                         <img
                             src="/aursa-logo.svg"
                             alt="Aursa logo"
-                            style={{ height: '28px', width: 'auto' }}
+                            className="h-6 sm:h-7 w-auto"
                         />
                     </Link>
 
-                    {/* Right side navigation */}
+                    {/* Right side navigation (Desktop) */}
                     <div className="hidden md:flex items-center gap-2 ml-auto">
                         <NavLink href="/about">About</NavLink>
                         <NavLink href="/journal">Journal</NavLink>
@@ -175,12 +171,12 @@ const Navbar = () => {
                     {/* Mobile hamburger */}
                     <div className="flex items-center md:hidden">
                         <button
-                            className="flex flex-col gap-[5px] p-2"
+                            className="flex flex-col justify-center items-center gap-[5px] p-2 text-[#F5F5F7]"
                             onClick={() => setMenuOpen(v => !v)}
                             aria-label="Toggle menu"
                         >
                             <motion.span
-                                animate={menuOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+                                animate={menuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
                                 transition={{ duration: 0.15 }}
                                 className="block w-5 h-px bg-[#F5F5F7]"
                             />
@@ -190,7 +186,7 @@ const Navbar = () => {
                                 className="block w-5 h-px bg-[#F5F5F7]"
                             />
                             <motion.span
-                                animate={menuOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+                                animate={menuOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
                                 transition={{ duration: 0.15 }}
                                 className="block w-5 h-px bg-[#F5F5F7]"
                             />
@@ -207,12 +203,10 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
                         transition={{ duration: 0.15 }}
-                        className="md:hidden fixed z-40 flex flex-col items-start gap-2 px-6 py-4"
+                        className="md:hidden fixed z-40 flex flex-col items-start gap-1 px-6 py-4 left-4 right-4 sm:left-6 sm:right-6"
                         style={{
-                            top: '90px',
-                            left: '24px',
-                            right: '24px',
-                            background: 'rgba(22,22,28,0.95)',
+                            top: '80px',
+                            background: 'rgba(22,22,28,0.96)',
                             backdropFilter: 'blur(16px)',
                             border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '16px',
@@ -223,7 +217,7 @@ const Navbar = () => {
                                 key={href}
                                 to={href}
                                 onClick={() => setMenuOpen(false)}
-                                className="w-full text-[11px] uppercase tracking-[0.35em] text-[#A1A1AA] hover:text-[#F5F5F7] py-3 border-b border-white/5 transition-colors duration-200"
+                                className="w-full text-[11px] uppercase tracking-[0.35em] text-[#A1A1AA] hover:text-[#F5F5F7] py-3 border-b border-white/5 last:border-none transition-colors duration-200"
                             >
                                 {label}
                             </Link>
@@ -366,6 +360,15 @@ const AnimatedNumber = ({ value }) => {
 const HeroSection = () => {
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.play().catch((err) => {
+                console.log("Autoplay blocked or waiting for user interaction", err);
+            });
+        }
+    }, []);
 
     const handleMouseMove = (e) => {
         const { clientX, clientY } = e;
@@ -377,264 +380,279 @@ const HeroSection = () => {
     return (
         <section
             id="hero"
-            className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0F0F13] pt-28 md:pt-36 pb-16 md:pb-20"
+            className="relative min-h-[90vh] lg:min-h-screen flex flex-col justify-center overflow-hidden bg-[#0F0F13] pt-24 sm:pt-28 lg:pt-32 pb-14 sm:pb-16 lg:pb-20"
             onMouseMove={handleMouseMove}
         >
             {/* Layer 1: Ambient Glow */}
             <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D88A3D]/5 rounded-full blur-[120px]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] bg-[#D88A3D]/5 rounded-full blur-[120px]" />
+                <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[350px] lg:w-[500px] h-[350px] lg:h-[500px] bg-[#D88A3D]/8 rounded-full blur-[100px]" />
             </div>
 
             {/* Layer 2: Subtle Particles */}
             <HeroParticles mouseX={mouseX} mouseY={mouseY} />
 
             {/* Layer 3: Subtle Rotating Zodiac Background */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.12] md:opacity-[0.08]" style={{ zIndex: 1, filter: 'contrast(1.1)' }}>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.05] sm:opacity-[0.08] lg:opacity-[0.08]" style={{ zIndex: 1, filter: 'contrast(1.1)' }}>
                 <motion.img
                     src="/zodiac.svg"
                     alt=""
-                    className="w-[85%] md:w-[70%] max-w-[800px] md:max-w-[700px] h-auto"
+                    className="w-[90%] sm:w-[80%] lg:w-[65%] max-w-[650px] lg:max-w-[700px] h-auto"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
                 />
             </div>
 
-            {/* Layer 4: Content Layout */}
-            <div className="relative z-10 w-full px-6 md:px-12 flex justify-center items-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="max-w-[760px] w-full mx-auto flex flex-col items-center text-center"
-                >
-                    <p className="font-sans text-[#D88A3D] text-[12px] md:text-[13px] uppercase tracking-[0.4em] font-bold mb-5 md:mb-6">
-                        AURSA
-                    </p>
+            {/* Layer 4: Content Layout (Responsive Two Column / Single Column Grid) */}
+            <div className="relative z-10 w-full max-w-[1240px] mx-auto px-5 sm:px-8 lg:px-12 my-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-center">
 
-                    <h1 className="font-serif text-[#F5F5F7] mb-4 md:mb-5 leading-[1.1]" style={{ fontSize: 'clamp(48px, 7.5vw, 84px)' }}>
-                        Wear with Confidence
-                    </h1>
-
-                    <h2 className="font-serif text-[#D88A3D] italic mb-8 md:mb-10 leading-tight" style={{ fontSize: 'clamp(28px, 4.5vw, 48px)' }}>
-                        Know what works before you step out.
-                    </h2>
-
-                    <p className="font-sans text-[#A1A1AA] text-lg md:text-xl leading-relaxed mb-10 md:mb-12 font-light opacity-90 max-w-[660px]">
-                        AURSA gives you instant AI-powered feedback on your outfit — helping you understand your look and make it feel more like you.
-                    </p>
-
-                    <div className="flex flex-col items-center justify-center w-full">
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full">
-                            <a
-                                href="https://apps.apple.com/in/app/aursa/id6761254001"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="opacity-80 hover:opacity-100 transition-opacity duration-200"
-                            >
-                                <img 
-                                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" 
-                                    alt="App Store" 
-                                    className="h-[60px] md:h-[72px] w-auto object-contain" 
-                                />
-                            </a>
-                            <a
-                                href="https://play.google.com/store/apps/details?id=com.aursa.app"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="opacity-80 hover:opacity-100 transition-opacity duration-200"
-                            >
-                                <img 
-                                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
-                                    alt="Google Play" 
-                                    className="h-[53px] md:h-[64px] w-auto object-contain" 
-                                />
-                            </a>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* Minimal bottom fade */}
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0F0F13] to-transparent pointer-events-none" />
-        </section>
-    );
-};
-
-// ── Section 2 · Value Proposition ─────────────────────────────────────────────
-
-const ValuePropSection = () => {
-    const props = [
-        {
-            title: "Understand Your Look",
-            description: "Get a clearer perspective on how your outfit comes together."
-        },
-        {
-            title: "Make It More You",
-            description: "See whether the look feels aligned with your personal style."
-        },
-        {
-            title: "Step Out With Confidence",
-            description: "Get useful guidance before you leave."
-        }
-    ];
-
-    return (
-        <section className="relative py-24 md:py-36 px-6 md:px-12 bg-[#0F0F13] border-t border-white/5">
-            <div className="max-w-[1200px] mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-                    {props.map((item, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 24 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: index * 0.15, ease: 'easeOut' }}
-                            className="bg-[#16161C] p-8 md:p-10 rounded-[20px] border border-white/5 relative overflow-hidden flex flex-col justify-between transition-all duration-300 hover:border-[#D88A3D]/30 hover:-translate-y-1"
-                        >
-                            <div>
-                                <div className="w-10 h-10 rounded-full bg-[#D88A3D]/10 border border-[#D88A3D]/20 flex items-center justify-center mb-8">
-                                    <span className="font-serif text-[#D88A3D] text-lg">0{index + 1}</span>
-                                </div>
-                                <h3 className="text-2xl md:text-3xl font-serif text-[#F5F5F7] mb-4 leading-snug">
-                                    {item.title}
-                                </h3>
-                                <p className="text-[#A1A1AA] text-base md:text-lg leading-relaxed font-light">
-                                    {item.description}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-};
-
-
-
-
-
-
-const ReinforcementStrip = () => {
-    return (
-        <div className="w-full flex justify-center text-center py-8 md:py-10 px-4 bg-[#0F0F13] border-t border-white/5">
-            <p className="font-sans text-[#D88A3D] uppercase tracking-[0.2em] font-medium text-center max-w-4xl text-sm md:text-base leading-relaxed">
-                AURSA IS AN AI MIRROR THAT ANALYZES YOUR OUTFIT — REVEALING BALANCE, CONTRAST, AND VISUAL HARMONY IN SECONDS.
-            </p>
-        </div>
-    );
-};
-
-
-// ── Section 2 · Mirror Moment ──────────────────────────────────────────
-
-const MirrorMomentSection = () => {
-    const pillContainer = {
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.15, delayChildren: 0.4 } }
-    };
-    const pillVariant = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
-    };
-    const thoughts = [
-        'Do these colors actually work together?',
-        'Does this feel balanced — or slightly off?',
-        'Does this look like me?'
-    ];
-
-    return (
-        <section
-            id="mirror-moment"
-            className="w-full bg-[#FFFFFF] px-5 md:px-8 lg:px-12 py-[70px] md:py-[90px] lg:py-[120px] overflow-hidden"
-            style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}
-        >
-            {/* Two-column layout */}
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16">
-
-                {/* LEFT — Image */}
-                <div className="relative flex-shrink-0">
-                    <img
-                        src="https://images.pexels.com/photos/7383117/pexels-photo-7383117.jpeg"
-                        alt="Person checking outfit in mirror"
-                        className="w-full max-w-[640px] rounded-2xl object-cover shadow-[0_25px_60px_rgba(0,0,0,0.15)]"
-                    />
-                </div>
-
-                {/* RIGHT — Text */}
-                <div className="flex flex-col items-start text-left max-w-[520px] gap-6">
-
-                    {/* Headline */}
-                    <motion.h2
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.7, ease: 'easeOut' }}
-                        className="font-serif text-[#0B0F1A] leading-tight"
-                        style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}
-                    >
-                        That 10-second moment before you leave
-                    </motion.h2>
-
-                    {/* Subtext */}
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.15, ease: 'easeOut' }}
-                        className="font-sans text-[#6B7280] text-lg font-light"
-                    >
-                        You look in the mirror and wonder.
-                    </motion.p>
-
-                    {/* Thought Pills */}
+                    {/* LEFT COLUMN: Brand promise & CTAs */}
                     <motion.div
-                        variants={pillContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-100px' }}
-                        className="flex flex-col gap-3 mt-4"
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7, ease: "easeOut" }}
+                        className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left mx-auto lg:mx-0 w-full"
                     >
-                        {thoughts.map((thought, i) => (
-                            <motion.div
-                                key={i}
-                                variants={pillVariant}
-                                className="bg-white border border-black/10 rounded-full px-6 py-3 text-sm font-medium shadow-md text-[#374151] w-fit"
+                        <p className="font-sans text-[#D88A3D] text-[11px] sm:text-[12px] uppercase tracking-[0.4em] font-bold mb-3 sm:mb-4">
+                            YOUR AI STYLE MIRROR
+                        </p>
+
+                        <h1 className="font-serif text-[#F5F5F7] mb-2 sm:mb-3 leading-[1.1] text-center lg:text-left" style={{ fontSize: 'clamp(32px, 4.2vw, 60px)' }}>
+                            Wear with Confidence
+                        </h1>
+
+                        <h2 className="font-serif text-[#D88A3D] italic mb-5 sm:mb-7 leading-tight text-center lg:text-left" style={{ fontSize: 'clamp(20px, 2.4vw, 34px)' }}>
+                            Know what works before you step out.
+                        </h2>
+
+                        <p className="font-sans text-[#A1A1AA] text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 font-light opacity-90 text-center lg:text-left max-w-[460px]">
+                            Get instant AI feedback on your outfit. See what works, what stands out, and how your look can feel more like you.
+                        </p>
+
+                        <div className="flex flex-col items-center lg:items-start w-full gap-5">
+                            {/* App Store + Google Play Buttons */}
+                            <div className="flex flex-row flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 w-full">
+                                <a
+                                    href="https://apps.apple.com/in/app/aursa/id6761254001"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="opacity-80 hover:opacity-100 transition-opacity duration-200"
+                                >
+                                    <img
+                                        src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us"
+                                        alt="App Store"
+                                        className="h-[44px] sm:h-[50px] lg:h-[56px] w-auto object-contain"
+                                    />
+                                </a>
+                                <a
+                                    href="https://play.google.com/store/apps/details?id=com.aursa.app"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="opacity-80 hover:opacity-100 transition-opacity duration-200"
+                                >
+                                    <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                                        alt="Google Play"
+                                        className="h-[39px] sm:h-[44px] lg:h-[50px] w-auto object-contain"
+                                    />
+                                </a>
+                            </div>
+
+                            {/* Editorial invitation interaction */}
+                            <motion.a
+                                href="#vibe-check"
+                                className="group inline-flex items-center gap-2.5 sm:gap-3 text-left mt-2 cursor-pointer"
+                                whileHover="hover"
                             >
-                                {thought}
-                            </motion.div>
-                        ))}
+                                {/* Left small curved orange arrow pointing to text */}
+                                <svg className="w-6 h-5 text-[#D88A3D] opacity-90 transition-transform duration-300 group-hover:translate-x-0.5 shrink-0" viewBox="0 0 32 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M 3 14 C 10 3, 20 4, 27 10" />
+                                    <path d="M 22 7 L 27 10 L 23 15" />
+                                </svg>
+
+                                {/* Refined understated text */}
+                                <span className="text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.25em] font-medium text-[#A1A1AA] group-hover:text-[#F5F5F7] transition-colors duration-200">
+                                    Start your style journey
+                                </span>
+
+                                {/* Right small circular outlined arrow button */}
+                                <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full border border-[#D88A3D]/40 text-[#D88A3D] flex items-center justify-center group-hover:border-[#D88A3D] group-hover:bg-[#D88A3D]/10 group-hover:scale-105 transition-all duration-200 shrink-0 ml-0.5">
+                                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                                </div>
+                            </motion.a>
+                        </div>
+                    </motion.div>
+
+                    {/* RIGHT COLUMN: iPhone Showcase Video (Placed underneath CTA on mobile) */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 24 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+                        className="lg:col-span-7 flex justify-center items-center relative mt-4 lg:mt-0"
+                    >
+                        {/* Ambient glow behind phone */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] sm:w-[250px] lg:w-[380px] h-[280px] sm:h-[380px] lg:h-[480px] bg-[#D88A3D]/12 rounded-full blur-[80px] pointer-events-none" />
+
+                        {/* Refined iPhone 15 Frame - Additional 10% reduction on mobile while preserving desktop/tablet sizing */}
+                        <div className="relative w-full max-w-[155px] sm:max-w-[185px] md:max-w-[280px] lg:max-w-[280px] xl:max-w-[300px] aspect-[9/19.5] rounded-[26px] sm:rounded-[32px] md:rounded-[42px] lg:rounded-[46px] p-[5px] sm:p-[7px] md:p-[10px] lg:p-[11px] bg-gradient-to-b from-[#383842] via-[#1E1E24] to-[#121216] border border-white/20 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9),0_0_35px_rgba(216,138,61,0.12)]">
+                            {/* Outer Phone Bezel Lines */}
+                            <div className="absolute inset-0 rounded-[26px] sm:rounded-[32px] md:rounded-[42px] lg:rounded-[46px] border border-white/10 pointer-events-none" />
+
+                            {/* Screen Container */}
+                            <div className="relative w-full h-full rounded-[21px] sm:rounded-[25px] md:rounded-[34px] lg:rounded-[36px] overflow-hidden bg-black flex items-center justify-center">
+                                {/* Dynamic Island / Notch */}
+                                <div className="absolute top-1.5 sm:top-2 lg:top-3 left-1/2 -translate-x-1/2 w-[50px] sm:w-[65px] md:w-[85px] lg:w-[92px] h-[13px] sm:h-[16px] md:h-[22px] lg:h-[24px] bg-black rounded-full z-30 flex items-center justify-end px-1.5 sm:px-2 space-x-1 border border-white/10 shadow-sm pointer-events-none">
+                                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#0F0F13] ring-1 ring-white/10" />
+                                </div>
+
+                                {/* Video Player */}
+                                <video
+                                    ref={videoRef}
+                                    src="/download (7).mp4"
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    controls={false}
+                                    preload="auto"
+                                    title="AI outfit analysis demonstration showing AURSA reviewing an outfit and providing style feedback."
+                                    aria-label="AI outfit analysis demonstration showing AURSA reviewing an outfit and providing style feedback."
+                                    className="w-full h-full object-cover rounded-[21px] sm:rounded-[25px] md:rounded-[34px] lg:rounded-[36px]"
+                                />
+
+                                {/* Photorealistic Screen Gloss Overlay */}
+                                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent z-20 rounded-[21px] sm:rounded-[25px] md:rounded-[34px] lg:rounded-[36px]" />
+                            </div>
+                        </div>
                     </motion.div>
 
                 </div>
-
             </div>
 
-            {/* Divider */}
-            <div className="w-[120px] h-[1px] bg-black/10 mx-auto my-12" />
+            {/* Minimal bottom fade */}
+            <div className="absolute bottom-0 left-0 w-full h-24 lg:h-32 bg-gradient-to-t from-[#0F0F13] to-transparent pointer-events-none" />
+        </section>
+    );
+};
 
-            {/* Final Reveal Line */}
+// ── Section 2 · Mirror Moment ──────────────────────────────────────────────────
+
+// ── Section 2 · Mirror Moment ──────────────────────────────────────────────────
+
+// ── Section 2 · Mirror Moment ──────────────────────────────────────────────────
+
+const QUESTIONS = [
+    "Does it work?",
+    "Should I change something?",
+    "Does it feel like me?"
+];
+
+const MirrorMomentSection = () => {
+    const [questionIndex, setQuestionIndex] = useState(0);
+    const reducedMotion = useReducedMotion();
+
+    useEffect(() => {
+        if (reducedMotion) return;
+        const interval = setInterval(() => {
+            setQuestionIndex((prev) => (prev + 1) % QUESTIONS.length);
+        }, 3200); // 500ms fade-in + 2300ms visible + 400ms fade-out
+        return () => clearInterval(interval);
+    }, [reducedMotion]);
+
+    return (
+        <section id="mirror-moment" className="relative w-full min-h-[700px] lg:min-h-[820px] flex flex-col justify-between overflow-hidden bg-[#0F0F13] border-t border-white/5 pt-16 sm:pt-20 lg:pt-24 pb-4 sm:pb-6 lg:pb-8">
+            {/* Full-bleed cinematic mirror moment photograph background */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <img
+                    src="/mirror moment.png"
+                    alt="Woman reflecting on her outfit in a mirror before stepping out."
+                    className="w-full h-full object-cover object-[75%_center] sm:object-right lg:object-[80%_center]"
+                />
+                {/* Dark gradient overlay: Dark on left for text readability -> Translucent on right for warm mirror scene */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0F0F13] via-[#0F0F13]/92 lg:via-[#0F0F13]/85 via-45% to-black/20" />
+                {/* Mobile top & bottom subtle dark vignette for clean transitions */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#0F0F13]/60 via-transparent to-[#0F0F13]/80 lg:hidden" />
+            </div>
+
+            {/* Main Content Container (Left-aligned ~40-45% desktop width) */}
+            <div className="relative z-10 w-full max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-16 my-auto">
+                <div className="max-w-[760px] lg:max-w-[800px] flex flex-col items-start text-left">
+
+                    {/* Eyebrow */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="font-sans text-[#D88A3D] text-[11px] sm:text-[12px] uppercase tracking-[0.4em] font-bold mb-3 sm:mb-4"
+                    >
+                        THE MIRROR MOMENT
+                    </motion.p>
+
+                    {/* Main Headline (Semantic H2) */}
+                    <motion.h2
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+                        className="font-serif text-[#F5F5F7] mb-5 sm:mb-6 leading-[1.12] max-w-[540px]"
+                        style={{ fontSize: 'clamp(32px, 3.8vw, 56px)' }}
+                    >
+                        You've looked in the mirror.<br />
+                        <span className="text-[#F5F5F7]/95 font-serif">Still not sure?</span>
+                    </motion.h2>
+
+                    {/* Body / Intro Copy */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                        className="font-sans text-[#A1A1AA] text-base sm:text-lg font-light leading-relaxed mb-6 sm:mb-8 max-w-[460px]"
+                    >
+                        <p>You know the outfit is almost there.</p>
+                        <p>But something makes you pause.</p>
+                    </motion.div>
+
+                    {/* Animated Question Container (Expanded width, single-line desktop, clean unclipped text) */}
+                    <div className="w-full max-w-[760px] py-2 sm:py-3 my-2 sm:my-3">
+                        <div className="min-h-[64px] sm:min-h-[76px] lg:min-h-[96px] flex items-center justify-start relative">
+                            <AnimatePresence mode="wait">
+                                <motion.p
+                                    key={reducedMotion ? 0 : questionIndex}
+                                    initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={reducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
+                                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                                    aria-live="polite"
+                                    className="font-serif text-[#F5F5F7] tracking-wide font-normal italic leading-normal sm:leading-snug lg:whitespace-nowrap"
+                                    style={{ fontSize: 'clamp(22px, 3.2vw, 50px)' }}
+                                >
+                                    {QUESTIONS[questionIndex]}
+                                </motion.p>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            {/* Full-width editorial closing statement anchored at section bottom */}
             <motion.div
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.18, ease: 'easeOut' }}
-                className="w-full max-w-[1000px] mx-auto px-4 text-center"
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
+                className="relative z-10 w-full max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-16 pt-5 sm:pt-6 mt-6 sm:mt-8 mb-2 border-t border-white/15 text-center"
             >
                 <p
-                    className="font-serif text-center"
-                    style={{
-                        fontSize: 'clamp(36px, 5vw, 64px)',
-                        lineHeight: 1.1,
-                        fontWeight: 500,
-                        letterSpacing: '0.01em'
-                    }}
+                    className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-medium leading-relaxed max-w-[1200px] mx-auto text-center"
+                    style={{ fontSize: 'clamp(15px, 2vw, 32px)' }}
                 >
-                    <span className="text-[#D88A3D]">AURSA</span>
-                    <span className="text-[#0B0F1A]"> is built exactly for this moment.</span>
+                    AURSA gives you a clearer perspective before you step out.
                 </p>
             </motion.div>
-
         </section>
     );
 };
@@ -1633,17 +1651,17 @@ const DownloadSection = () => (
                 transition={{ duration: 0.2 }}
                 className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full"
             >
-                <a 
-                    href="https://apps.apple.com/in/app/aursa/id6761254001" 
-                    target="_blank" 
+                <a
+                    href="https://apps.apple.com/in/app/aursa/id6761254001"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="opacity-90 hover:opacity-100 transition-opacity duration-200"
                 >
                     <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="App Store" className="h-[60px] md:h-[84px] w-auto object-contain" />
                 </a>
-                <a 
-                    href="https://play.google.com/store/apps/details?id=com.aursa.app" 
-                    target="_blank" 
+                <a
+                    href="https://play.google.com/store/apps/details?id=com.aursa.app"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="opacity-90 hover:opacity-100 transition-opacity duration-200"
                 >
@@ -1778,7 +1796,7 @@ const AnalyticsTracker = () => {
 
     useEffect(() => {
         const titleMap = {
-            '/': 'AURSA — Wear with Confidence',
+            '/': 'AURSA — AI Outfit Analysis & Personal Style App',
             '/about': 'About — AURSA',
             '/contact': 'Contact — AURSA',
             '/privacy-policy': 'Privacy Policy — AURSA',
@@ -1831,8 +1849,8 @@ const AnimatedRoutes = () => {
                         {/* 1 · Hero */}
                         <HeroSection />
 
-                        {/* 2 · Value Proposition */}
-                        <ValuePropSection />
+                        {/* 2 · Mirror Moment */}
+                        <MirrorMomentSection />
                     </PageWrapper>
                 } />
 
