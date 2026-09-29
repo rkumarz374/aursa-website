@@ -211,6 +211,7 @@ const Footer = () => {
                     <div className="flex items-center gap-6 md:gap-8">
                         {[
                             { name: 'About', url: '/about' },
+                            { name: 'Insights', url: '/insights' },
                             { name: 'Contact', url: '/contact' },
                             { name: 'Privacy Policy', url: '/privacy' }
                         ].map((link) => (
@@ -309,12 +310,24 @@ const LegacyHashRedirect = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const normalizePath = (p) => {
+            if (!p) return '/';
+            let clean = p;
+            if (clean.startsWith('#/')) clean = clean.slice(1);
+            if (clean.length > 1 && clean.endsWith('/')) {
+                clean = clean.slice(0, -1);
+            }
+            if (clean === '/journal') return '/insights';
+            if (clean === '/privacy-policy') return '/privacy';
+            if (clean === '/blog') return '/insights';
+            return clean;
+        };
+
         // 1. Handle GitHub Pages / 404 query redirect "?/about"
         const search = window.location.search;
         if (search && search.startsWith('?/')) {
-            const cleanPath = search.slice(2).replace(/~and~/g, '&');
-            let targetPath = cleanPath;
-            if (targetPath === '/privacy-policy') targetPath = '/privacy';
+            const rawPath = search.slice(2).replace(/~and~/g, '&');
+            const targetPath = normalizePath(rawPath);
             navigate(targetPath, { replace: true });
             return;
         }
@@ -322,8 +335,7 @@ const LegacyHashRedirect = () => {
         // 2. Handle legacy hash URLs e.g. "/#/about" or "/#/privacy-policy"
         const hash = window.location.hash;
         if (hash && hash.startsWith('#/')) {
-            let targetPath = hash.slice(1);
-            if (targetPath === '/privacy-policy') targetPath = '/privacy';
+            const targetPath = normalizePath(hash);
             navigate(targetPath, { replace: true });
             return;
         }
@@ -332,9 +344,7 @@ const LegacyHashRedirect = () => {
         const redirect = sessionStorage.getItem("redirect");
         if (redirect) {
             sessionStorage.removeItem("redirect");
-            let targetPath = redirect;
-            if (targetPath.startsWith('#/')) targetPath = targetPath.slice(1);
-            if (targetPath === '/privacy-policy') targetPath = '/privacy';
+            const targetPath = normalizePath(redirect);
             navigate(targetPath, { replace: true });
         }
     }, [navigate]);

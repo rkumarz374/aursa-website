@@ -521,8 +521,8 @@ const routes = [
         robots: 'noindex, follow',
         sitemap: false,
         isRedirect: true,
-        redirectTo: 'https://aursa.app/insights',
-        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/insights">AURSA Insights</a>...</p></main>`
+        redirectTo: 'https://aursa.app/insights/',
+        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/insights/">AURSA Insights</a>...</p></main>`
     },
     {
         path: '/privacy-policy',
@@ -532,8 +532,8 @@ const routes = [
         robots: 'noindex, follow',
         sitemap: false,
         isRedirect: true,
-        redirectTo: 'https://aursa.app/privacy',
-        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/privacy">AURSA Privacy Policy</a>...</p></main>`
+        redirectTo: 'https://aursa.app/privacy/',
+        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/privacy/">AURSA Privacy Policy</a>...</p></main>`
     },
     {
         path: '/blog',
@@ -543,8 +543,8 @@ const routes = [
         robots: 'noindex, follow',
         sitemap: false,
         isRedirect: true,
-        redirectTo: 'https://aursa.app/insights',
-        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/insights">AURSA Insights</a>...</p></main>`
+        redirectTo: 'https://aursa.app/insights/',
+        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/insights/">AURSA Insights</a>...</p></main>`
     }
 ];
 
