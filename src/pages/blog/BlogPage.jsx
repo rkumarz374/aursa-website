@@ -148,6 +148,9 @@ const ContentCard = ({ item }) => {
 const BlogPage = () => {
     const [selectedTrack, setSelectedTrack] = useState('all');
 
+    const showRetail = selectedTrack === 'all' || selectedTrack === 'retail';
+    const showPersonal = selectedTrack === 'all' || selectedTrack === 'personal';
+
     const personalArticles = blogPosts.map((post) => ({
         slug: post.slug,
         link: `/blog/${post.slug}`,
