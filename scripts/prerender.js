@@ -503,6 +503,48 @@ const routes = [
                 `).join('')}
             </section>
         </main>`
+    },
+    {
+        path: '/mirror',
+        title: 'AURSA — Mirror',
+        description: 'AURSA Interactive Mirror Application',
+        canonical: 'https://aursa.app/mirror',
+        robots: 'noindex, follow',
+        sitemap: false,
+        htmlContent: `<main class="prerendered-content"><section><h1>AURSA Mirror</h1><p>Interactive Mirror Application</p></section></main>`
+    },
+    {
+        path: '/journal',
+        title: 'Redirecting to AURSA Insights...',
+        description: 'AURSA Insights',
+        canonical: 'https://aursa.app/insights',
+        robots: 'noindex, follow',
+        sitemap: false,
+        isRedirect: true,
+        redirectTo: 'https://aursa.app/insights',
+        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/insights">AURSA Insights</a>...</p></main>`
+    },
+    {
+        path: '/privacy-policy',
+        title: 'Redirecting to Privacy Policy...',
+        description: 'AURSA Privacy Policy',
+        canonical: 'https://aursa.app/privacy',
+        robots: 'noindex, follow',
+        sitemap: false,
+        isRedirect: true,
+        redirectTo: 'https://aursa.app/privacy',
+        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/privacy">AURSA Privacy Policy</a>...</p></main>`
+    },
+    {
+        path: '/blog',
+        title: 'Redirecting to AURSA Insights...',
+        description: 'AURSA Insights',
+        canonical: 'https://aursa.app/insights',
+        robots: 'noindex, follow',
+        sitemap: false,
+        isRedirect: true,
+        redirectTo: 'https://aursa.app/insights',
+        htmlContent: `<main class="prerendered-content"><p>Redirecting to <a href="https://aursa.app/insights">AURSA Insights</a>...</p></main>`
     }
 ];
 
@@ -721,6 +763,12 @@ routes.forEach(route => {
     if (route.schema) {
         const schemaTag = `<script id="jsonld-route-schema" type="application/ld+json">${JSON.stringify(route.schema)}</script>`;
         html = html.replace('</head>', `  ${schemaTag}\n</head>`);
+    }
+
+    // 6.5 Redirect meta & script if applicable
+    if (route.isRedirect) {
+        const redirectMeta = `<meta http-equiv="refresh" content="0; url=${route.redirectTo}" />\n  <script>window.location.replace("${route.redirectTo}");</script>`;
+        html = html.replace('</head>', `  ${redirectMeta}\n</head>`);
     }
 
     // 7. Inject Pre-rendered HTML inside root
