@@ -1,108 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import AboutPage from "./pages/AboutPage";
-import ContactPage from "./pages/ContactPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-import InvestorsPage from "./pages/InvestorsPage";
-import Mirror from "./pages/Mirror";
-import BlogPage from "./pages/blog/BlogPage";
-import BlogPostPage from "./pages/blog/BlogPostPage";
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollProgress from "./components/ScrollProgress";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
-import { Camera, Sparkles, Layers, Share2, ArrowRight, Archive, Smartphone, Apple } from 'lucide-react';
-import posthog from 'posthog-js';
+import SEOHead, { HOMEPAGE_SCHEMA } from "./components/SEOHead";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { trackEvent } from './lib/analytics';
+import { useScrollDepth } from './hooks/useScrollDepth';
 
-// ── Shared Utilities ──────────────────────────────────────────────────────────
-
-
-const AursaButton = ({ text, onClick, href = '#', className = '', variant = 'outline', type = 'a' }) => {
-    const cls = `relative inline-flex items-center justify-center gap-3 px-10 py-5 text-xs font-bold uppercase tracking-[0.4em] transition-all duration-150 ${variant === 'solid'
-        ? 'bg-[#D88A3D] border border-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13]'
-        : 'border border-white/20 bg-transparent hover:bg-[#D88A3D] hover:border-[#D88A3D] text-white'
-        } ${className}`;
-    if (type === 'button') {
-        return (
-            <motion.button onClick={onClick} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={cls}>
-                {text}
-            </motion.button>
-        );
-    }
-    if (href.startsWith('/')) {
-        return (
-            <Link to={href} onClick={onClick} className="inline-block">
-                <motion.span whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={cls}>
-                    {text}
-                </motion.span>
-            </Link>
-        );
-    }
-    return (
-        <motion.a href={href} onClick={onClick} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={cls}>
-            {text}
-        </motion.a>
-    );
-};
-
-
-
-const SectionHeading = ({ small, title, subtitle, mb = 'mb-16', centered = true }) => (
-    <div className={`${mb} ${centered ? 'text-center' : 'text-left'}`}>
-        {small && (
-            <p className="text-[#D88A3D] uppercase tracking-[0.35em] text-[10px] font-bold mb-4">
-                {small}
-            </p>
-        )}
-        <h2 className="text-4xl md:text-6xl font-serif mb-4 leading-tight text-[#F5F5F7]">
-            {title}
-        </h2>
-        {subtitle && (
-            <p className="text-lg max-w-2xl mx-auto leading-relaxed font-light text-[#A1A1AA]">
-                {subtitle}
-            </p>
-        )}
-    </div>
-);
-
-
-
-// ── Vibe Card ─────────────────────────────────────────────────────────────────
-
-const VibeCard = ({ title, harmony, contrast, layering, insight }) => {
-    const DotRow = ({ label, count }) => (
-        <div className="flex justify-between items-center mb-4">
-            <span className="text-[10px] text-[#A1A1AA] uppercase tracking-[0.2em]">{label}</span>
-            <div className="flex gap-1.5">
-                {[...Array(5)].map((_, i) => (
-                    <div
-                        key={i}
-                        className={`w-2 h-2 rounded-full ${i < count ? 'bg-[#D88A3D]' : 'bg-[#3A3A40]'}`}
-                    />
-                ))}
-            </div>
-        </div>
-    );
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="bg-[#16161C] p-[28px] rounded-[16px] border border-white/5 relative overflow-hidden w-full max-w-[380px] mx-auto transition-all duration-150 ease-in-out hover:-translate-y-[6px] hover:border-[#D88A3D]"
-        >
-            <h3 className="text-2xl font-serif text-[#F5F5F7] mb-8">{title}</h3>
-            <div className="space-y-1 mb-8">
-                <DotRow label="Color Harmony" count={harmony} />
-                <DotRow label="Contrast" count={contrast} />
-                <DotRow label="Layering" count={layering} />
-            </div>
-            <div className="pt-6 border-t border-white/5">
-                <p className="text-[#A1A1AA] text-sm leading-relaxed font-light">{insight}</p>
-            </div>
-        </motion.div>
-    );
-};
+// ── Lazy-loaded Page Routes ────────────────────────────────────────────────
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContactPage = lazy(() => import("./pages/ContactPage"));
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage"));
+const InvestorsPage = lazy(() => import("./pages/InvestorsPage"));
+const Mirror = lazy(() => import("./pages/Mirror"));
+const BlogPage = lazy(() => import("./pages/blog/BlogPage"));
+const BlogPostPage = lazy(() => import("./pages/blog/BlogPostPage"));
+const BrandGatewayHomepage = lazy(() => import("./pages/BrandGatewayHomepage"));
+const RetailPage = lazy(() => import("./pages/RetailPage"));
+const AppPage = lazy(() => import("./pages/AppPage"));
+const SmartFittingRoomPage = lazy(() => import("./pages/pillars/SmartFittingRoomPage"));
+const FittingRoomIntelligencePage = lazy(() => import("./pages/pillars/FittingRoomIntelligencePage"));
+const FittingRoomAnalyticsPage = lazy(() => import("./pages/pillars/FittingRoomAnalyticsPage"));
+const InStorePersonalizationPage = lazy(() => import("./pages/pillars/InStorePersonalizationPage"));
+const PersonalStyleIntelligencePage = lazy(() => import("./pages/PersonalStyleIntelligencePage"));
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
 
@@ -164,7 +84,7 @@ const Navbar = () => {
                     {/* Right side navigation (Desktop) */}
                     <div className="hidden md:flex items-center gap-2 ml-auto">
                         <NavLink href="/about">About</NavLink>
-                        <NavLink href="/journal">Journal</NavLink>
+                        <NavLink href="/insights">Insights</NavLink>
                         <NavLink href="/contact">Contact</NavLink>
                     </div>
 
@@ -212,7 +132,7 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['/about', 'About'], ['/journal', 'Journal'], ['/contact', 'Contact']].map(([href, label]) => (
+                        {[['/about', 'About'], ['/insights', 'Insights'], ['/contact', 'Contact']].map(([href, label]) => (
                             <Link
                                 key={href}
                                 to={href}
@@ -228,1451 +148,6 @@ const Navbar = () => {
         </>
     );
 };
-
-
-// ── Hero Particles ────────────────────────────────────────────────────────────
-
-const COLORS = ['#D88A3D', '#D88A3D', '#F0B67F', 'rgba(255,255,255,0.6)'];
-
-const HeroParticles = ({ mouseX, mouseY }) => {
-    const canvasRef = useRef(null);
-    const rafRef = useRef(null);
-
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        let W, H, particles;
-
-        const isMobile = () => window.innerWidth < 768;
-
-        const rand = (min, max) => Math.random() * (max - min) + min;
-
-        const makeParticle = () => ({
-            x: rand(0, W),
-            y: rand(0, H),
-            r: rand(1, 2.2),
-            vx: rand(-0.08, 0.08), // Slower vx
-            vy: rand(-0.12, -0.04), // Slower vy
-            alpha: rand(0.15, 0.3), // Opacity range 0.15 - 0.3
-            alphaDir: Math.random() > 0.5 ? 1 : -1,
-            alphaDelta: rand(0.001, 0.004), // Slower fade
-            color: COLORS[Math.floor(Math.random() * COLORS.length)],
-            // parallax weight — lighter particles shift more with mouse
-            px: rand(0.015, 0.035), // Increased weight for depth
-            py: rand(0.015, 0.035),
-        });
-
-        const init = () => {
-            if (!canvas) return;
-            W = canvas.width = canvas.offsetWidth;
-            H = canvas.height = canvas.offsetHeight;
-            const count = isMobile() ? 18 : 32;
-            particles = Array.from({ length: count }, makeParticle);
-        };
-
-        const draw = () => {
-            if (!ctx) return;
-            ctx.clearRect(0, 0, W, H);
-
-            // Get smoothed mouse values from motion values
-            const mx = mouseX.get() * W;
-            const my = mouseY.get() * H;
-
-            particles.forEach((p) => {
-                // drift
-                p.x += p.vx;
-                p.y += p.vy;
-
-                // gentle pulse
-                p.alpha += p.alphaDelta * p.alphaDir;
-                if (p.alpha >= 0.3 || p.alpha <= 0.1) p.alphaDir *= -1;
-
-                // wrap around edges
-                if (p.x < -10) p.x = W + 10;
-                if (p.x > W + 10) p.x = -10;
-                if (p.y < -10) p.y = H + 10;
-
-                // subtle mouse parallax
-                const drawX = p.x + mx * p.px;
-                const drawY = p.y + my * p.py;
-
-                ctx.save();
-                ctx.globalAlpha = p.alpha;
-                ctx.beginPath();
-                ctx.arc(drawX, drawY, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.shadowBlur = 4;
-                ctx.shadowColor = p.color;
-                ctx.fill();
-                ctx.restore();
-            });
-
-            rafRef.current = requestAnimationFrame(draw);
-        };
-
-        const onResize = () => { init(); };
-
-        init();
-        draw();
-        window.addEventListener('resize', onResize);
-
-        return () => {
-            cancelAnimationFrame(rafRef.current);
-            window.removeEventListener('resize', onResize);
-        };
-    }, [mouseX, mouseY]);
-
-    return (
-        <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ zIndex: 1 }}
-        />
-    );
-};
-
-// ── Section 1 · Hero ──────────────────────────────────────────────────────────
-
-const AnimatedNumber = ({ value }) => {
-    const [display, setDisplay] = useState(0);
-    useEffect(() => {
-        let start;
-        const duration = 900;
-        const step = (timestamp) => {
-            if (!start) start = timestamp;
-            const progress = (timestamp - start) / duration;
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            if (progress < 1) {
-                setDisplay(Math.floor(easeOut * value));
-                requestAnimationFrame(step);
-            } else {
-                setDisplay(value);
-            }
-        };
-        const timeout = setTimeout(() => {
-            requestAnimationFrame(step);
-        }, 300);
-        return () => clearTimeout(timeout);
-    }, [value]);
-    return <>{display}</>;
-};
-
-const HeroSection = () => {
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const videoRef = useRef(null);
-
-    useEffect(() => {
-        if (videoRef.current) {
-            videoRef.current.play().catch((err) => {
-                console.log("Autoplay blocked or waiting for user interaction", err);
-            });
-        }
-    }, []);
-
-    const handleMouseMove = (e) => {
-        const { clientX, clientY } = e;
-        const { innerWidth, innerHeight } = window;
-        mouseX.set((clientX / innerWidth) - 0.5);
-        mouseY.set((clientY / innerHeight) - 0.5);
-    };
-
-    return (
-        <section
-            id="hero"
-            className="relative min-h-[90vh] lg:min-h-screen flex flex-col justify-center overflow-hidden bg-[#0F0F13] pt-24 sm:pt-28 lg:pt-32 pb-14 sm:pb-16 lg:pb-20"
-            onMouseMove={handleMouseMove}
-        >
-            {/* Layer 1: Ambient Glow */}
-            <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] bg-[#D88A3D]/5 rounded-full blur-[120px]" />
-                <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[350px] lg:w-[500px] h-[350px] lg:h-[500px] bg-[#D88A3D]/8 rounded-full blur-[100px]" />
-            </div>
-
-            {/* Layer 2: Subtle Particles */}
-            <HeroParticles mouseX={mouseX} mouseY={mouseY} />
-
-            {/* Layer 3: Subtle Rotating Zodiac Background */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.05] sm:opacity-[0.08] lg:opacity-[0.08]" style={{ zIndex: 1, filter: 'contrast(1.1)' }}>
-                <motion.img
-                    src="/zodiac.svg"
-                    alt=""
-                    className="w-[90%] sm:w-[80%] lg:w-[65%] max-w-[650px] lg:max-w-[700px] h-auto"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                />
-            </div>
-
-            {/* Layer 4: Content Layout (Responsive Two Column / Single Column Grid) */}
-            <div className="relative z-10 w-full max-w-[1240px] mx-auto px-5 sm:px-8 lg:px-12 my-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-center">
-
-                    {/* LEFT COLUMN: Brand promise & CTAs */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, ease: "easeOut" }}
-                        className="lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left mx-auto lg:mx-0 w-full"
-                    >
-                        <p className="font-sans text-[#D88A3D] text-[11px] sm:text-[12px] uppercase tracking-[0.4em] font-bold mb-3 sm:mb-4">
-                            YOUR AI STYLE MIRROR
-                        </p>
-
-                        <h1 className="font-serif text-[#F5F5F7] mb-2 sm:mb-3 leading-[1.1] text-center lg:text-left" style={{ fontSize: 'clamp(32px, 4.2vw, 60px)' }}>
-                            Wear with Confidence
-                        </h1>
-
-                        <h2 className="font-serif text-[#D88A3D] italic mb-5 sm:mb-7 leading-tight text-center lg:text-left" style={{ fontSize: 'clamp(20px, 2.4vw, 34px)' }}>
-                            Know what works before you step out.
-                        </h2>
-
-                        <p className="font-sans text-[#A1A1AA] text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 font-light opacity-90 text-center lg:text-left max-w-[460px]">
-                            Get instant AI feedback on your outfit. See what works, what stands out, and how your look can feel more like you.
-                        </p>
-
-                        <div className="flex flex-col items-center lg:items-start w-full gap-5">
-                            {/* App Store + Google Play Buttons */}
-                            <div className="flex flex-row flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 w-full">
-                                <a
-                                    href="https://apps.apple.com/in/app/aursa/id6761254001"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="opacity-80 hover:opacity-100 transition-opacity duration-200"
-                                >
-                                    <img
-                                        src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us"
-                                        alt="App Store"
-                                        className="h-[44px] sm:h-[50px] lg:h-[56px] w-auto object-contain"
-                                    />
-                                </a>
-                                <a
-                                    href="https://play.google.com/store/apps/details?id=com.aursa.app"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="opacity-80 hover:opacity-100 transition-opacity duration-200"
-                                >
-                                    <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                                        alt="Google Play"
-                                        className="h-[39px] sm:h-[44px] lg:h-[50px] w-auto object-contain"
-                                    />
-                                </a>
-                            </div>
-
-                            {/* Editorial invitation interaction */}
-                            <motion.a
-                                href="#vibe-check"
-                                className="group inline-flex items-center gap-2.5 sm:gap-3 text-left mt-2 cursor-pointer"
-                                whileHover="hover"
-                            >
-                                {/* Left small curved orange arrow pointing to text */}
-                                <svg className="w-6 h-5 text-[#D88A3D] opacity-90 transition-transform duration-300 group-hover:translate-x-0.5 shrink-0" viewBox="0 0 32 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M 3 14 C 10 3, 20 4, 27 10" />
-                                    <path d="M 22 7 L 27 10 L 23 15" />
-                                </svg>
-
-                                {/* Refined understated text */}
-                                <span className="text-[10px] sm:text-[11px] lg:text-xs uppercase tracking-[0.25em] font-medium text-[#A1A1AA] group-hover:text-[#F5F5F7] transition-colors duration-200">
-                                    Start your style journey
-                                </span>
-
-                                {/* Right small circular outlined arrow button */}
-                                <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full border border-[#D88A3D]/40 text-[#D88A3D] flex items-center justify-center group-hover:border-[#D88A3D] group-hover:bg-[#D88A3D]/10 group-hover:scale-105 transition-all duration-200 shrink-0 ml-0.5">
-                                    <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                                </div>
-                            </motion.a>
-                        </div>
-                    </motion.div>
-
-                    {/* RIGHT COLUMN: iPhone Showcase Video (Placed underneath CTA on mobile) */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-                        className="lg:col-span-7 flex justify-center items-center relative mt-4 lg:mt-0"
-                    >
-                        {/* Ambient glow behind phone */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] sm:w-[250px] lg:w-[380px] h-[280px] sm:h-[380px] lg:h-[480px] bg-[#D88A3D]/12 rounded-full blur-[80px] pointer-events-none" />
-
-                        {/* Refined iPhone 15 Frame - Additional 10% reduction on mobile while preserving desktop/tablet sizing */}
-                        <div className="relative w-full max-w-[155px] sm:max-w-[185px] md:max-w-[280px] lg:max-w-[280px] xl:max-w-[300px] aspect-[9/19.5] rounded-[26px] sm:rounded-[32px] md:rounded-[42px] lg:rounded-[46px] p-[5px] sm:p-[7px] md:p-[10px] lg:p-[11px] bg-gradient-to-b from-[#383842] via-[#1E1E24] to-[#121216] border border-white/20 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9),0_0_35px_rgba(216,138,61,0.12)]">
-                            {/* Outer Phone Bezel Lines */}
-                            <div className="absolute inset-0 rounded-[26px] sm:rounded-[32px] md:rounded-[42px] lg:rounded-[46px] border border-white/10 pointer-events-none" />
-
-                            {/* Screen Container */}
-                            <div className="relative w-full h-full rounded-[21px] sm:rounded-[25px] md:rounded-[34px] lg:rounded-[36px] overflow-hidden bg-black flex items-center justify-center">
-                                {/* Dynamic Island / Notch */}
-                                <div className="absolute top-1.5 sm:top-2 lg:top-3 left-1/2 -translate-x-1/2 w-[50px] sm:w-[65px] md:w-[85px] lg:w-[92px] h-[13px] sm:h-[16px] md:h-[22px] lg:h-[24px] bg-black rounded-full z-30 flex items-center justify-end px-1.5 sm:px-2 space-x-1 border border-white/10 shadow-sm pointer-events-none">
-                                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#0F0F13] ring-1 ring-white/10" />
-                                </div>
-
-                                {/* Video Player */}
-                                <video
-                                    ref={videoRef}
-                                    src="/download (7).mp4"
-                                    autoPlay
-                                    muted
-                                    loop
-                                    playsInline
-                                    controls={false}
-                                    preload="auto"
-                                    title="AI outfit analysis demonstration showing AURSA reviewing an outfit and providing style feedback."
-                                    aria-label="AI outfit analysis demonstration showing AURSA reviewing an outfit and providing style feedback."
-                                    className="w-full h-full object-cover rounded-[21px] sm:rounded-[25px] md:rounded-[34px] lg:rounded-[36px]"
-                                />
-
-                                {/* Photorealistic Screen Gloss Overlay */}
-                                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent z-20 rounded-[21px] sm:rounded-[25px] md:rounded-[34px] lg:rounded-[36px]" />
-                            </div>
-                        </div>
-                    </motion.div>
-
-                </div>
-            </div>
-
-            {/* Minimal bottom fade */}
-            <div className="absolute bottom-0 left-0 w-full h-24 lg:h-32 bg-gradient-to-t from-[#0F0F13] to-transparent pointer-events-none" />
-        </section>
-    );
-};
-
-// ── Section 2 · Mirror Moment ──────────────────────────────────────────────────
-
-// ── Section 2 · Mirror Moment ──────────────────────────────────────────────────
-
-// ── Section 2 · Mirror Moment ──────────────────────────────────────────────────
-
-const QUESTIONS = [
-    "Does it work?",
-    "Should I change something?",
-    "Does it feel like me?"
-];
-
-const MirrorMomentSection = () => {
-    const [questionIndex, setQuestionIndex] = useState(0);
-    const reducedMotion = useReducedMotion();
-
-    useEffect(() => {
-        if (reducedMotion) return;
-        const interval = setInterval(() => {
-            setQuestionIndex((prev) => (prev + 1) % QUESTIONS.length);
-        }, 3200); // 500ms fade-in + 2300ms visible + 400ms fade-out
-        return () => clearInterval(interval);
-    }, [reducedMotion]);
-
-    return (
-        <section id="mirror-moment" className="relative w-full min-h-[700px] lg:min-h-[820px] flex flex-col justify-between overflow-hidden bg-[#0F0F13] border-t border-white/5 pt-16 sm:pt-20 lg:pt-24 pb-4 sm:pb-6 lg:pb-8">
-            {/* Full-bleed cinematic mirror moment photograph background */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <img
-                    src="/mirror moment.png"
-                    alt="Woman reflecting on her outfit in a mirror before stepping out."
-                    className="w-full h-full object-cover object-[75%_center] sm:object-right lg:object-[80%_center]"
-                />
-                {/* Dark gradient overlay: Dark on left for text readability -> Translucent on right for warm mirror scene */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0F0F13] via-[#0F0F13]/92 lg:via-[#0F0F13]/85 via-45% to-black/20" />
-                {/* Mobile top & bottom subtle dark vignette for clean transitions */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#0F0F13]/60 via-transparent to-[#0F0F13]/80 lg:hidden" />
-            </div>
-
-            {/* Main Content Container (Left-aligned ~40-45% desktop width) */}
-            <div className="relative z-10 w-full max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-16 my-auto">
-                <div className="max-w-[760px] lg:max-w-[800px] flex flex-col items-start text-left">
-
-                    {/* Eyebrow */}
-                    <motion.p
-                        initial={{ opacity: 0, y: 12 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                        className="font-sans text-[#D88A3D] text-[11px] sm:text-[12px] uppercase tracking-[0.4em] font-bold mb-3 sm:mb-4"
-                    >
-                        THE MIRROR MOMENT
-                    </motion.p>
-
-                    {/* Main Headline (Semantic H2) */}
-                    <motion.h2
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-                        className="font-serif text-[#F5F5F7] mb-5 sm:mb-6 leading-[1.12] max-w-[540px]"
-                        style={{ fontSize: 'clamp(32px, 3.8vw, 56px)' }}
-                    >
-                        You've looked in the mirror.<br />
-                        <span className="text-[#F5F5F7]/95 font-serif">Still not sure?</span>
-                    </motion.h2>
-
-                    {/* Body / Intro Copy */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                        className="font-sans text-[#A1A1AA] text-base sm:text-lg font-light leading-relaxed mb-6 sm:mb-8 max-w-[460px]"
-                    >
-                        <p>You know the outfit is almost there.</p>
-                        <p>But something makes you pause.</p>
-                    </motion.div>
-
-                    {/* Animated Question Container (Expanded width, single-line desktop, clean unclipped text) */}
-                    <div className="w-full max-w-[760px] py-2 sm:py-3 my-2 sm:my-3">
-                        <div className="min-h-[64px] sm:min-h-[76px] lg:min-h-[96px] flex items-center justify-start relative">
-                            <AnimatePresence mode="wait">
-                                <motion.p
-                                    key={reducedMotion ? 0 : questionIndex}
-                                    initial={reducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={reducedMotion ? { opacity: 1 } : { opacity: 0, y: -6 }}
-                                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                                    aria-live="polite"
-                                    className="font-serif text-[#F5F5F7] tracking-wide font-normal italic leading-normal sm:leading-snug lg:whitespace-nowrap"
-                                    style={{ fontSize: 'clamp(22px, 3.2vw, 50px)' }}
-                                >
-                                    {QUESTIONS[questionIndex]}
-                                </motion.p>
-                            </AnimatePresence>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Full-width editorial closing statement anchored at section bottom */}
-            <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
-                className="relative z-10 w-full max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-16 pt-5 sm:pt-6 mt-6 sm:mt-8 mb-2 border-t border-white/15 text-center"
-            >
-                <p
-                    className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-medium leading-relaxed max-w-[1200px] mx-auto text-center"
-                    style={{ fontSize: 'clamp(15px, 2vw, 32px)' }}
-                >
-                    AURSA gives you a clearer perspective before you step out.
-                </p>
-            </motion.div>
-        </section>
-    );
-};
-
-
-// ── Section 3 · AI Mirror ───────────────────────────────────────────────
-
-const AIMirrorSection = () => {
-    // Staggered labels animation variants
-    const labelContainer = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.15, // 150ms delay between labels
-                delayChildren: 0.6, // Start after grid draw
-            }
-        }
-    };
-
-    const labelItem = {
-        hidden: { opacity: 0, x: -10 },
-        visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
-    };
-
-    return (
-        <section id="how" className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
-
-                {/* ── LEFT COLUMN: Text Explanation ── */}
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8 }}
-                    className="w-full md:w-1/2 flex flex-col items-start text-left"
-                >
-                    <h2
-                        className="font-serif text-[#FFFFFF] mb-8"
-                        style={{ fontSize: 'clamp(40px, 4vw, 56px)', lineHeight: 1.1 }}
-                    >
-                        A mirror that <br className="hidden md:block" /> understands your style
-                    </h2>
-
-                    <div className="space-y-6">
-                        <p className="font-sans text-[#D1D5DB] text-lg md:text-xl font-medium">
-                            Upload your outfit.
-                        </p>
-
-                        <p className="font-sans text-[#A1A1AA] text-base md:text-lg leading-relaxed max-w-md">
-                            AURSA analyzes the visual composition of your look — from color harmony to contrast, layering, and balance.
-                        </p>
-
-                        <p className="font-sans text-[#A1A1AA] text-base md:text-lg leading-relaxed max-w-md">
-                            Then it reveals the vibe your outfit projects.
-                        </p>
-                    </div>
-
-                    <div className="mt-12 pt-12 border-t border-white/10">
-                        <p className="font-sans text-[#A1A1AA] text-sm md:text-base leading-relaxed italic border-l-2 border-[#D88A3D] pl-4">
-                            Not trends.<br />
-                            Not rules.<br />
-                            <span className="text-[#F5F5F7] font-medium not-italic block mt-3">Just understanding.</span>
-                        </p>
-                    </div>
-                </motion.div>
-
-                {/* ── RIGHT COLUMN: Outfit Grid Animation ── */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8 }}
-                    className="w-full md:w-1/2 relative flex justify-center items-center"
-                >
-                    <div className="relative w-full max-w-[360px] md:w-[400px] h-[450px] md:h-[600px] rounded-2xl overflow-hidden bg-[#1C1C23] mx-auto">
-                        {/* Placeholder image for outfit — using a gradient block if actual image is missing */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a35] to-[#1C1C23]" />
-                        <img
-                            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop"
-                            alt="Outfit Example"
-                            className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity"
-                        />
-
-                        {/* Animated Grid Overlay */}
-                        <motion.div
-                            initial={{ clipPath: 'inset(0 100% 0 0)' }}
-                            whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, ease: "easeInOut" }}
-                            className="absolute inset-0"
-                        >
-                            {/* Horizontal scanning lines */}
-                            <div className="absolute top-1/4 left-0 w-full h-px bg-[#D88A3D]/40" />
-                            <div className="absolute top-2/4 left-0 w-full h-px bg-[#D88A3D]/40" />
-                            <div className="absolute top-3/4 left-0 w-full h-px bg-[#D88A3D]/40" />
-
-                            {/* Vertical scanning lines */}
-                            <div className="absolute top-0 left-1/3 w-px h-full bg-[#D88A3D]/40" />
-                            <div className="absolute top-0 left-2/3 w-px h-full bg-[#D88A3D]/40" />
-
-                            {/* Corner brackets */}
-                            <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-[#D88A3D]" />
-                            <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-[#D88A3D]" />
-                            <div className="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-[#D88A3D]" />
-                            <div className="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-[#D88A3D]" />
-                        </motion.div>
-
-                        {/* Sequential Labels */}
-                        <motion.div
-                            variants={labelContainer}
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            className="absolute inset-y-0 right-4 flex flex-col justify-center gap-12"
-                        >
-                            {['Color Harmony', 'Contrast', 'Layering', 'Balance'].map((label, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    variants={labelItem}
-                                    className="flex items-center justify-end gap-3"
-                                >
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                    <span className="bg-[#16161C]/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-[#D88A3D]/20 text-[10px] uppercase tracking-wider font-bold text-[#F5F5F7] whitespace-nowrap shadow-xl">
-                                        {label}
-                                    </span>
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    </div>
-                </motion.div>
-            </div>
-        </section>
-    );
-};
-
-// ── Section 4+5 · Style Analysis (merged) ──────────────────────────────────
-
-const StyleAnalysisSection = () => {
-    const listContainer = {
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } }
-    };
-    const listItem = {
-        hidden: { opacity: 0, y: 30 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
-    };
-    const gridContainer = {
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.1 } }
-    };
-    const gridItem = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-    };
-
-    return (
-        <section
-            className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF]"
-            style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}
-        >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-16 md:gap-24">
-
-                {/* LEFT COLUMN — Style Patterns */}
-                <div className="w-full md:w-1/2 flex flex-col gap-10">
-
-                    <motion.h2
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.7, ease: 'easeOut' }}
-                        className="font-serif text-[#0B0F1A] leading-tight"
-                        style={{ fontSize: 'clamp(40px, 5vw, 56px)' }}
-                    >
-                        Your style isn’t random
-                    </motion.h2>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.15, ease: 'easeOut' }}
-                        className="flex flex-col gap-4 text-[#374151] font-sans text-lg md:text-xl font-light"
-                    >
-                        <p>Most people think their style changes constantly.</p>
-                        <p>But when you look closely — patterns repeat.</p>
-                    </motion.div>
-
-                    <motion.ul
-                        variants={listContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-100px' }}
-                        className="flex flex-col gap-3 md:gap-4 text-left"
-                    >
-                        {[
-                            'Color palette patterns',
-                            'Contrast preferences',
-                            'Layering habits',
-                            'Visual balance'
-                        ].map((item, idx) => (
-                            <motion.li
-                                key={idx}
-                                variants={listItem}
-                                className="bg-[#F9FAFB] border rounded-[16px] px-6 py-4 flex items-center justify-between"
-                                style={{ borderColor: 'rgba(0,0,0,0.06)' }}
-                            >
-                                <span className="font-sans text-[#374151] font-medium tracking-wide">{item}</span>
-                                <div className="w-2 h-2 rounded-full bg-[#D88A3D]" />
-                            </motion.li>
-                        ))}
-                    </motion.ul>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-100px' }}
-                        transition={{ duration: 0.15, ease: 'easeOut' }}
-                        className="flex flex-col gap-2"
-                    >
-                        <p className="font-sans text-[#374151] text-lg font-medium">
-                            AURSA helps you see those patterns clearly.
-                        </p>
-                    </motion.div>
-
-                </div>
-
-                {/* RIGHT COLUMN — Feature Cards */}
-                <div className="w-full md:w-1/2">
-                    <motion.div
-                        variants={gridContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-100px' }}
-                        className="flex flex-col gap-6 max-w-[420px]"
-                    >
-                        {[
-                            { title: 'Color Harmony', desc: 'How well the colors in your outfit work together.' },
-                            { title: 'Contrast Energy', desc: 'The visual intensity your outfit projects.' },
-                            { title: 'Layering Structure', desc: 'How garments interact to create depth.' },
-                            { title: 'Visual Balance', desc: 'The overall composition of your look.' }
-                        ].map((feature, idx) => (
-                            <motion.div
-                                key={idx}
-                                variants={gridItem}
-                                whileHover={{
-                                    scale: 1.03,
-                                    borderColor: '#D88A3D',
-                                    boxShadow: '0px 10px 30px rgba(216,138,61,0.15)',
-                                    transition: { duration: 0.2, ease: 'easeOut' }
-                                }}
-                                className="w-full bg-[#F9FAFB] border border-black/[0.06] rounded-2xl p-8 flex flex-col items-start cursor-default"
-                            >
-                                <h3 className="font-serif text-[#0B0F1A] text-xl mb-3 leading-tight">
-                                    {feature.title}
-                                </h3>
-                                <p className="font-sans text-[#6B7280] text-base leading-relaxed">
-                                    {feature.desc}
-                                </p>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </div>
-
-            </div>
-
-            {/* Closing focus statement */}
-            <div className="w-full flex justify-center text-center mt-16">
-                <p className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center text-[24px]">
-                    OVER TIME, THIS BECOMES YOUR STYLE FINGERPRINT.
-                </p>
-            </div>
-        </section>
-    );
-};
-
-
-// ── Section 6 · Result Card ───────────────────────────────────────────
-
-const ResultCardSection = () => {
-    // Staggered variants for the card metrics
-    const metricsContainer = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.12, // 120ms stagger
-                delayChildren: 0.4,
-            }
-        }
-    };
-
-    const metricItem = {
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-    };
-
-    const labelsContainer = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.6,
-            }
-        }
-    };
-
-    const labelAnim = {
-        hidden: { opacity: 0, y: 10 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-    };
-
-    return (
-        <section id="vibe-section" className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
-                className="max-w-[600px] w-full mx-auto mb-16"
-            >
-                <h2
-                    className="font-serif text-[#0B0F1A] mb-6 leading-tight"
-                    style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
-                >
-                    Clarity in seconds <br className="hidden md:block" />
-                </h2>
-                <p className="font-sans text-[#374151] text-lg md:text-xl font-light">
-                    AURSA turns your outfit into something you can understand instantly.
-                </p>
-            </motion.div>
-
-            {/* The Floating Result Card Area */}
-            <div className="relative w-full flex justify-center mb-16">
-
-                {/* Glow Behind the Card */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.6 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 1.2, ease: "easeOut" }}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-                    style={{
-                        width: '420px',
-                        height: '420px',
-                        background: 'radial-gradient(circle, rgba(216,138,61,0.08) 0%, transparent 70%)',
-                        filter: 'blur(60px)',
-                        zIndex: 0
-                    }}
-                />
-
-                {/* Floating Labels */}
-                <motion.div
-                    variants={labelsContainer}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
-                    className="absolute inset-0 pointer-events-none z-10"
-                >
-                    {/* Top Left */}
-                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ top: '20%', right: 'calc(50% + 140px)' }}>
-                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Color Harmony</span>
-                        <div className="w-[60px] h-[1px] bg-black/10" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                    </motion.div>
-
-                    {/* Top Right */}
-                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ top: '30%', left: 'calc(50% + 140px)' }}>
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                        <div className="w-[60px] h-[1px] bg-black/10" />
-                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Contrast Energy</span>
-                    </motion.div>
-
-                    {/* Bottom Left */}
-                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ bottom: '25%', right: 'calc(50% + 140px)' }}>
-                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Layering Structure</span>
-                        <div className="w-[60px] h-[1px] bg-black/10" />
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                    </motion.div>
-
-                    {/* Bottom Right */}
-                    <motion.div variants={labelAnim} className="hidden md:flex items-center gap-2 absolute" style={{ bottom: '15%', left: 'calc(50% + 140px)' }}>
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                        <div className="w-[60px] h-[1px] bg-black/10" />
-                        <span className="text-[#6B7280] uppercase tracking-[0.12em] text-[11px] font-medium whitespace-nowrap">Visual Balance</span>
-                    </motion.div>
-                </motion.div>
-
-                {/* The Floating Result Card */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 30 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.18, ease: "easeOut" }}
-                    whileHover={{ y: -8, transition: { duration: 0.12, ease: "easeOut" } }}
-                    className="relative z-20 w-full max-w-[360px] bg-[#FFFFFF] p-6 md:p-8 flex flex-col gap-8 transition duration-300 ease-out hover:scale-[1.03] hover:shadow-xl"
-                    style={{ borderRadius: '24px', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 25px 60px rgba(0,0,0,0.12)' }}
-                >
-                    {/* Header Profile - purely visual context */}
-                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                        <span className="font-serif text-[#0B0F1A] text-lg">Your Vibe</span>
-                        <span className="text-[#D88A3D] text-[10px] uppercase tracking-[0.3em] font-bold">Analysis Complete</span>
-                    </div>
-
-                    <motion.div
-                        variants={metricsContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        className="flex flex-col gap-6"
-                    >
-                        {/* Primary Metric: Harmony */}
-                        <div className="flex flex-col gap-2 items-start border-b border-black/5 pb-6">
-                            <span className="text-[#6B7280] text-[11px] uppercase tracking-widest font-semibold flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />
-                                Harmony
-                            </span>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-4xl font-serif text-[#0B0F1A]">82%</span>
-                            </div>
-                        </div>
-
-                        {/* Secondary Metrics / Supporting Points */}
-                        <div className="flex flex-col gap-5">
-                            {[
-                                { label: 'What stood out', value: 'Harmony' },
-                                { label: 'What can improve', value: 'Balance' },
-                                { label: 'What already works', value: 'Contrast' }
-                            ].map((metric, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    variants={metricItem}
-                                    className="flex items-center justify-between"
-                                >
-                                    <span className="text-[#6B7280] text-xs uppercase tracking-wider font-medium">{metric.label}</span>
-                                    <span className="font-serif text-[#0B0F1A] text-lg">{metric.value}</span>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
-                </motion.div>
-            </div>
-
-            {/* Divider */}
-            <div className="w-[120px] h-[1px] bg-black/10 mx-auto my-2"></div>
-
-            {/* Closing focus statement */}
-            <div
-                className="w-full flex justify-center text-center"
-                style={{ marginTop: "60px" }}
-            >
-                <p
-                    className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center"
-                    style={{ fontSize: "24px" }}
-                >
-                    No guessing. No overthinking. Just clarity.
-                </p>
-            </div>
-
-        </section>
-    );
-};
-
-// ── Section 6.5 · Save Your Vibe ──────────────────────────────────────────
-
-const SaveVibeSection = () => {
-    return (
-        <section className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A]" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
-
-                {/* ── LEFT COLUMN: Visual Stacked Cards ── */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.18, ease: "easeOut" }}
-                    className="w-full md:w-1/2 flex justify-center items-center"
-                >
-                    <div className="relative w-full max-w-[320px] h-[320px] flex items-center justify-center">
-
-                        {/* Card 3 (Back) */}
-                        <div
-                            className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl p-6 shadow-lg w-full max-w-[260px]"
-                            style={{
-                                transform: 'translateX(20px) translateY(20px) rotate(3deg)',
-                                opacity: 0.4,
-                                zIndex: 1
-                            }}
-                        >
-                            <div className="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
-                                <span className="font-serif text-[#F5F5F7] text-sm">Vibe Saved</span>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="h-2 w-full bg-white/5 rounded" />
-                                <div className="h-2 w-3/4 bg-white/5 rounded" />
-                                <div className="h-2 w-5/6 bg-white/5 rounded" />
-                                <div className="h-2 w-2/3 bg-white/5 rounded" />
-                            </div>
-                        </div>
-
-                        {/* Card 2 (Middle) */}
-                        <div
-                            className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl p-6 shadow-lg w-full max-w-[260px]"
-                            style={{
-                                transform: 'translateX(-20px) translateY(20px) rotate(-3deg)',
-                                opacity: 0.6,
-                                zIndex: 2
-                            }}
-                        >
-                            <div className="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
-                                <span className="font-serif text-[#F5F5F7] text-sm">Vibe Saved</span>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="h-2 w-full bg-white/10 rounded" />
-                                <div className="h-2 w-3/4 bg-white/10 rounded" />
-                                <div className="h-2 w-5/6 bg-white/10 rounded" />
-                                <div className="h-2 w-2/3 bg-white/10 rounded" />
-                            </div>
-                        </div>
-
-                        {/* Card 1 (Front) — overflow visible so pill can bleed outside */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.18, ease: 'easeOut' }}
-                            whileHover={{ y: -5, transition: { duration: 0.12 } }}
-                            className="absolute bg-[#1C1C23] border border-white/10 rounded-2xl shadow-xl w-full max-w-[280px]"
-                            style={{ zIndex: 3, overflow: 'visible' }}
-                        >
-                            {/* Top Meta Bar */}
-                            <div className="flex items-center justify-between px-4 py-3 rounded-t-2xl overflow-hidden">
-                                <span className="text-xs uppercase tracking-widest text-[#A1A1AA]">Saved Look</span>
-                                <span className="text-xs uppercase tracking-widest text-[#A1A1AA]">Oct 21</span>
-                            </div>
-
-                            {/* Image Area */}
-                            <div className="relative rounded-none">
-                                <img
-                                    src="https://images.pexels.com/photos/1310524/pexels-photo-1310524.jpeg"
-                                    alt="Person outfit"
-                                    className="w-full h-[200px] object-cover"
-                                />
-
-                                {/* Gradient Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-
-                                {/* Bottom-left Harmony Score */}
-                                <div className="absolute bottom-4 left-4 flex flex-col">
-                                    <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">Harmony Score</span>
-                                    <span className="font-serif text-[42px] text-[#D88A3D] leading-none drop-shadow-lg">88%</span>
-                                </div>
-
-                                {/* Right-side Energy Pill — bleeds outside card */}
-                                <div
-                                    className="absolute bottom-[18px] bg-[#1C1C23] border border-[#D88A3D]/40 rounded-full px-5 py-2 text-[11px] uppercase tracking-[0.25em] font-bold text-[#F5F5F7] shadow-[0_6px_20px_rgba(0,0,0,0.45)] whitespace-nowrap"
-                                    style={{ right: '-28px' }}
-                                >
-                                    Soft Precision
-                                </div>
-                            </div>
-
-                            {/* Bottom Stats Area */}
-                            <div className="px-5 pt-8 pb-2 flex flex-col gap-3">
-                                {[
-                                    { label: 'Contrast', value: 'Low' },
-                                    { label: 'Layering', value: 'Structured' },
-                                    { label: 'Balance', value: 'Clean' }
-                                ].map(({ label, value }) => (
-                                    <div key={label} className="flex items-center justify-between text-sm">
-                                        <span className="text-[#A1A1AA]">{label}</span>
-                                        <span className="text-[#F5F5F7]">{value}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Insight Text */}
-                            <p className="text-sm italic text-[#A1A1AA] border-t border-white/5 mx-5 mt-2 pt-4 pb-5">
-                                "The focused color palette creates a unified style energy."
-                            </p>
-                        </motion.div>
-
-                    </div>
-                </motion.div>
-
-                {/* ── RIGHT COLUMN: Text Explanation ── */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.7 }}
-                    className="w-full md:w-1/2 flex flex-col items-start text-left"
-                >
-                    {/* Section Label */}
-                    <p className="text-xs uppercase tracking-[0.35em] text-[#D88A3D] mb-4">
-                        Save Vibe
-                    </p>
-
-                    {/* Main Heading */}
-                    <h2
-                        className="font-serif text-[#F5F5F7] leading-tight mb-6"
-                        style={{ fontSize: 'clamp(34px, 4vw, 42px)' }}
-                    >
-                        Save what feels right
-                    </h2>
-
-                    {/* Body Copy */}
-                    <p className="font-sans text-[#A1A1AA] text-base md:text-[18px] leading-relaxed max-w-md">
-                        Sometimes an outfit just clicks.
-                    </p>
-
-                    <p className="font-sans text-[#A1A1AA] text-base md:text-[18px] leading-relaxed max-w-md mt-4">
-                        The colors feel right. The balance feels effortless. The vibe feels like you.
-                    </p>
-
-                    <p className="font-sans text-[#A1A1AA] text-base md:text-[18px] leading-relaxed max-w-md mt-4">
-                        When that happens, AURSA lets you save the moment.
-                    </p>
-
-                    <p className="font-sans text-[#A1A1AA] text-base md:text-[18px] leading-relaxed max-w-md mt-4">
-                        Your best looks become part of a personal style library you can revisit, refine, and build on.
-                    </p>
-
-
-                </motion.div>
-
-            </div>
-
-            {/* Centered Closing Statement */}
-            <div className="w-full flex justify-center" style={{ marginTop: "120px" }}>
-                <p
-                    className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center"
-                    style={{ fontSize: '24px' }}
-                >
-                    Your strongest looks. Your evolving style.
-                </p>
-            </div>
-        </section>
-    );
-};
-
-// ── Section 6.75 · Wardrobe Archive ──────────────────────────────────────────
-
-const WardrobeSection = () => {
-    const [showUnlockMsg, setShowUnlockMsg] = React.useState(false);
-
-    const wardrobeImages = [
-        { src: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80', dot: true },
-        { src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80', dot: false },
-        { src: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', dot: true },
-        { src: 'https://images.unsplash.com/photo-1520975922327-1c0d0d6f2c1c?auto=format&fit=crop&w=600&q=80', dot: false },
-        { src: 'https://images.unsplash.com/photo-1520974735194-7f2a2e6b7f0d?auto=format&fit=crop&w=600&q=80', dot: true },
-        { src: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80', dot: false },
-        { src: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80', dot: true },
-        { src: 'https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=600&q=80', dot: false },
-        { src: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=600&q=80', dot: true },
-    ];
-
-    const gridContainer = {
-        hidden: {},
-        visible: {
-            transition: { staggerChildren: 0.08 }
-        }
-    };
-
-    const tileAnim = {
-        hidden: { opacity: 0, y: 12 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-    };
-
-    return (
-        <section
-            className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#FFFFFF] flex flex-col items-center justify-center"
-            style={{ borderTop: '1px solid rgba(0,0,0,0.05)' }}
-        >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-24">
-
-                {/* LEFT COLUMN — TEXT */}
-                <div className="w-full md:w-1/2 flex flex-col items-start text-left">
-                    <h2
-                        className="font-serif text-[#0B0F1A] leading-tight"
-                        style={{ fontSize: 'clamp(40px,4vw,56px)', marginBottom: '28px' }}
-                    >
-                        Your wardrobe, understood
-                    </h2>
-
-                    <p className="font-sans text-[#374151] text-lg md:text-xl leading-relaxed max-w-md">
-                        Every outfit you analyze becomes part of your personal wardrobe.
-                    </p>
-
-                    <p className="font-sans text-[#374151] text-lg md:text-xl leading-relaxed max-w-md" style={{ marginTop: '16px' }}>
-                        Over time AURSA reveals patterns in how you actually dress.
-                    </p>
-
-
-                </div>
-
-                {/* RIGHT COLUMN — WARDROBE UI */}
-                <div className="w-full md:w-1/2 flex flex-col items-start">
-
-                    {/* Archive label */}
-                    <p className="text-xs tracking-[0.2em] uppercase text-neutral-500 mb-4">
-                        Your Wardrobe Archive
-                    </p>
-
-                    {/* Image Grid */}
-                    <motion.div
-                        variants={gridContainer}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-80px' }}
-                        className="grid grid-cols-3 gap-3 w-full max-w-[320px]"
-                    >
-                        {wardrobeImages.map(({ src, dot }, i) => (
-                            <motion.div
-                                key={i}
-                                variants={tileAnim}
-                                className="aspect-square rounded-xl overflow-hidden relative cursor-default transition duration-200 ease-out hover:scale-[1.05] hover:shadow-xl"
-                            >
-                                <img
-                                    src={src}
-                                    alt="Outfit from wardrobe"
-                                    className="w-full h-full object-cover rounded-xl"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextElementSibling.style.display = 'flex';
-                                    }}
-                                />
-                                {/* Fallback Placeholder */}
-                                <div className="hidden absolute inset-0 bg-[#f4f4f4] rounded-xl flex-col items-center justify-center p-4 text-center">
-                                    <svg className="w-8 h-8 text-neutral-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                    </svg>
-                                    <span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Outfit from<br />wardrobe</span>
-                                </div>
-                                {/* Dark gradient overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60" />
-                                {/* Analysis dot */}
-                                {dot && (
-                                    <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-[#D88A3D]" />
-                                )}
-                            </motion.div>
-                        ))}
-                    </motion.div>
-
-                </div>
-
-            </div>
-
-            {/* AI Wardrobe Search (Centered below grid) */}
-            <div className="w-full flex flex-col items-center justify-center mt-6">
-                <p className="text-[15px] opacity-90 text-[#555] text-center mb-[18px] max-w-[520px] leading-relaxed mx-auto">
-                    Choose a mood. Choose an occasion.<br />AURSA finds what fits — instantly.
-                </p>
-                <div className="flex items-center justify-center gap-[14px] flex-wrap w-full mt-[10px]">
-
-                    {/* Occasion Dropdown */}
-                    <div className="relative w-full md:w-auto group">
-                        <select className="appearance-none w-full md:w-auto h-[48px] pl-[18px] pr-[36px] rounded-[28px] border border-black/10 bg-white text-[15px] text-[#333] min-w-[170px] outline-none transition-all duration-300 ease-out shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-black/15 hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] focus:border-[#c9822f] focus:shadow-[0_0_0_3px_rgba(201,130,47,0.12)] cursor-pointer">
-                            <option value="">Occasion</option>
-                            <option>Work</option>
-                            <option>Casual</option>
-                            <option>Date</option>
-                            <option>Party</option>
-                            <option>Travel</option>
-                        </select>
-                        <div className="absolute right-[16px] top-1/2 -translate-y-1/2 pointer-events-none opacity-60">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-
-                    {/* Mood Dropdown */}
-                    <div className="relative w-full md:w-auto group">
-                        <select className="appearance-none w-full md:w-auto h-[48px] pl-[18px] pr-[36px] rounded-[28px] border border-black/10 bg-white text-[15px] text-[#333] min-w-[170px] outline-none transition-all duration-300 ease-out shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-black/15 hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] focus:border-[#c9822f] focus:shadow-[0_0_0_3px_rgba(201,130,47,0.12)] cursor-pointer">
-                            <option value="">Mood</option>
-                            <option>Minimal</option>
-                            <option>Bold</option>
-                            <option>Relaxed</option>
-                            <option>Elegant</option>
-                            <option>Confident</option>
-                        </select>
-                        <div className="absolute right-[16px] top-1/2 -translate-y-1/2 pointer-events-none opacity-60">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                        onClick={() => setShowUnlockMsg(true)}
-                        className="w-full md:w-auto h-[48px] px-[22px] rounded-[28px] bg-[#D08A3C] text-white text-[15px] font-medium transition-all duration-150 shadow-[0_6px_18px_rgba(201,130,47,0.25)] hover:-translate-y-[1px] hover:shadow-[0_10px_24px_rgba(201,130,47,0.30)] flex items-center justify-center">
-                        Find Outfit
-                    </button>
-
-                </div>
-
-                {/* Unlock Message */}
-                {showUnlockMsg && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeOut' }}
-                        className="flex flex-col items-center mt-[14px]"
-                    >
-                        <p style={{ fontSize: '14px', color: '#666', textAlign: 'center', letterSpacing: '0.3px', opacity: 0.9 }}>
-                            Unlock this in the AURSA app.
-                        </p>
-                        <a
-                            href="#download"
-                            className="mt-3 h-[40px] px-[18px] rounded-[20px] bg-neutral-800 text-white text-[13px] font-medium flex items-center justify-center hover:bg-neutral-700 transition-colors"
-                        >
-                            Download the App
-                        </a>
-                    </motion.div>
-                )}
-
-            </div>
-
-            {/* Colors closing statement */}
-            <div className="w-full flex justify-center" style={{ marginTop: '60px' }}>
-                <p
-                    className="font-sans text-[#D88A3D] uppercase tracking-[0.25em] font-bold text-center"
-                    style={{ fontSize: '24px' }}
-                >
-                    Your colors. Your contrast. Your style.
-                </p>
-            </div>
-
-
-        </section>
-    );
-};
-
-
-// ── Section 7 · Long-Term Vision ──────────────────────────────────────────
-
-const VisionSection = () => {
-    const cardContainer = {
-        hidden: {},
-        visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
-    };
-    const cardAnim = {
-        hidden: { opacity: 0, y: 24 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } }
-    };
-
-    const stages = [
-        {
-            subtitle: 'Day 1',
-            title: 'Outfit Analysis',
-            body: 'Each outfit reveals signals like color harmony, contrast, layering, and balance.'
-        },
-        {
-            subtitle: 'Week 2',
-            title: 'Pattern Discovery',
-            body: 'AURSA begins detecting patterns in your color palette, contrast level, and layering habits.'
-        },
-        {
-            subtitle: 'Month 1',
-            title: 'Style Identity',
-            body: 'Your wardrobe reveals a clear visual identity and consistent style energy.'
-        }
-    ];
-
-    return (
-        <section
-            className="py-[70px] md:py-[90px] lg:py-[120px] px-5 md:px-8 lg:px-12 bg-[#0B0F1A] flex flex-col items-center text-center overflow-hidden"
-            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
-        >
-            {/* Section Label */}
-            <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-                className="text-xs uppercase tracking-[0.25em] text-neutral-500 mb-4 text-center"
-            >
-                The Future of Your Style
-            </motion.p>
-
-            {/* Main Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
-                className="font-serif text-4xl md:text-5xl text-white text-center mb-6 leading-tight"
-            >
-                Your style becomes clearer over time.
-            </motion.h2>
-
-            {/* Explanation */}
-            <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-                className="text-neutral-400 text-lg text-center max-w-[600px] mx-auto mb-16"
-            >
-                Every outfit you check teaches AURSA something about you.
-            </motion.p>
-
-            {/* 3-Stage Card Timeline */}
-            <div className="relative w-full max-w-4xl mx-auto">
-                {/* Connecting line behind cards */}
-                <div
-                    className="absolute hidden md:block top-[72px] left-[calc(16.67%+20px)] right-[calc(16.67%+20px)]"
-                    style={{ height: '1px', background: 'rgba(255,255,255,0.1)' }}
-                />
-
-                <motion.div
-                    variants={cardContainer}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: '-80px' }}
-                    className="flex justify-center items-start gap-6 flex-wrap"
-                >
-                    {stages.map((stage, i) => (
-                        <motion.div
-                            key={i}
-                            variants={cardAnim}
-                            className="bg-[#1a1a22] rounded-2xl border border-white/5 p-6 max-w-[240px] text-center flex flex-col items-center gap-3"
-                        >
-                            {/* Step number dot */}
-                            <div className="w-8 h-8 rounded-full border border-[#D88A3D]/60 flex items-center justify-center mb-1">
-                                <span className="text-[#D88A3D] text-xs font-bold">{i + 1}</span>
-                            </div>
-                            {/* Subtitle */}
-                            <span className="text-neutral-500 text-[10px] uppercase tracking-[0.2em]">
-                                {i === 0 ? 'Day 1' : i === 1 ? 'Week 2' : 'Month 1'}
-                            </span>
-                            {/* Title */}
-                            <h3 className="font-serif text-white text-lg leading-tight">
-                                {i === 0 ? 'You understand your outfit' : i === 1 ? 'Patterns start to appear' : 'Your style becomes clear'}
-                            </h3>
-                        </motion.div>
-                    ))}
-                </motion.div>
-            </div>
-
-            {/* Closing Statement */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.18, ease: 'easeOut' }}
-                className="mt-20 text-center"
-            >
-                {/* Copper divider */}
-                <div className="w-16 h-px bg-[#D88A3D] mx-auto mb-6" />
-                {/* Focus text */}
-                <p className="font-serif text-3xl md:text-4xl text-white leading-tight">
-                    Your style was always there.<br />
-                    AURSA just helps you see it.
-                </p>
-            </motion.div>
-
-        </section>
-    );
-};
-
-// ── Section 9 · Download Section ─────────────────────────────────────────────
-
-// ── Section 8 · Download Section ─────────────────────────────────────────────
-
-const DownloadSection = () => (
-    <section id="final-cta" className="py-[80px] md:py-[120px] px-5 md:px-8 bg-[#FFFFFF] flex flex-col items-center justify-center text-center" style={{ borderTop: '1px solid rgba(0,0,0,0.05)', scrollMarginTop: '100px' }}>
-        <div className="max-w-xl mx-auto flex flex-col items-center">
-
-            <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.18, ease: 'easeOut' }}
-                className="text-4xl md:text-5xl font-serif mb-6 text-[#0B0F1A] leading-tight"
-            >
-                Step out without second-guessing
-            </motion.h2>
-
-            <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="text-[#555] text-lg mb-10 font-light leading-relaxed max-w-[500px]"
-            >
-                Check your outfit in seconds and feel confident before you leave
-            </motion.p>
-
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.2 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full"
-            >
-                <a
-                    href="https://apps.apple.com/in/app/aursa/id6761254001"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="opacity-90 hover:opacity-100 transition-opacity duration-200"
-                >
-                    <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="App Store" className="h-[60px] md:h-[84px] w-auto object-contain" />
-                </a>
-                <a
-                    href="https://play.google.com/store/apps/details?id=com.aursa.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="opacity-90 hover:opacity-100 transition-opacity duration-200"
-                >
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-[53px] md:h-[75px] w-auto object-contain" />
-                </a>
-            </motion.div>
-
-        </div>
-    </section>
-);
-
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 
@@ -1737,7 +212,7 @@ const Footer = () => {
                         {[
                             { name: 'About', url: '/about' },
                             { name: 'Contact', url: '/contact' },
-                            { name: 'Privacy Policy', url: '/privacy-policy' }
+                            { name: 'Privacy Policy', url: '/privacy' }
                         ].map((link) => (
                             <Link
                                 key={link.name}
@@ -1770,7 +245,7 @@ const Footer = () => {
                         lineHeight: 0.9,
                         margin: 0,
                         padding: 0,
-                        opacity: 0.8 // Copper tone with reduced opacity
+                        opacity: 0.8
                     }}
                 >
                     {letters.map((char, index) => (
@@ -1790,37 +265,79 @@ const Footer = () => {
     );
 };
 
-// ── Google Analytics Tracker ────────────────────────────────────────────────
+// ── Analytics Tracker ────────────────────────────────────────────────────────
 const AnalyticsTracker = () => {
     const location = useLocation();
 
-    useEffect(() => {
-        const titleMap = {
-            '/': 'AURSA — AI Outfit Analysis & Personal Style App',
-            '/about': 'About — AURSA',
-            '/contact': 'Contact — AURSA',
-            '/privacy-policy': 'Privacy Policy — AURSA',
-            '/investors': 'Investors — AURSA',
-            '/mirror': 'AI Mirror — AURSA',
-            '/journal': 'The AURSA Journal — Style, Confidence & Identity',
-            '/blog': 'The AURSA Journal — Style, Confidence & Identity',
-        };
+    const getPageMetadata = (pathname) => {
+        if (pathname === '/') return { pageType: 'brand_gateway', contentTrack: 'brand', title: 'AURSA — Personal Style & Fashion Retail Intelligence' };
+        if (pathname === '/retail') return { pageType: 'retail_commercial', contentTrack: 'retail', title: 'Fashion Retail Intelligence for the Fitting-Room Decision | AURSA' };
+        if (pathname === '/app') return { pageType: 'consumer_product', contentTrack: 'personal', title: 'AURSA — AI Outfit Checker & Personal Style App' };
+        if (pathname === '/smart-fitting-room') return { pageType: 'retail_pillar', contentTrack: 'retail', title: 'Smart Fitting Rooms Without New Hardware | AURSA' };
+        if (pathname === '/fitting-room-intelligence') return { pageType: 'retail_pillar', contentTrack: 'retail', title: 'What Is Fitting Room Intelligence? | AURSA' };
+        if (pathname === '/fitting-room-analytics') return { pageType: 'retail_pillar', contentTrack: 'retail', title: 'Fitting Room Analytics & Shopper Decision Insights | AURSA' };
+        if (pathname === '/in-store-personalization') return { pageType: 'retail_pillar', contentTrack: 'retail', title: 'In-Store Personalization for Fashion Retail | AURSA' };
+        if (pathname === '/personal-style-intelligence') return { pageType: 'consumer_pillar', contentTrack: 'personal', title: 'What Is Personal Style Intelligence? | AURSA' };
+        if (pathname === '/insights') return { pageType: 'insights_hub', contentTrack: 'brand', title: 'AURSA Insights — Retail & Personal Style Intelligence' };
+        if (pathname.startsWith('/blog/')) return { pageType: 'article', contentTrack: 'personal', title: 'AURSA Insights' };
+        return { pageType: 'trust', contentTrack: 'trust', title: 'AURSA' };
+    };
 
-        if (location.pathname.startsWith('/blog/') || location.pathname.startsWith('/journal/')) {
+    const { pageType, contentTrack, title } = getPageMetadata(location.pathname);
+
+    // Instrument scroll depth tracking per page view
+    useScrollDepth(location.pathname, pageType);
+
+    useEffect(() => {
+        if (!location.pathname.startsWith('/blog/')) {
+            document.title = title;
+        }
+
+        trackEvent('page_view', {
+            path: location.pathname,
+            page_type: pageType,
+            content_track: contentTrack,
+            page_title: title
+        });
+    }, [location.pathname, pageType, contentTrack, title]);
+
+    return null;
+};
+
+// ── Legacy Hash & SPA 404 Redirect Helper ─────────────────────────────────
+const LegacyHashRedirect = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // 1. Handle GitHub Pages / 404 query redirect "?/about"
+        const search = window.location.search;
+        if (search && search.startsWith('?/')) {
+            const cleanPath = search.slice(2).replace(/~and~/g, '&');
+            let targetPath = cleanPath;
+            if (targetPath === '/privacy-policy') targetPath = '/privacy';
+            navigate(targetPath, { replace: true });
             return;
         }
 
-        const newTitle = titleMap[location.pathname] || 'AURSA';
-        document.title = newTitle;
-
-        if (window.gtag) {
-            window.gtag('event', 'page_view', {
-                page_path: location.pathname,
-                page_title: newTitle,
-                page_location: window.location.href
-            });
+        // 2. Handle legacy hash URLs e.g. "/#/about" or "/#/privacy-policy"
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#/')) {
+            let targetPath = hash.slice(1);
+            if (targetPath === '/privacy-policy') targetPath = '/privacy';
+            navigate(targetPath, { replace: true });
+            return;
         }
-    }, [location]);
+
+        // 3. Handle sessionStorage redirect fallback
+        const redirect = sessionStorage.getItem("redirect");
+        if (redirect) {
+            sessionStorage.removeItem("redirect");
+            let targetPath = redirect;
+            if (targetPath.startsWith('#/')) targetPath = targetPath.slice(1);
+            if (targetPath === '/privacy-policy') targetPath = '/privacy';
+            navigate(targetPath, { replace: true });
+        }
+    }, [navigate]);
 
     return null;
 };
@@ -1837,59 +354,79 @@ const PageWrapper = ({ children }) => (
     </motion.div>
 );
 
+// ── 404 Not Found Component ──────────────────────────────────────────────────
+const NotFoundPage = () => (
+    <PageWrapper>
+        <SEOHead
+            title="404: Page Not Found — AURSA"
+            description="The requested page could not be found."
+            robots="noindex, nofollow"
+        />
+        <div className="min-h-[#70vh] bg-[#0F0F13] text-[#F5F5F7] font-sans flex flex-col items-center justify-center p-6 text-center pt-32 pb-24">
+            <h1 className="font-serif text-5xl md:text-6xl mb-4 text-[#F5F5F7]">404 — Page Not Found</h1>
+            <p className="text-[#A1A1AA] text-lg mb-8 max-w-md font-light">
+                The page you are looking for doesn't exist or has been moved.
+            </p>
+            <Link
+                to="/"
+                className="inline-flex items-center justify-center px-8 py-4 border border-white/20 bg-transparent hover:bg-[#D88A3D] hover:border-[#D88A3D] text-white text-xs font-bold uppercase tracking-[0.3em] transition-all duration-200"
+            >
+                Return Home
+            </Link>
+        </div>
+    </PageWrapper>
+);
+
 // ── Animated Routes Component ────────────────────────────────────────────────
 const AnimatedRoutes = () => {
     const location = useLocation();
 
     return (
-        <AnimatePresence mode="wait">
-            <Routes location={location} key={location.pathname}>
-                <Route path="/" element={
-                    <PageWrapper>
-                        {/* 1 · Hero */}
-                        <HeroSection />
+        <Suspense fallback={<div className="min-h-screen bg-[#0F0F13]" />}>
+            <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                    <Route path="/" element={<PageWrapper><BrandGatewayHomepage /></PageWrapper>} />
+                    <Route path="/retail" element={<PageWrapper><RetailPage /></PageWrapper>} />
+                    <Route path="/app" element={<PageWrapper><AppPage /></PageWrapper>} />
+                    <Route path="/smart-fitting-room" element={<PageWrapper><SmartFittingRoomPage /></PageWrapper>} />
+                    <Route path="/fitting-room-intelligence" element={<PageWrapper><FittingRoomIntelligencePage /></PageWrapper>} />
+                    <Route path="/fitting-room-analytics" element={<PageWrapper><FittingRoomAnalyticsPage /></PageWrapper>} />
+                    <Route path="/in-store-personalization" element={<PageWrapper><InStorePersonalizationPage /></PageWrapper>} />
+                    <Route path="/personal-style-intelligence" element={<PageWrapper><PersonalStyleIntelligencePage /></PageWrapper>} />
 
-                        {/* 2 · Mirror Moment */}
-                        <MirrorMomentSection />
-                    </PageWrapper>
-                } />
-
-                <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
-                <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
-                <Route path="/privacy-policy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
-                <Route path="/investors" element={<PageWrapper><InvestorsPage /></PageWrapper>} />
-                <Route path="/mirror" element={<Mirror />} />
-                <Route path="/journal" element={<PageWrapper><BlogPage /></PageWrapper>} />
-                <Route path="/blog" element={<PageWrapper><BlogPage /></PageWrapper>} />
-                <Route path="/blog/:slug" element={<PageWrapper><BlogPostPage /></PageWrapper>} />
-            </Routes>
-        </AnimatePresence>
+                    <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
+                    <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
+                    <Route path="/privacy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
+                    <Route path="/privacy-policy" element={<PageWrapper><PrivacyPolicyPage /></PageWrapper>} />
+                    <Route path="/investors" element={<PageWrapper><InvestorsPage /></PageWrapper>} />
+                    <Route path="/mirror" element={<Mirror />} />
+                    <Route path="/insights" element={<PageWrapper><BlogPage /></PageWrapper>} />
+                    <Route path="/journal" element={<Navigate to="/insights" replace />} />
+                    <Route path="/blog" element={<Navigate to="/insights" replace />} />
+                    <Route path="/blog/:slug" element={<PageWrapper><BlogPostPage /></PageWrapper>} />
+                    <Route path="/journal/:slug" element={<PageWrapper><BlogPostPage /></PageWrapper>} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+            </AnimatePresence>
+        </Suspense>
     );
 };
 
 // ── Root App ──────────────────────────────────────────────────────────────────
 
 const App = () => {
-    useEffect(() => {
-        const redirect = sessionStorage.getItem("redirect");
-        if (redirect) {
-            sessionStorage.removeItem("redirect");
-            window.location.hash = redirect;
-        }
-    }, []);
-
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden">
             <style>{`
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Questrial&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Instrument+Serif:ital@0;1&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Questrial&family=Instrument+Serif:ital@0;1&display=swap');
 
             .font-serif  { font-family: 'Instrument Serif', serif; }
             .font-sans   { font-family: 'Inter', sans-serif; }
             .font-neutra { font-family: 'Questrial', sans-serif; }
-            .font-hatton { font-family: 'Fraunces', serif; }
         `}</style>
 
             <Router>
+                <LegacyHashRedirect />
                 <AnalyticsTracker />
                 <ScrollToTop />
                 <ScrollProgress />

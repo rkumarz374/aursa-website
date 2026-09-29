@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Clock, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import { blogPosts } from './blogData';
 import MarkdownRenderer from './MarkdownRenderer';
+import SEOHead from '../../components/SEOHead';
+import { trackEvent } from '../../lib/analytics';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 24 },
@@ -43,7 +45,7 @@ const BlogPostPage = () => {
     const handleCopyLink = (e) => {
         e.preventDefault();
         if (!post) return;
-        const cleanUrl = `${window.location.origin}/#/blog/${post.slug}`;
+        const cleanUrl = `${window.location.origin}/blog/${post.slug}`;
         navigator.clipboard.writeText(cleanUrl)
             .then(() => {
                 setCopied(true);
@@ -52,161 +54,157 @@ const BlogPostPage = () => {
             .catch(() => {});
     };
 
-    const cleanShareUrl = post ? `${window.location.origin}/#/blog/${post.slug}` : '';
+    const cleanShareUrl = post ? `${window.location.origin}/blog/${post.slug}` : '';
     const shareUrl = encodeURIComponent(cleanShareUrl);
-    const shareTitle = encodeURIComponent(`AURSA Journal — ${post ? post.title : ''}`);
+    const shareTitle = encodeURIComponent(`AURSA Insights — ${post ? post.title : ''}`);
     const twitterShareUrl = `https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`;
     const linkedinShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`;
-
-    useEffect(() => {
-        if (!post) {
-            document.title = 'AURSA Journal';
-            return;
-        }
-
-        // 1. Title
-        document.title = `AURSA Journal — ${post.title}`;
-
-        // Helper to update or create a meta tag safely
-        const updateMetaTag = (name, value, isProperty = false) => {
-            let el = isProperty 
-                ? document.querySelector(`meta[property="${name}"]`) 
-                : document.querySelector(`meta[name="${name}"]`);
-            
-            if (!el) {
-                el = document.createElement('meta');
-                if (isProperty) {
-                    el.setAttribute('property', name);
-                } else {
-                    el.setAttribute('name', name);
-                }
-                document.head.appendChild(el);
-            }
-            el.setAttribute('content', value);
-        };
-
-        // 2. Custom Meta & Social Sharing
-        const seoDescription = post.metaDescription || post.excerpt;
-        const currentUrl = window.location.href;
-
-        updateMetaTag('description', seoDescription);
-        
-        updateMetaTag('og:title', `AURSA Journal — ${post.title}`, true);
-        updateMetaTag('og:description', seoDescription, true);
-        updateMetaTag('og:type', 'article', true);
-        updateMetaTag('og:url', currentUrl, true);
-        updateMetaTag('og:image', post.ogImage || post.coverImage, true);
-
-        updateMetaTag('twitter:card', 'summary_large_image');
-        updateMetaTag('twitter:title', `AURSA Journal — ${post.title}`);
-        updateMetaTag('twitter:description', seoDescription);
-        updateMetaTag('twitter:image', post.ogImage || post.coverImage);
-
-        // 3. Canonical Link Support
-        let canonical = document.querySelector('link[rel="canonical"]');
-        if (!canonical) {
-            canonical = document.createElement('link');
-            canonical.setAttribute('rel', 'canonical');
-            document.head.appendChild(canonical);
-        }
-        canonical.setAttribute('href', post.canonicalUrl || currentUrl);
-
-        // 4. JSON-LD Schema.org Structured Data
-        let schemaScript = document.getElementById('jsonld-article-schema');
-        if (!schemaScript) {
-            schemaScript = document.createElement('script');
-            schemaScript.id = 'jsonld-article-schema';
-            schemaScript.type = 'application/ld+json';
-            document.head.appendChild(schemaScript);
-        }
-
-        // Safe Date Parsing
-        let datePublished;
-        try {
-            datePublished = new Date(post.publishedAt || post.date).toISOString();
-        } catch (e) {
-            datePublished = new Date().toISOString();
-        }
-
-        let dateModified;
-        try {
-            dateModified = new Date(post.updatedAt || post.date).toISOString();
-        } catch (e) {
-            dateModified = new Date().toISOString();
-        }
-
-        const schemaData = {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": post.title,
-            "description": seoDescription,
-            "image": post.ogImage || post.coverImage,
-            "datePublished": datePublished,
-            "dateModified": dateModified,
-            "author": {
-                "@type": "Person",
-                "name": post.author || "AURSA",
-                "url": window.location.origin
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "AURSA",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": `${window.location.origin}/logo.png`
-                }
-            },
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": post.canonicalUrl || currentUrl
-            }
-        };
-        schemaScript.textContent = JSON.stringify(schemaData);
-
-        // Cleanup on unmount
-        return () => {
-            const tagsToRemove = [
-                'meta[name="description"]',
-                'meta[property="og:title"]',
-                'meta[property="og:description"]',
-                'meta[property="og:type"]',
-                'meta[property="og:url"]',
-                'meta[property="og:image"]',
-                'meta[name="twitter:card"]',
-                'meta[name="twitter:title"]',
-                'meta[name="twitter:description"]',
-                'meta[name="twitter:image"]',
-                'link[rel="canonical"]'
-            ];
-            tagsToRemove.forEach(selector => {
-                const el = document.querySelector(selector);
-                if (el) el.remove();
-            });
-            const schema = document.getElementById('jsonld-article-schema');
-            if (schema) schema.remove();
-        };
-    }, [post]);
 
     if (!post) {
         return (
             <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans flex flex-col items-center justify-center p-6 text-center">
+                <SEOHead
+                    title="Entry Not Found — AURSA Insights"
+                    description="We couldn't locate that article."
+                    noindex={true}
+                />
                 <h1 className="font-serif text-4xl mb-4 text-[#FFFFFF]">Entry Not Found</h1>
                 <p className="text-[#A1A1AA] text-lg mb-8 max-w-md">
-                    We couldn't locate that journal entry. It may have been archived or moved.
+                    We couldn't locate that article. It may have been archived or moved.
                 </p>
                 <Link
-                    to="/journal"
+                    to="/insights"
                     className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 bg-transparent hover:bg-[#D88A3D] hover:border-[#D88A3D] text-white rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all duration-200"
                 >
                     <ArrowLeft size={14} />
-                    Back to Journal
+                    Back to AURSA Insights
                 </Link>
             </div>
         );
     }
 
+    const seoDescription = post.metaDescription || post.excerpt;
+
+    let datePublished;
+    try {
+        datePublished = new Date(post.publishedAt || post.date).toISOString();
+    } catch (e) {
+        datePublished = new Date().toISOString();
+    }
+
+    let dateModified = null;
+    if (post.updatedAt) {
+        try {
+            dateModified = new Date(post.updatedAt).toISOString();
+        } catch (e) { /* silent fail */ }
+    }
+
+    let rawCanonical = post.canonicalUrl || `https://aursa.app/blog/${post.slug}`;
+    rawCanonical = rawCanonical.replace(/https?:\/\/(www\.)?aursa\.(com|app)\/#\//g, 'https://aursa.app/');
+    if (!rawCanonical.startsWith('http')) {
+        rawCanonical = `https://aursa.app${rawCanonical.startsWith('/') ? rawCanonical : `/${rawCanonical}`}`;
+    }
+    const articleCanonical = rawCanonical;
+
+    const blogPostingObj = {
+        "@type": "BlogPosting",
+        "@id": `${articleCanonical}#article`,
+        "url": articleCanonical,
+        "headline": post.title,
+        "description": seoDescription,
+        "image": post.ogImage || post.coverImage,
+        "datePublished": datePublished,
+        "author": post.author && post.author !== 'AURSA' ? {
+            "@type": "Person",
+            "name": post.author
+        } : {
+            "@type": "Organization",
+            "@id": "https://aursa.app/#organization",
+            "name": "AURSA"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "@id": "https://aursa.app/#organization",
+            "name": "AURSA"
+        },
+        "isPartOf": {
+            "@type": "WebSite",
+            "@id": "https://aursa.app/#website"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleCanonical
+        },
+        "articleSection": "Personal Style Intelligence"
+    };
+
+    if (dateModified) {
+        blogPostingObj.dateModified = dateModified;
+    }
+
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "https://aursa.app/#organization",
+                "name": "AURSA",
+                "url": "https://aursa.app/",
+                "logo": "https://aursa.app/aursa-logo.svg",
+                "sameAs": [
+                    "https://www.instagram.com/aursa.ai/",
+                    "https://www.linkedin.com/company/aursa",
+                    "https://x.com/AursaAI"
+                ]
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://aursa.app/#website",
+                "url": "https://aursa.app/",
+                "name": "AURSA",
+                "publisher": {
+                    "@id": "https://aursa.app/#organization"
+                }
+            },
+            blogPostingObj,
+            {
+                "@type": "BreadcrumbList",
+                "@id": `${articleCanonical}#breadcrumb`,
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "AURSA",
+                        "item": "https://aursa.app/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Insights",
+                        "item": "https://aursa.app/insights"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
+                        "name": post.title,
+                        "item": articleCanonical
+                    }
+                ]
+            }
+        ]
+    };
+
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-40 pb-24 text-left relative">
+            <SEOHead
+                title={`AURSA Insights — ${post.title}`}
+                description={seoDescription}
+                canonical={articleCanonical}
+                path={`/blog/${post.slug}`}
+                ogImage={post.ogImage || post.coverImage}
+                ogType="article"
+                schema={articleSchema}
+            />
             {/* Background Ambient Glow */}
             <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
                 <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[#D88A3D]/5 rounded-full blur-[140px]" />
@@ -216,11 +214,11 @@ const BlogPostPage = () => {
                 {/* Back Link */}
                 <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="mb-12">
                     <Link
-                        to="/journal"
+                        to="/insights"
                         className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#A1A1AA] hover:text-[#D88A3D] transition-colors duration-200 group"
                     >
                         <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform duration-200" />
-                        Back to Journal
+                        Back to AURSA Insights
                     </Link>
                 </motion.div>
 
@@ -240,7 +238,7 @@ const BlogPostPage = () => {
                     </p>
 
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-[10px] md:text-xs tracking-[0.2em] uppercase text-[#A1A1AA] border-t border-white/5 w-full pt-6 mt-8 font-neutra">
-                        <span className="text-[#D88A3D] font-bold">{post.category}</span>
+                        <span className="text-[#D88A3D] font-bold">Personal Style Intelligence — {post.category}</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-white/10 hidden sm:inline-block" />
                         <span>{post.readTime}</span>
                         <span className="w-1.5 h-1.5 rounded-full bg-white/10 hidden sm:inline-block" />
@@ -348,6 +346,7 @@ const BlogPostPage = () => {
                             href="https://apps.apple.com/in/app/aursa/id6761254001"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackEvent('app_store_click', { store: 'apple', source: 'article' })}
                             className="opacity-80 hover:opacity-100 transition-opacity duration-200"
                         >
                             <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us" alt="App Store" className="h-[74px] md:h-[84px] w-auto" />
@@ -439,10 +438,10 @@ const BlogPostPage = () => {
                     )}
 
                     <Link
-                        to="/journal"
+                        to="/insights"
                         className="text-[#A1A1AA] hover:text-[#D88A3D] transition-colors duration-200"
                     >
-                        Journal
+                        AURSA Insights
                     </Link>
 
                     {nextPost ? (

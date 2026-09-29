@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Linkedin } from 'lucide-react';
+import SEOHead from '../components/SEOHead';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -10,6 +11,11 @@ const fadeInUp = {
 const AboutPage = () => {
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-40 pb-24 text-left">
+            <SEOHead
+                title="About — AURSA"
+                description="Understand AURSA's mission: solving outfit uncertainty before you step out so you can wear with confidence."
+                path="/about"
+            />
             <div className="max-w-3xl mx-auto px-6 space-y-16 md:space-y-24">
 
                 {/* Section 1 — Opening */}

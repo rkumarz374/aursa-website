@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEOHead from '../components/SEOHead';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -9,6 +10,11 @@ const fadeInUp = {
 const InvestorsPage = () => {
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-40 pb-24 text-left">
+            <SEOHead
+                title="Investors — AURSA"
+                description="AURSA is building an AI-powered system that helps people understand their style, reduce uncertainty, and feel confident."
+                path="/investors"
+            />
 
             <div className="max-w-3xl mx-auto px-6 space-y-12">
 

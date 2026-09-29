@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowUpRight } from 'lucide-react';
+import SEOHead from '../components/SEOHead';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -10,6 +11,11 @@ const fadeInUp = {
 const ContactPage = () => {
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-40 pb-24 text-left">
+            <SEOHead
+                title="Contact — AURSA"
+                description="Get in touch with AURSA for questions, feedback, partnerships, or retail pilot inquiries."
+                path="/contact"
+            />
             <div className="max-w-2xl mx-auto px-6 space-y-16 md:space-y-20">
                 
                 {/* Header Section */}

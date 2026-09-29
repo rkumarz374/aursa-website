@@ -1,0 +1,45 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy/",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/journal",
+      "destination": "/insights",
+      "permanent": true
+    },
+    {
+      "source": "/journal/",
+      "destination": "/insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog/",
+      "destination": "/insights",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/mirror",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/mirror/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

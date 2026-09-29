@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import posthog from 'posthog-js';
+import SEOHead from '../components/SEOHead';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -403,9 +404,19 @@ export default function Mirror() {
         return "This look has potential — a small shift could elevate it.";
     };
 
+    const head = (
+        <SEOHead
+            title="AI Mirror — AURSA"
+            description="AURSA AI Mirror outfit analysis tool."
+            path="/mirror"
+            noindex={true}
+        />
+    );
+
     if (step === 'entry') {
         return (
             <div style={S.root}>
+                {head}
                 <div className="noise-layer" />
                 <div className="relative z-10 w-full flex flex-col items-center">
                     {usage && (

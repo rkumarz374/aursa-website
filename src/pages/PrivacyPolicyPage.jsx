@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SEOHead from '../components/SEOHead';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -9,6 +10,11 @@ const fadeInUp = {
 const PrivacyPolicyPage = () => {
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-24 md:pt-32 pb-24 text-left">
+            <SEOHead
+                title="Privacy Policy — AURSA"
+                description="AURSA Privacy Policy: Read how AURSA handles data with a privacy-first approach and outfit image handling policy."
+                path="/privacy"
+            />
             <div className="max-w-3xl mx-auto px-6 space-y-12">
                 
                 {/* Header */}
