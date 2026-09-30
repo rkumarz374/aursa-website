@@ -5,6 +5,7 @@ import { ArrowRight, Building2, Smartphone, ShieldCheck, Sparkles, CheckCircle2,
 import SEOHead from '../components/SEOHead';
 import RetailTrialRoomExperience from '../components/retail/RetailTrialRoomExperience';
 import { trackEvent } from '../lib/analytics';
+import { useRetailPilotModal } from '../context/RetailPilotModalContext';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 24 },
@@ -13,6 +14,7 @@ const fadeInUp = {
 
 const RetailPage = () => {
     const shouldReduceMotion = useReducedMotion();
+    const { openPilotModal } = useRetailPilotModal();
     const motionProps = shouldReduceMotion 
         ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
         : { initial: "hidden", whileInView: "visible", viewport: { once: true, margin: "-60px" }, variants: fadeInUp };
@@ -73,13 +75,13 @@ const RetailPage = () => {
                     </motion.p>
 
                     <motion.div {...motionProps} className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                        <a
-                            href="#retail-pilot"
-                            onClick={() => trackEvent('retail_pilot_cta_click', { source: 'hero' })}
-                            className="px-8 py-4 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl"
+                        <button
+                            type="button"
+                            onClick={(e) => openPilotModal('hero', e)}
+                            className="px-8 py-4 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl cursor-pointer"
                         >
                             Request a Retail Pilot
-                        </a>
+                        </button>
                         <a
                             href="#trial-room-experience"
                             onClick={() => trackEvent('retail_trial_room_cta_click', { source: 'hero' })}
@@ -343,13 +345,13 @@ const RetailPage = () => {
                     </p>
 
                     <div className="pt-4">
-                        <Link
-                            to="/contact?interest=retail-pilot"
-                            onClick={() => trackEvent('retail_pilot_cta_click', { source: 'final_pilot' })}
-                            className="inline-flex items-center justify-center px-10 py-5 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl"
+                        <button
+                            type="button"
+                            onClick={(e) => openPilotModal('final_pilot', e)}
+                            className="inline-flex items-center justify-center px-10 py-5 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl cursor-pointer"
                         >
                             Request a Retail Pilot
-                        </Link>
+                        </button>
                     </div>
 
                     <p className="text-xs text-[#A1A1AA] font-light pt-4 font-neutra">

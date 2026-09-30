@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, ArrowUpRight } from 'lucide-react';
 import SEOHead from '../components/SEOHead';
+import { useRetailPilotModal } from '../context/RetailPilotModalContext';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -9,6 +11,15 @@ const fadeInUp = {
 };
 
 const ContactPage = () => {
+    const [searchParams] = useSearchParams();
+    const { openPilotModal } = useRetailPilotModal();
+
+    useEffect(() => {
+        if (searchParams.get('interest') === 'retail-pilot') {
+            openPilotModal('deep_link', null, true);
+        }
+    }, [searchParams]);
+
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-32 md:pt-40 pb-24 text-left">
             <SEOHead

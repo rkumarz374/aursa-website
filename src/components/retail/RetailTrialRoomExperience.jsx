@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Smartphone, Sparkles, ShieldCheck, CheckCircle2, QrCode, Eye, Layers } from 'lucide-react';
 import { trackEvent } from '../../lib/analytics';
+import { useRetailPilotModal } from '../../context/RetailPilotModalContext';
 
 const STEPS = [
     {
@@ -52,6 +53,9 @@ const RetailTrialRoomExperience = () => {
     const shouldReduceMotion = useReducedMotion();
     const [hasStarted, setHasStarted] = useState(false);
     const [hasCompleted, setHasCompleted] = useState(false);
+    const { openPilotModal } = useRetailPilotModal();
+
+    const currentStep = STEPS[currentStepIndex];
 
     const changeStep = (newIndex) => {
         if (!hasStarted) {
@@ -341,14 +345,14 @@ const RetailTrialRoomExperience = () => {
                                             The decision belongs to the shopper. AURSA provides clarity to make the choice confident.
                                         </p>
                                         <div>
-                                            <a
-                                                href="#retail-pilot"
-                                                onClick={() => trackEvent('retail_pilot_cta_click', { source: 'trial_room' })}
-                                                className="inline-flex items-center gap-2 px-6 py-3 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.2em] transition-all duration-200 rounded-xl"
+                                            <button
+                                                type="button"
+                                                onClick={(e) => openPilotModal('trial_room', e)}
+                                                className="inline-flex items-center gap-2 px-6 py-3 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.2em] transition-all duration-200 rounded-xl cursor-pointer"
                                             >
                                                 <span>Request a Retail Pilot</span>
                                                 <ArrowRight size={14} />
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 )}

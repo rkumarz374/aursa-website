@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, UserCheck, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import SEOHead from '../../components/SEOHead';
 import { trackEvent } from '../../lib/analytics';
+import { useRetailPilotModal } from '../../context/RetailPilotModalContext';
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 24 },
@@ -12,6 +13,7 @@ const fadeInUp = {
 
 const InStorePersonalizationPage = () => {
     const shouldReduceMotion = useReducedMotion();
+    const { openPilotModal } = useRetailPilotModal();
     const motionProps = shouldReduceMotion 
         ? { initial: { opacity: 1, y: 0 }, animate: { opacity: 1, y: 0 } }
         : { initial: "hidden", whileInView: "visible", viewport: { once: true, margin: "-60px" }, variants: fadeInUp };
@@ -140,13 +142,13 @@ const InStorePersonalizationPage = () => {
                         >
                             Explore AURSA Retail
                         </Link>
-                        <Link
-                            to="/retail#retail-pilot"
-                            onClick={() => trackEvent('retail_pillar_cta_click', { pillar: 'in_store_personalization', destination: 'pilot' })}
-                            className="px-8 py-4 border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl"
+                        <button
+                            type="button"
+                            onClick={(e) => openPilotModal('pillar_page', e)}
+                            className="px-8 py-4 border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl cursor-pointer"
                         >
                             Request a Retail Pilot
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </section>

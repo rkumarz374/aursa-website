@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Smartphone, ShieldCheck, Sparkles, CheckCircle2, Heart, Layers, UserCheck } from 'lucide-react';
 import SEOHead from '../components/SEOHead';
+import AppDownloadSection from '../components/AppDownloadSection';
 import { trackEvent } from '../lib/analytics';
 
 const fadeInUp = {
@@ -34,7 +35,7 @@ const AppPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden pt-28 sm:pt-32 pb-24 text-left relative">
+        <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden text-left relative">
             <SEOHead
                 title="AURSA — AI Outfit Checker & Personal Style App"
                 description="Use AURSA as a private AI outfit checker and personal style companion when you're standing in front of the mirror and wondering whether a look works for you."
@@ -44,52 +45,86 @@ const AppPage = () => {
             />
 
             {/* ── SECTION 1: HERO — MIRROR MOMENT ─────────────────────────────── */}
-            <section className="relative min-h-[80vh] flex flex-col justify-center items-center px-6 pt-8 pb-16 overflow-hidden">
+            <section className="relative min-h-screen min-h-[100svh] flex flex-col justify-center pt-28 sm:pt-32 pb-16 px-6 overflow-hidden bg-[#0F0F13]">
+                {/* Layer 0 & 1: Hero Background Photography & Dark Warm Overlay */}
                 <div className="absolute inset-0 pointer-events-none z-0">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[750px] bg-[#D88A3D]/8 rounded-full blur-[140px]" />
+                    {/* Background Photograph */}
+                    <div
+                        className="absolute inset-0 bg-no-repeat bg-cover bg-[70%_center] sm:bg-[70%_center] lg:bg-[70%_center]"
+                        style={{
+                            backgroundImage: `url('/mirror%20moment.png')`
+                        }}
+                    />
+                    {/* Dark Warm Cinematic Overlay protecting Left Copy */}
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            background: 'linear-gradient(90deg, rgba(12, 10, 12, 0.95) 0%, rgba(12, 10, 12, 0.88) 40%, rgba(12, 10, 12, 0.55) 70%, rgba(12, 10, 12, 0.25) 100%)'
+                        }}
+                    />
+                    {/* Top & Bottom Subtle Vibe Gradients */}
+                    <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-[#0F0F13] to-transparent" />
+                    <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#0F0F13] to-transparent" />
                 </div>
 
-                <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
-                    <motion.div {...motionProps} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D88A3D]/30 bg-[#D88A3D]/10 backdrop-blur-md">
-                        <Smartphone size={14} className="text-[#D88A3D]" />
-                        <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.35em] text-[#D88A3D] font-neutra">
-                            YOUR AI STYLE MIRROR
-                        </span>
-                    </motion.div>
+                <div className="max-w-[1200px] mx-auto relative z-10 w-full">
+                    <div className="max-w-2xl text-left space-y-8">
+                        <motion.div {...motionProps} className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#D88A3D]/30 bg-[#D88A3D]/10 backdrop-blur-md">
+                            <Smartphone size={13} className="text-[#D88A3D]" />
+                            <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.35em] text-[#D88A3D]">
+                                YOUR AI STYLE MIRROR
+                            </span>
+                        </motion.div>
 
-                    <motion.h1 
-                        {...motionProps}
-                        className="font-serif text-[#FFFFFF] text-4xl sm:text-6xl md:text-7xl font-normal leading-[1.1] tracking-tight max-w-3xl mx-auto"
-                    >
-                        Does this actually work for me?
-                    </motion.h1>
-
-                    <motion.p 
-                        {...motionProps}
-                        className="font-sans text-[#A1A1AA] text-lg sm:text-xl md:text-2xl font-light leading-relaxed max-w-2xl mx-auto"
-                    >
-                        AURSA gives you a private second opinion on your outfit when you're standing in front of the mirror and unsure.
-                    </motion.p>
-
-                    <motion.div {...motionProps} className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                        <Link
-                            to="/mirror"
-                            onClick={() => trackEvent('consumer_try_aursa_click', { source: 'hero' })}
-                            className="px-8 py-4 border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl"
+                        <motion.h1 
+                            {...motionProps}
+                            className="font-serif text-[#FFFFFF] text-4xl sm:text-6xl lg:text-7xl font-normal leading-[1.08] sm:leading-[1.05] tracking-tight text-left"
                         >
-                            Try AURSA
-                        </Link>
-                        <a
-                            href="#download-aursa"
-                            className="px-8 py-4 border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-[0.25em] transition-all duration-200 rounded-xl"
-                        >
-                            Download AURSA
-                        </a>
-                    </motion.div>
+                            Does this actually work for me?
+                        </motion.h1>
 
-                    <motion.p {...motionProps} className="text-xs text-[#A1A1AA] font-light font-neutra tracking-wider pt-2">
-                        Wear with Confidence.
-                    </motion.p>
+                        <motion.p 
+                            {...motionProps}
+                            className="font-sans text-[#A1A1AA] text-base sm:text-xl font-light leading-relaxed max-w-xl text-left"
+                        >
+                            AURSA gives you a private second opinion on your outfit when you're standing in front of the mirror and unsure.
+                        </motion.p>
+
+                        <motion.div {...motionProps} className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
+                            <a
+                                href="https://apps.apple.com/in/app/aursa/id6761254001"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => trackEvent('app_store_click', { store: 'apple', source: 'consumer_hero', platform: 'ios' })}
+                                className="opacity-90 hover:opacity-100 transition-opacity duration-200"
+                            >
+                                <img 
+                                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" 
+                                    alt="Download on the App Store" 
+                                    className="h-[46px] sm:h-[50px] w-auto object-contain" 
+                                />
+                            </a>
+                            <a
+                                href="https://play.google.com/store/apps/details?id=com.aursa.app"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => trackEvent('app_store_click', { store: 'google', source: 'consumer_hero', platform: 'android' })}
+                                className="opacity-90 hover:opacity-100 transition-opacity duration-200"
+                            >
+                                <img 
+                                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                                    alt="Get it on Google Play" 
+                                    className="h-[46px] sm:h-[50px] w-auto object-contain" 
+                                />
+                            </a>
+                        </motion.div>
+
+                        <motion.div {...motionProps} className="pt-2 border-t border-white/10 max-w-md">
+                            <p className="text-xs text-[#A1A1AA] font-light tracking-wider">
+                                Your outfit photo isn't stored.
+                            </p>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -249,52 +284,7 @@ const AppPage = () => {
             </section>
 
             {/* ── SECTION 7: DOWNLOAD AURSA ────────────────────────────────────── */}
-            <section id="download-aursa" className="py-24 px-6 border-t border-white/5 bg-[#16161C]/50 relative z-10 scroll-mt-28">
-                <div className="max-w-3xl mx-auto text-center space-y-8">
-                    <p className="text-[#D88A3D] text-xs font-bold uppercase tracking-[0.35em] font-neutra">WEAR WITH CONFIDENCE</p>
-
-                    <h2 className="font-serif text-4xl sm:text-5xl text-[#FFFFFF]">
-                        Take AURSA to your mirror.
-                    </h2>
-
-                    <p className="text-base sm:text-lg text-[#A1A1AA] font-light leading-relaxed max-w-xl mx-auto">
-                        Available on iPhone and Android. Download the personal style app to get an instant private second opinion whenever you stand in front of the mirror.
-                    </p>
-
-                    <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-                        <a
-                            href="https://apps.apple.com/in/app/aursa/id6761254001"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => trackEvent('app_store_click', { store: 'apple', source: 'app_page' })}
-                            className="opacity-90 hover:opacity-100 transition-opacity duration-200"
-                        >
-                            <img 
-                                src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" 
-                                alt="Download on the App Store" 
-                                className="h-[44px] sm:h-[48px] w-auto object-contain" 
-                            />
-                        </a>
-                        <a
-                            href="https://play.google.com/store/apps/details?id=com.aursa.app"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => trackEvent('app_store_click', { store: 'google', source: 'app_page' })}
-                            className="opacity-90 hover:opacity-100 transition-opacity duration-200"
-                        >
-                            <img 
-                                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
-                                alt="Get it on Google Play" 
-                                className="h-[44px] sm:h-[48px] w-auto object-contain" 
-                            />
-                        </a>
-                    </div>
-
-                    <p className="text-xs text-[#A1A1AA] font-light pt-6 font-neutra">
-                        Wear with Confidence.
-                    </p>
-                </div>
-            </section>
+            <AppDownloadSection source="app_page" />
         </div>
     );
 };

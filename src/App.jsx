@@ -6,6 +6,8 @@ import SEOHead, { HOMEPAGE_SCHEMA } from "./components/SEOHead";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { trackEvent } from './lib/analytics';
 import { useScrollDepth } from './hooks/useScrollDepth';
+import { RetailPilotModalProvider, useRetailPilotModal } from './context/RetailPilotModalContext';
+import RetailPilotModal from './components/retail/RetailPilotModal';
 
 // ── Lazy-loaded Page Routes ────────────────────────────────────────────────
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -26,28 +28,43 @@ const PersonalStyleIntelligencePage = lazy(() => import("./pages/PersonalStyleIn
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
 
-const NavLink = ({ href, children }) => (
-    <Link
-        to={href}
-        className="relative group text-[10px] uppercase tracking-[0.4em] text-[#A1A1AA] hover:text-[#F5F5F7] transition-colors duration-200 px-3 py-1"
-    >
-        {children}
-        <span className="absolute left-0 -bottom-[4px] h-[1px] w-0 bg-[#D88A3D] transition-all duration-150 group-hover:w-full" />
-    </Link>
-);
+const NavLink = ({ href, children }) => {
+    const location = useLocation();
+    const isExactMatch = location.pathname === href;
+    const isActive = isExactMatch || (href === '/insights' && (location.pathname.startsWith('/blog/') || location.pathname.startsWith('/journal/')));
+
+    return (
+        <Link
+            to={href}
+            aria-current={isExactMatch ? 'page' : undefined}
+            className={`relative group text-[11px] uppercase tracking-[0.3em] font-medium px-3 py-1 transition-colors duration-200 ${
+                isActive ? 'text-[#D88A3D]' : 'text-[#A1A1AA] hover:text-[#F5F5F7]'
+            }`}
+        >
+            {children}
+            <span
+                className={`absolute left-0 -bottom-[4px] h-[1px] bg-[#D88A3D] transition-all duration-150 ${
+                    isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}
+            />
+        </Link>
+    );
+};
 
 const Navbar = () => {
+    const location = useLocation();
     const { scrollY } = useScroll();
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const { openPilotModal } = useRetailPilotModal();
 
     useMotionValueEvent(scrollY, 'change', (latest) => {
         setScrolled(latest > 40);
     });
 
     const navBg = scrolled
-        ? 'rgba(22,22,28,0.88)'
-        : 'rgba(22,22,28,0.60)';
+        ? 'rgba(22,22,28,0.92)'
+        : 'rgba(22,22,28,0.70)';
 
     return (
         <>
@@ -81,11 +98,22 @@ const Navbar = () => {
                         />
                     </Link>
 
-                    {/* Right side navigation (Desktop) */}
-                    <div className="hidden md:flex items-center gap-2 ml-auto">
-                        <NavLink href="/about">About</NavLink>
+                    {/* Desktop navigation links */}
+                    <div className="hidden md:flex items-center gap-1 lg:gap-3 ml-auto mr-4">
+                        <NavLink href="/app">Consumer App</NavLink>
                         <NavLink href="/insights">Insights</NavLink>
-                        <NavLink href="/contact">Contact</NavLink>
+                        <NavLink href="/about">About</NavLink>
+                    </div>
+
+                    {/* Primary Commercial CTA Button */}
+                    <div className="hidden md:flex items-center">
+                        <button
+                            type="button"
+                            onClick={(e) => openPilotModal('navbar', e)}
+                            className="px-4 py-2 rounded-xl border border-[#D88A3D] bg-[#D88A3D] hover:bg-[#F0B67F] hover:border-[#F0B67F] text-[#0F0F13] text-[10px] uppercase font-bold tracking-[0.25em] transition-all duration-200 shrink-0 cursor-pointer"
+                        >
+                            Request a Pilot
+                        </button>
                     </div>
 
                     {/* Mobile hamburger */}
@@ -123,7 +151,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
                         transition={{ duration: 0.15 }}
-                        className="md:hidden fixed z-40 flex flex-col items-start gap-1 px-6 py-4 left-4 right-4 sm:left-6 sm:right-6"
+                        className="md:hidden fixed z-40 flex flex-col items-start gap-1 px-6 py-5 left-4 right-4 sm:left-6 sm:right-6"
                         style={{
                             top: '80px',
                             background: 'rgba(22,22,28,0.96)',
@@ -132,16 +160,41 @@ const Navbar = () => {
                             borderRadius: '16px',
                         }}
                     >
-                        {[['/about', 'About'], ['/insights', 'Insights'], ['/contact', 'Contact']].map(([href, label]) => (
-                            <Link
-                                key={href}
-                                to={href}
-                                onClick={() => setMenuOpen(false)}
-                                className="w-full text-[11px] uppercase tracking-[0.35em] text-[#A1A1AA] hover:text-[#F5F5F7] py-3 border-b border-white/5 last:border-none transition-colors duration-200"
+                        {[
+                            ['/app', 'Consumer App'],
+                            ['/insights', 'Insights'],
+                            ['/about', 'About']
+                        ].map(([href, label]) => {
+                            const isExactMatch = location.pathname === href;
+                            const isActive = isExactMatch || (href === '/insights' && (location.pathname.startsWith('/blog/') || location.pathname.startsWith('/journal/')));
+                            return (
+                                <Link
+                                    key={href}
+                                    to={href}
+                                    aria-current={isExactMatch ? 'page' : undefined}
+                                    onClick={() => setMenuOpen(false)}
+                                    className={`w-full text-[11px] uppercase tracking-[0.35em] py-3 border-b border-white/5 font-medium transition-colors duration-200 flex items-center justify-between ${
+                                        isActive ? 'text-[#D88A3D]' : 'text-[#A1A1AA] hover:text-[#F5F5F7]'
+                                    }`}
+                                >
+                                    <span>{label}</span>
+                                    {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#D88A3D]" />}
+                                </Link>
+                            );
+                        })}
+
+                        <div className="w-full pt-4">
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    setMenuOpen(false);
+                                    openPilotModal('mobile_nav', e);
+                                }}
+                                className="w-full py-3.5 flex items-center justify-center rounded-xl border border-[#D88A3D] bg-[#D88A3D] text-[#0F0F13] text-xs uppercase font-bold tracking-[0.25em] cursor-pointer"
                             >
-                                {label}
-                            </Link>
-                        ))}
+                                Request a Pilot
+                            </button>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -208,10 +261,12 @@ const Footer = () => {
                 {/* Right Column: Origin + Links */}
                 <div className="flex flex-col items-center md:items-end gap-8">
                     {/* Navigation links */}
-                    <div className="flex items-center gap-6 md:gap-8">
+                    <div className="flex flex-wrap items-center justify-center md:justify-end gap-6 md:gap-8">
                         {[
-                            { name: 'About', url: '/about' },
+                            { name: 'Retail', url: '/retail' },
+                            { name: 'Consumer App', url: '/app' },
                             { name: 'Insights', url: '/insights' },
+                            { name: 'About', url: '/about' },
                             { name: 'Contact', url: '/contact' },
                             { name: 'Privacy Policy', url: '/privacy' }
                         ].map((link) => (
@@ -428,25 +483,27 @@ const App = () => {
     return (
         <div className="min-h-screen bg-[#0F0F13] text-[#F5F5F7] font-sans selection:bg-[#D88A3D]/30 w-full overflow-x-hidden">
             <style>{`
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Questrial&family=Instrument+Serif:ital@0;1&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Instrument+Serif:ital@0;1&display=swap');
 
             .font-serif  { font-family: 'Instrument Serif', serif; }
             .font-sans   { font-family: 'Inter', sans-serif; }
-            .font-neutra { font-family: 'Questrial', sans-serif; }
         `}</style>
 
             <Router>
-                <LegacyHashRedirect />
-                <AnalyticsTracker />
-                <ScrollToTop />
-                <ScrollProgress />
-                <Navbar />
+                <RetailPilotModalProvider>
+                    <LegacyHashRedirect />
+                    <AnalyticsTracker />
+                    <ScrollToTop />
+                    <ScrollProgress />
+                    <Navbar />
 
-                <main className="relative z-10">
-                    <AnimatedRoutes />
-                </main>
+                    <main className="relative z-10">
+                        <AnimatedRoutes />
+                    </main>
 
-                <Footer />
+                    <Footer />
+                    <RetailPilotModal />
+                </RetailPilotModalProvider>
             </Router>
         </div>
     );
