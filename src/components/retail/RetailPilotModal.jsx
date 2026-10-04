@@ -157,7 +157,7 @@ const RetailPilotModal = () => {
                         <div className="pt-4 space-y-5 flex flex-col items-center">
                             <a
                                 href="mailto:hello@aursa.app?subject=AURSA%20Retail%20Pilot%20Request"
-                                onClick={() => trackEvent('retail_pilot_submit', { method: 'email_client', channel: 'primary_button' })}
+                                onClick={() => trackEvent('retail_pilot_contact_open', { contact_method: 'email', channel: 'primary_button', origin_path: window.location.pathname })}
                                 className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-[#D88A3D] hover:bg-[#F0B67F] text-[#0F0F13] font-bold uppercase tracking-[0.25em] text-xs sm:text-sm rounded-xl transition-all duration-200 shadow-lg active:scale-[0.99] w-full sm:w-auto"
                             >
                                 <Mail size={16} className="shrink-0" />
@@ -168,7 +168,7 @@ const RetailPilotModal = () => {
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
                                 <a
                                     href="mailto:hello@aursa.app?subject=AURSA%20Retail%20Pilot%20Request"
-                                    onClick={() => trackEvent('retail_pilot_submit', { method: 'email_client', channel: 'text_link' })}
+                                    onClick={() => trackEvent('retail_pilot_contact_open', { contact_method: 'email', channel: 'text_link', origin_path: window.location.pathname })}
                                     className="font-serif text-base sm:text-lg text-[#F5F5F7] hover:text-[#D88A3D] transition-colors"
                                 >
                                     hello@aursa.app

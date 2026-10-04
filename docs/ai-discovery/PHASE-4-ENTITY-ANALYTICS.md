@@ -29,13 +29,13 @@ Primary Goals:
 
 ## 3. ENTITY CONSISTENCY MATRIX
 
-| Channel | Current Copy / Summary | Current Category | Target Semantic Entity | Consistent? | Change Required? | Who Must Change It? |
-| :--- | :--- | :--- | :--- | :---: | :---: | :--- |
-| **AURSA Website (aursa.app)** | "Instant personalized outfit second opinion before stepping out / Fitting-room decision support" | Personal Style Intelligence / Retail AI | Consumer & Retail canonical definitions fully implemented | YES | NO (Frozen Phase 2) | N/A (Code Complete) |
-| **App Store (iOS)** | "AURSA: Personal Style Intelligence & Outfit Second Opinion" | Lifestyle / Utilities | B2C Canonical Entity | ALIGNED | Suggested copy refinement | **FOUNDER ACTION REQUIRED** |
-| **Google Play (Android)** | "AURSA — AI Outfit Second Opinion" | Lifestyle | B2C Canonical Entity | ALIGNED | Suggested copy refinement | **FOUNDER ACTION REQUIRED** |
-| **LinkedIn Company Profile** | "AI Confidence Infrastructure for Fashion Retail & Personal Style Intelligence" | Software / Retail Intelligence | B2C + B2B Canonical Entity | ALIGNED | Optional profile sync | **FOUNDER ACTION REQUIRED** |
-| **External Startup Directories** | Various draft profiles | Technology / Fashion Tech | Unified Semantic Entity | PENDING AUDIT | Founder copy update | **FOUNDER ACTION REQUIRED** |
+| Channel | Current Copy / Summary | Current Category | Target Semantic Entity | Consistent? | Classification Status | Who Must Change It? |
+| :--- | :--- | :--- | :--- | :---: | :--- | :--- |
+| **AURSA Website (aursa.app)** | "Instant personalized outfit second opinion before stepping out / Fitting-room decision support" | Personal Style Intelligence / Retail AI | Consumer & Retail canonical definitions fully implemented | YES | **ALIGNED — NO CHANGE REQUIRED** | N/A (Code Complete) |
+| **App Store (iOS)** | "AURSA: Personal Style Intelligence & Outfit Second Opinion" | Lifestyle / Utilities | B2C Canonical Entity | YES | **ALIGNED — OPTIONAL OPTIMIZATION** | **FOUNDER ACTION REQUIRED** |
+| **Google Play (Android)** | "AURSA — AI Outfit Second Opinion" | Lifestyle | B2C Canonical Entity | YES | **ALIGNED — OPTIONAL OPTIMIZATION** | **FOUNDER ACTION REQUIRED** |
+| **LinkedIn Company Profile** | "AI Confidence Infrastructure for Fashion Retail & Personal Style Intelligence" | Software / Retail Intelligence | B2C + B2B Canonical Entity | YES | **ALIGNED — OPTIONAL OPTIMIZATION** | **FOUNDER ACTION REQUIRED** |
+| **External Startup Directories** | Various draft profiles | Technology / Fashion Tech | Unified Semantic Entity | PENDING AUDIT | **NOT VERIFIED** | **FOUNDER ACTION REQUIRED** |
 
 ---
 
@@ -52,7 +52,7 @@ Audited pages:
 - `/retail-pilot` (B2B Retail Pilot Request)
 - Structured Data (`JSON-LD` schemas on all pages)
 
-**Status**: 100% Consistent. All Phase 2 content strictly preserves B2C ("personalized outfit second opinion") and B2B ("fitting-room purchase decision support"). No contradictions exist.
+**Status**: **ALIGNED — NO CHANGE REQUIRED**. All Phase 2 content strictly preserves B2C ("personalized outfit second opinion") and B2B ("fitting-room purchase decision support"). No contradictions exist.
 
 ---
 
@@ -62,8 +62,7 @@ Audited pages:
 - **Subtitle**: Personal Outfit Second Opinion
 - **Description Copy**: "Get an instant, private second opinion on what you're wearing before you step out. Wear with Confidence."
 - **Category**: Lifestyle
-- **Founder Action**: Update App Store Connect promotional text and short description with exact Phase 4 target semantic entity.
-- **Status**: **FOUNDER ACTION REQUIRED**
+- **Status**: **ALIGNED — OPTIONAL OPTIMIZATION** (Founder may optimize promotional text in App Store Connect).
 
 ---
 
@@ -74,7 +73,7 @@ Audited pages:
 - **Full Description**: Aligned with B2C Canonical Entity.
 - **Category**: Lifestyle
 - **Package Identity**: `com.aursa.app`
-- **Status**: **FOUNDER ACTION REQUIRED** (Console entry updates)
+- **Status**: **ALIGNED — OPTIONAL OPTIMIZATION** (Console entry updates optional).
 
 ---
 
@@ -82,24 +81,22 @@ Audited pages:
 
 - **Tagline**: Personal Style Intelligence & AI Confidence Infrastructure for Retail
 - **About Section**: Highlighting both Consumer fitting-room decision confidence and Retail purchase hesitation reduction.
-- **Status**: **FOUNDER ACTION REQUIRED** (Manual profile updates)
+- **Status**: **ALIGNED — OPTIONAL OPTIMIZATION** (Optional profile sync).
 
 ---
 
-## 8. MANUAL FOUNDER CHANGES REQUIRED
+## 8. MANUAL FOUNDER ACTIONS SUMMARY
 
 ```markdown
-[FOUNDER ACTION REQUIRED] App Store Listing Update:
-- Title: AURSA — Outfit Second Opinion
+[FOUNDER ACTION REQUIRED] App Store Connect Campaign Links:
+- Create campaign: "AI Discovery" in App Store Connect Analytics to track iOS campaign downloads.
+
+[FOUNDER ACTION OPTIONAL] App Store Listing Copy Refinement:
 - Subtitle: Wear with Confidence
 - Promotional Text: Instant personalized second opinion on what you're wearing before you step out.
 
-[FOUNDER ACTION REQUIRED] Google Play Store Update:
+[FOUNDER ACTION OPTIONAL] Google Play Store Copy Refinement:
 - Short Description: Instant personalized outfit second opinion before you step out.
-- Category: Lifestyle
-
-[FOUNDER ACTION REQUIRED] App Store Connect Campaign Links:
-- Create campaign: "AI Discovery" in App Store Connect Analytics to track iOS campaign downloads.
 ```
 
 ---
@@ -114,46 +111,44 @@ Audited pages:
 
 ---
 
-## 10. EXISTING EVENT INVENTORY
+## 10. CANONICAL EVENT DICTIONARY
 
-| Event Name | Where Fired | GA4? | PostHog? | Web / Mobile | Parameters | Action Taken |
-| :--- | :--- | :---: | :---: | :---: | :--- | :--- |
-| `page_view` | `App.jsx` | YES | YES | Web | `path`, `page_type`, `content_track`, `page_title`, `ai_source`, `content_cluster` | KEPT / ENRICHED |
-| `scroll_depth_reached` | `useScrollDepth.js` | YES | YES | Web | `depth_percentage`, `path`, `page_type`, `ai_source` | KEPT / ENRICHED |
-| `ai_referral_visit` | `analytics.js` | YES | YES | Web | `ai_source`, `detection_method`, `landing_path`, `referrer_host`, `content_cluster` | **NEW PHASE 4** |
-| `app_store_click` | `AppDownloadSection`, `AppPage`, `BlogPostPage` | YES | YES | Web | `store` ('apple'), `source`, `platform` ('ios'), `store_platform` ('ios'), `origin_path`, `ai_source`, `content_cluster` | KEPT / ENRICHED |
-| `play_store_click` | `AppDownloadSection`, `AppPage` | YES | YES | Web | `store` ('google'), `source`, `platform` ('android'), `store_platform` ('android'), `origin_path`, `ai_source`, `content_cluster` | **ENRICHED** |
-| `retail_pilot_cta_click` | `RetailPilotModalContext` | YES | YES | Web | `source`, `origin_path`, `ai_source`, `content_cluster` | KEPT / ENRICHED |
-| `retail_pilot_submit` | `RetailPilotModal` | YES | YES | Web | `method` ('email_client'), `channel`, `ai_source`, `content_cluster` | **ENRICHED** |
-| `app_install_attributed` | Android Native Launch | YES | YES | Mobile | `platform` ('android'), `acquisition_source`, `attribution_method` | **SPECIFIED / MOBILE** |
-| `first_look_check` | Android/iOS First Use | YES | YES | Mobile | `platform`, `acquisition_source` | **SPECIFIED / MOBILE** |
-
----
-
-## 11. AI SOURCE TAXONOMY
-
-Normalized internal acquisition sources:
-- `chatgpt`: OpenAI ChatGPT Search / chatgpt.com
-- `claude`: Anthropic Claude Search / claude.ai
-- `google_ai`: Google Search AI Overviews / AI Mode (measured via Search Console)
-- `bing_ai`: Microsoft Copilot / Bing AI Search
-- `other_ai`: Recognized specialized AI discovery surfaces
-- `unknown`: Standard web search or direct traffic
+| Event Name | Trigger | Status Label | Web / Mobile | GA4? | PostHog? | Parameters | Attribution Confidence | Limitation |
+| :--- | :--- | :--- | :---: | :---: | :---: | :--- | :--- | :--- |
+| `ai_referral_visit` | First load on AI landing | **LIVE** | Web | YES | YES | `ai_source`, `detection_method`, `landing_path`, `referrer_host`, `content_cluster` | DETERMINISTIC / BEST_EFFORT | Fires once per session via `aursa_ai_event_fired_v1` guard. |
+| `page_view` | React Router navigation | **LIVE** | Web | YES | YES | `path`, `page_type`, `content_track`, `page_title`, `ai_source`, `content_cluster` | Inherited Session | Standard SPA view event. |
+| `app_store_click` | iOS App Store CTA click | **LIVE** | Web | YES | YES | `store` ('apple'), `source`, `platform` ('ios'), `store_platform` ('ios'), `origin_path`, `ai_source`, `content_cluster` | Inherited Session | Web store click; does not prove app installation. |
+| `play_store_click` | Google Play Store CTA click | **LIVE** | Web | YES | YES | `store` ('google'), `source`, `platform` ('android'), `store_platform` ('android'), `origin_path`, `ai_source`, `content_cluster` | Inherited Session | Web store click; formats Play Store link with referrer token. |
+| `retail_pilot_cta_click` | Request Pilot CTA trigger | **LIVE** | Web | YES | YES | `source`, `origin_path`, `ai_source`, `content_cluster` | Inherited Session | Indicates user opened the pilot request modal. |
+| `retail_pilot_contact_open` | Email contact link clicked | **LIVE** | Web | YES | YES | `contact_method` ('email'), `channel`, `origin_path`, `ai_source`, `content_cluster` | Inherited Session | Measures email flow initiation; does not confirm email delivery. |
+| `retail_pilot_submit` | Backend form confirmation | **NOT IMPLEMENTED** | Web | NO | NO | N/A | N/A | No backend form or API confirmation exists currently. |
+| `qualified_lead` | CRM qualification | **NOT IMPLEMENTED** | Backend | NO | NO | N/A | N/A | No automated CRM qualification signal exists currently. |
+| `app_install_attributed` | Android first launch | **NOT LIVE / PENDING** | Mobile | NO | NO | `platform` ('android'), `acquisition_source`, `attribution_method` | DETERMINISTIC | Requires native Android Google Play Install Referrer parsing release. |
+| `first_look_check` | First outfit check | **SPECIFIED / NOT LIVE** | Mobile | NO | NO | `platform`, `acquisition_source`, `attribution_method` | SPECIFIED | Telemetry contract specified; native mobile release required. |
 
 ---
 
-## 12. ATTRIBUTION DETECTION RULES
+## 11. AI SOURCE TAXONOMY & STATUS
 
-1. **ChatGPT**:
-   - Primary: `utm_source=chatgpt.com` -> `ai_source = chatgpt` (`detection_method = utm`)
-   - Fallback: Referrer host contains `chatgpt.com` or `chat.openai.com` -> `ai_source = chatgpt` (`detection_method = referrer`)
-2. **Claude**:
-   - Best-effort Referrer: Referrer host contains `claude.ai` -> `ai_source = claude` (`detection_method = referrer`)
-3. **Bing AI / Copilot**:
-   - Referrer host contains `copilot.microsoft.com` -> `ai_source = bing_ai` (`detection_method = referrer`)
-4. **Session Persistence**:
-   - Stored in `sessionStorage` (`aursa_ai_session_v1`) upon first attributable land.
-   - Retained across internal SPA navigation so all downstream conversion events (`app_store_click`, `retail_pilot_submit`) inherit the acquisition origin.
+- `chatgpt`: 
+  - `utm_source=chatgpt.com`: **DETERMINISTIC WEBSITE REFERRAL EVIDENCE**.
+  - Recognized referrer host (`chatgpt.com`, `chat.openai.com`): **BEST_EFFORT** fallback.
+- `claude`: 
+  - Recognized referrer host (`claude.ai`): **BEST-EFFORT RULE IMPLEMENTED — LIVE SOURCE BEHAVIOR NOT YET OBSERVED**.
+- `bing_ai`: 
+  - Recognized referrer host (`copilot.microsoft.com`): **BEST-EFFORT RULE IMPLEMENTED — LIVE SOURCE BEHAVIOR NOT YET OBSERVED**.
+- `google_ai`: 
+  - Measured via **Google Search Console -> Generative AI Performance** (**AGGREGATE VISIBILITY**). Standard `google.com` organic search traffic is retained as organic search.
+- `unknown`: 
+  - Standard web search or direct traffic without referrer metadata.
+
+---
+
+## 12. ATTRIBUTION DETECTION & SESSION PERSISTENCE
+
+1. **Detection Rules**: `detectAIReferral()` evaluates query parameters and `document.referrer` hostname.
+2. **Session Persistence**: Stored in `sessionStorage` (`aursa_ai_session_v1`) upon first land. Preserved across internal SPA route navigation so downstream conversion events (`app_store_click`, `play_store_click`, `retail_pilot_contact_open`) retain the acquisition origin.
+3. **Session Guard**: `aursa_ai_event_fired_v1` ONLY guards the single `ai_referral_visit` event to prevent double-firing on internal navigation. It does NOT suppress downstream conversion events or page views.
 
 ---
 
@@ -163,137 +158,82 @@ Normalized internal acquisition sources:
 | :--- | :--- | :--- |
 | **DETERMINISTIC** | Explicit campaign query parameter or native install referrer token | ChatGPT UTM (`utm_source=chatgpt.com`), Android Google Play Install Referrer |
 | **BEST_EFFORT** | Browser referrer hostname string supplied during request | Claude.ai referrer header, Copilot referrer header |
-| **AGGREGATE** | Platform dashboard reporting (no per-user join) | Google Search Console (Generative AI), Bing Webmaster (AI Performance), App Store Connect Campaign Analytics |
+| **AGGREGATE ONLY** | Platform dashboard reporting (no per-user join) | Google Search Console (Generative AI), Bing Webmaster (AI Performance), App Store Connect Campaign Analytics |
 | **UNKNOWN** | Unattributed direct or un-tagged organic search | Standard browser visits without referrer metadata |
 
 ---
 
-## 14. GA4 EVENT DICTIONARY
+## 14. CONSUMER FUNNEL
 
-- `ai_referral_visit`: Triggered once per session on AI landing (`ai_source`, `detection_method`, `landing_path`, `referrer_host`, `content_cluster`).
-- `app_store_click`: Triggered on iOS App Store button click (`store`, `source`, `platform`, `store_platform`, `origin_path`, `ai_source`, `content_cluster`).
-- `play_store_click`: Triggered on Google Play Store button click (`store`, `source`, `platform`, `store_platform`, `origin_path`, `ai_source`, `content_cluster`).
-- `retail_pilot_click`: Triggered on Request Pilot button click (`source`, `origin_path`, `ai_source`, `content_cluster`).
-- `retail_pilot_submit`: Triggered on Retail Pilot contact email click (`method`, `channel`, `ai_source`, `content_cluster`).
-
----
-
-## 15. POSTHOG EVENT DICTIONARY
-
-Mirror taxonomy of GA4 dictionary with identical property structure passed through `trackEvent()`.
-
----
-
-## 16. CONSUMER FUNNEL
-
-`ai_referral_visit` (Web AI Land)  
+`ai_referral_visit` (Web AI Land - LIVE)  
 ↓  
-`page_view` / `scroll_depth_reached` (Consumer Content Cluster)  
+`page_view` / `scroll_depth_reached` (Consumer Cluster - LIVE)  
 ↓  
-`app_store_click` / `play_store_click` (Store CTA Click)  
+`app_store_click` / `play_store_click` (Store CTA Click - LIVE)  
 ↓  
-`app_install_attributed` (Attributable Mobile First Launch)  
+`app_install_attributed` (Attributable Mobile Launch - NOT LIVE / PENDING)  
 ↓  
-`first_look_check` (Attributable First Outfit Analysis)
+`first_look_check` (Attributable First Outfit Check - SPECIFIED / NOT LIVE)
 
 ---
 
-## 17. B2B RETAIL FUNNEL
+## 15. B2B RETAIL FUNNEL
 
-`ai_referral_visit` (Web AI Land)  
+`ai_referral_visit` (Web AI Land - LIVE)  
 ↓  
-`page_view` (Retail Content Cluster: `/retail`, `/retail-pilot`, Pillars)  
+`page_view` (Retail Content Cluster: `/retail`, `/retail-pilot`, Pillars - LIVE)  
 ↓  
-`retail_pilot_click` (Request Pilot Modal Trigger)  
+`retail_pilot_cta_click` (Request Pilot Modal Trigger - LIVE)  
 ↓  
-`retail_pilot_submit` (Pilot Email Contact Action)  
+`retail_pilot_contact_open` (Email Contact Intent - LIVE)  
 ↓  
-`qualified_lead` (*Future / Manual CRM Qualification*)
+*`retail_pilot_submit` (NOT IMPLEMENTED — Reserved for future backend confirmation)*  
+↓  
+*`qualified_lead` (NOT IMPLEMENTED — Reserved for future CRM qualification)*
 
 ---
 
-## 18. ANDROID INSTALL ATTRIBUTION STATUS
+## 16. ANDROID ATTRIBUTION — DETAILED REAL STATUS
 
-- **Web Construct**: Google Play store link (`com.aursa.app`) formatted with safe acquisition referrer parameter when originating from an AI session:
-  `https://play.google.com/store/apps/details?id=com.aursa.app&referrer=utm_source%3Dchatgpt.com%26utm_medium%3Dai_referral%26utm_campaign%3Daursa_ai_discovery`
-- **Native Implementation**: Android project audited for Google Play Install Referrer API integration.
-- **Status**: Technical web tracking complete. Native app release required for live Play Referrer parsing.
-
----
-
-## 19. IOS ATTRIBUTION STATUS
-
-- **Limitation**: Apple iOS does not support raw install-referrer parameters due to App Tracking Transparency rules.
-- **Mechanism**: App Store Connect Campaign Links (`pt`/`ct` tokens) represent aggregate campaign downloads.
-- **Status**: Aggregated attribution specified via App Store Connect. Per-user deterministic join excluded to maintain privacy and technical accuracy.
+- **Website Play Link Attribution**: **LIVE**. Formats Google Play destination URL with safe acquisition referrer token (`com.aursa.app`) when originating from an AI session.
+- **Native Install Referrer Parsing**: **NOT LIVE / PENDING**. Native mobile build update required to parse parameter on install.
+- **App Install Attributed Event**: **NOT LIVE / PENDING**.
+- **First Look Check AI Attribution**: **SPECIFIED / NOT LIVE**. Telemetry contract specified; native mobile build update required.
 
 ---
 
-## 20. FIRST LOOK CHECK ATTRIBUTION STATUS
+## 17. IOS ATTRIBUTION — DETAILED REAL STATUS
 
-- **Privacy Constraint**: Zero outfit image data, analysis results, or user appearance attributes are attached to telemetry.
-- **Telemetry Payload**: Includes only `platform`, `acquisition_source` (`chatgpt`, `claude`, `bing_ai`, `direct`), and `attribution_method`.
-
----
-
-## 21. GOOGLE AI MEASUREMENT MODEL
-
-- **Website Referral Policy**: Google Search traffic coming from `google.com` is NOT falsely marked as `google_ai`.
-- **Visibility Model**: Google AI Overviews and Google AI Mode impressions/clicks measured via **Google Search Console -> Generative AI Performance**.
+- **Website App Store Click**: **LIVE**. Measures iOS store CTA clicks (`app_store_click`).
+- **App Store Connect Campaign**: **FOUNDER ACTION REQUIRED**. Aggregate campaign download reporting via App Store Connect.
+- **iOS Install Attribution**: **AGGREGATE ONLY**. Individual per-user deterministic join not supported under Apple ATT privacy rules.
+- **Per-User ChatGPT → Install → First Look**: **NOT IMPLEMENTED / NOT CLAIMED**.
 
 ---
 
-## 22. BING AI MEASUREMENT MODEL
+## 18. PRIVACY & PII REVIEW
 
-- **Website Referral Policy**: Identifiable Copilot referrals (`copilot.microsoft.com`) normalized as `bing_ai`. Standard `bing.com` search retains normal search attribution.
-- **Visibility Model**: Measured via **Bing Webmaster Tools -> AI Performance**.
-
----
-
-## 23. CLAUDE ATTRIBUTION LIMITATIONS
-
-- Claude web links do not consistently transmit referrer headers across all browsers.
-- Detection is executed on a **best-effort basis** via `claude.ai` referrer host parsing without fabricating artificial precision.
-
----
-
-## 24. PRIVACY REVIEW
-
-- **PII Audit**: PASSED. No names, email addresses, phone numbers, or user inputs collected in event payloads.
-- **Content Privacy Audit**: PASSED. Zero outfit photos, style ratings, or analysis outputs logged.
+- **PII Audit**: **PASSED**. Zero email addresses, names, phone numbers, or user text stored in telemetry.
+- **Content Privacy Audit**: **PASSED**. Zero outfit photos, style ratings, or analysis outputs logged.
 - **URL Privacy**: Referrer URL paths stripped; only domain hostname preserved (`referrer_host`).
+- **Privacy Policy Status**: **NO CHANGE REQUIRED**. Telemetry is non-PII, session-level acquisition measurement extending existing analytics (GA4/PostHog). No new disclosure requirement triggered.
 
 ---
 
-## 25. BUILD & TEST RESULTS
+## 19. BUILD & TEST RESULTS
 
-- **Local Build (`npm run build`)**: SUCCESSFUL (Zero errors).
-- **Test Suite**: Verified all route clusters, attribution detection functions, and single-firing session mechanisms locally.
+- **Local Build (`npm run build`)**: **SUCCESSFUL** (Exit code 0).
+- **Static Prerendering**: 26 routes prerendered cleanly. `sitemap.xml` generated with 21 canonical URLs.
 
 ---
 
-## 26. PRODUCTION DEPLOYMENT
+## 20. PRODUCTION DEPLOYMENT & VERIFICATION
 
 - **Method**: GitHub `main` branch push (`git push origin main`).
-- **Live URL**: `https://aursa.app`
+- **Live URL**: `https://aursa.app` verified live.
 
 ---
 
-## 27. MOBILE-RELEASE REQUIREMENTS
+## 21. PHASE 5 HANDOFF
 
-Android Install Referrer parsing requires a native mobile build update before end-to-end install attribution is live on installed Android devices.
-
----
-
-## 28. REMAINING MANUAL ACTIONS
-
-1. Founder to update App Store Connect listing copy.
-2. Founder to update Google Play Console listing copy.
-3. Founder to update LinkedIn company profile tagline.
-4. Founder to generate App Store Connect Campaign Links for iOS AI tracking.
-
----
-
-## 29. PHASE 5 HANDOFF
-
-Phase 4 technical implementation complete. The AI discovery attribution engine is live and operational on `https://aursa.app`.
+Phase 4 technical implementation complete. The AI discovery attribution engine is live and operational on `https://aursa.app`. Phase 5 has NOT been started.
