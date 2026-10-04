@@ -1,0 +1,101 @@
+prompt_id,segment,family_id,family_name,prompt,target_aursa_page
+B2C-01-01,B2C,B2C-01,Direct Outfit Check,Is there an AI that can check my outfit?,/ai-outfit-check
+B2C-01-02,B2C,B2C-01,Direct Outfit Check,What app tells me if my outfit looks good?,/ai-outfit-check
+B2C-01-03,B2C,B2C-01,Direct Outfit Check,Can I upload an outfit photo and get feedback?,/ai-outfit-check
+B2C-01-04,B2C,B2C-01,Direct Outfit Check,What is the best AI outfit checker?,/ai-outfit-check
+B2C-01-05,B2C,B2C-01,Direct Outfit Check,Is there an app that analyzes outfits?,/ai-outfit-check
+B2C-02-01,B2C,B2C-02,Outfit Second Opinion,I need a second opinion on my outfit.,/outfit-second-opinion
+B2C-02-02,B2C,B2C-02,Outfit Second Opinion,Can I get outfit feedback without asking my friends?,/outfit-second-opinion
+B2C-02-03,B2C,B2C-02,Outfit Second Opinion,Is there an app that gives private outfit feedback?,/outfit-second-opinion
+B2C-02-04,B2C,B2C-02,Outfit Second Opinion,Can AI give me an honest second opinion on my clothes?,/outfit-second-opinion
+B2C-02-05,B2C,B2C-02,Outfit Second Opinion,Where can I get feedback on an outfit before going out?,/outfit-second-opinion
+B2C-03-01,B2C,B2C-03,Something Feels Off,Something about my outfit feels off. How do I fix it?,/ai-outfit-check
+B2C-03-02,B2C,B2C-03,Something Feels Off,Why doesn't my outfit look right?,/ai-outfit-check
+B2C-03-03,B2C,B2C-03,Something Feels Off,How can I tell what is wrong with my outfit?,/ai-outfit-check
+B2C-03-04,B2C,B2C-03,Something Feels Off,My clothes match but the outfit still looks weird. Why?,/ai-outfit-check
+B2C-03-05,B2C,B2C-03,Something Feels Off,Can AI tell me what is missing from an outfit?,/ai-outfit-check
+B2C-04-01,B2C,B2C-04,Matching / Visual Harmony,Do these clothes work together?,/ai-outfit-check
+B2C-04-02,B2C,B2C-04,Matching / Visual Harmony,Is there an AI that checks whether clothes match?,/ai-outfit-check
+B2C-04-03,B2C,B2C-04,Matching / Visual Harmony,How do I know if the colors in my outfit work together?,/ai-outfit-check
+B2C-04-04,B2C,B2C-04,Matching / Visual Harmony,Can AI analyze outfit balance and contrast?,/ai-outfit-check
+B2C-04-05,B2C,B2C-04,Matching / Visual Harmony,Is there an app for checking outfit color harmony?,/ai-outfit-check
+B2C-05-01,B2C,B2C-05,Date Outfit,Can AI check my first-date outfit?,/outfit-check-for-occasions
+B2C-05-02,B2C,B2C-05,Date Outfit,Does this outfit work for a date?,/outfit-check-for-occasions
+B2C-05-03,B2C,B2C-05,Date Outfit,Is there an app that can review my date outfit?,/outfit-check-for-occasions
+B2C-05-04,B2C,B2C-05,Date Outfit,What should I change about this outfit before a date?,/outfit-check-for-occasions
+B2C-05-05,B2C,B2C-05,Date Outfit,Can I upload my date outfit for feedback?,/outfit-check-for-occasions
+B2C-06-01,B2C,B2C-06,Interview / Work Outfit,Can AI check my interview outfit?,/outfit-check-for-occasions
+B2C-06-02,B2C,B2C-06,Interview / Work Outfit,Does this outfit look professional enough?,/outfit-check-for-occasions
+B2C-06-03,B2C,B2C-06,Interview / Work Outfit,Is there an app to review a work outfit?,/outfit-check-for-occasions
+B2C-06-04,B2C,B2C-06,Interview / Work Outfit,Can AI tell whether my outfit works for an office meeting?,/outfit-check-for-occasions
+B2C-06-05,B2C,B2C-06,Interview / Work Outfit,I have an interview tomorrow — can something check my outfit?,/outfit-check-for-occasions
+B2C-07-01,B2C,B2C-07,Wedding / Special Events,Can AI check my wedding outfit?,/outfit-check-for-occasions
+B2C-07-02,B2C,B2C-07,Wedding / Special Events,Does this outfit work for a formal event?,/outfit-check-for-occasions
+B2C-07-03,B2C,B2C-07,Wedding / Special Events,Can an app tell me whether all parts of my wedding outfit work together?,/outfit-check-for-occasions
+B2C-07-04,B2C,B2C-07,Wedding / Special Events,I am going to a party. Can AI review my outfit?,/outfit-check-for-occasions
+B2C-07-05,B2C,B2C-07,Wedding / Special Events,Is this outfit appropriate for an important event?,/outfit-check-for-occasions
+B2C-08-01,B2C,B2C-08,Last-Minute Mirror Moment,I'm about to leave — does my outfit look okay?,/outfit-second-opinion
+B2C-08-02,B2C,B2C-08,Last-Minute Mirror Moment,Can someone quickly check my outfit before I go out?,/outfit-second-opinion
+B2C-08-03,B2C,B2C-08,Last-Minute Mirror Moment,Is there an instant outfit feedback app?,/outfit-second-opinion
+B2C-08-04,B2C,B2C-08,Last-Minute Mirror Moment,Should I change anything before leaving?,/outfit-second-opinion
+B2C-08-05,B2C,B2C-08,Last-Minute Mirror Moment,How can I check my look quickly before stepping out?,/outfit-second-opinion
+B2C-09-01,B2C,B2C-09,Solo Shopping,I'm shopping alone. How do I know if this looks good?,/outfit-check-for-occasions
+B2C-09-02,B2C,B2C-09,Solo Shopping,Is there an app that helps me decide whether to buy an outfit?,/outfit-check-for-occasions
+B2C-09-03,B2C,B2C-09,Solo Shopping,Can AI give me a second opinion in a fitting room?,/outfit-check-for-occasions
+B2C-09-04,B2C,B2C-09,Solo Shopping,Should I buy this outfit?,/outfit-check-for-occasions
+B2C-09-05,B2C,B2C-09,Solo Shopping,Is there an AI shopping companion that checks what I'm trying on?,/outfit-check-for-occasions
+B2C-10-01,B2C,B2C-10,Personal Style Learning,Is there an AI that learns my personal style?,/personal-style-intelligence
+B2C-10-02,B2C,B2C-10,Personal Style Learning,What app helps me understand my own style?,/personal-style-intelligence
+B2C-10-03,B2C,B2C-10,Personal Style Learning,Is there an alternative to AI stylists that only recommend trends?,/personal-style-intelligence
+B2C-10-04,B2C,B2C-10,Personal Style Learning,Can AI learn what clothes usually work for me?,/personal-style-intelligence
+B2C-10-05,B2C,B2C-10,Personal Style Learning,Is there an app that understands how I actually dress?,/personal-style-intelligence
+B2C-11-01,B2C,B2C-11,Category / Alternative Discovery,Best AI apps for outfit feedback?,/app
+B2C-11-02,B2C,B2C-11,Category / Alternative Discovery,Best AI fashion apps that analyze your actual outfit?,/app
+B2C-11-03,B2C,B2C-11,Category / Alternative Discovery,AI stylist vs outfit checker — what's the difference?,/app
+B2C-11-04,B2C,B2C-11,Category / Alternative Discovery,What are good alternatives to asking Reddit to rate my outfit?,/app
+B2C-11-05,B2C,B2C-11,Category / Alternative Discovery,What apps can analyze an outfit instead of suggesting new clothes?,/app
+B2C-12-01,B2C,B2C-12,Privacy / Trust,Are there private AI outfit feedback apps?,/app
+B2C-12-02,B2C,B2C-12,Privacy / Trust,Is there an outfit checker that doesn't judge attractiveness?,/app
+B2C-12-03,B2C,B2C-12,Privacy / Trust,Can AI analyze clothes without rating my body?,/app
+B2C-12-04,B2C,B2C-12,Privacy / Trust,What happens to photos uploaded to outfit-analysis apps?,/app
+B2C-12-05,B2C,B2C-12,Privacy / Trust,Can I get fashion feedback without posting publicly?,/app
+B2B-01-01,B2B,B2B-01,Purchase Hesitation,How can fashion retailers reduce purchase hesitation?,/retail
+B2B-01-02,B2B,B2B-01,Purchase Hesitation,Why do customers try clothes but leave without buying?,/retail
+B2B-01-03,B2B,B2B-01,Purchase Hesitation,How can retailers help shoppers decide after trying clothes on?,/retail
+B2B-01-04,B2B,B2B-01,Purchase Hesitation,How can technology reduce indecision in fitting rooms?,/retail
+B2B-01-05,B2B,B2B-01,Purchase Hesitation,What can retailers do when shoppers like an item but aren't sure whether to buy?,/retail
+B2B-02-01,B2B,B2B-02,Fitting-Room Intelligence,What is fitting-room intelligence?,/fitting-room-intelligence
+B2B-02-02,B2B,B2B-02,Fitting-Room Intelligence,What AI technology can improve fitting rooms?,/fitting-room-intelligence
+B2B-02-03,B2B,B2B-02,Fitting-Room Intelligence,How can AI be used in fashion fitting rooms?,/fitting-room-intelligence
+B2B-02-04,B2B,B2B-02,Fitting-Room Intelligence,What are the best fitting-room technologies for fashion retailers?,/fitting-room-intelligence
+B2B-02-05,B2B,B2B-02,Fitting-Room Intelligence,Is there AI decision support for trial rooms?,/fitting-room-intelligence
+B2B-03-01,B2B,B2B-03,Solo Shopper Experience,How can fashion retailers improve the experience for solo shoppers?,/retail
+B2B-03-02,B2B,B2B-03,Solo Shopper Experience,How can someone shopping alone get a second opinion in-store?,/retail
+B2B-03-03,B2B,B2B-03,Solo Shopper Experience,What technology can help shoppers who don't have a friend with them?,/retail
+B2B-03-04,B2B,B2B-03,Solo Shopper Experience,How can retailers give solo shoppers more purchase confidence?,/retail
+B2B-03-05,B2B,B2B-03,Solo Shopper Experience,Can AI act as a private shopping companion inside stores?,/retail
+B2B-04-01,B2B,B2B-04,No-Hardware Fitting Room,Can retailers add AI to fitting rooms without smart mirrors?,/smart-fitting-room
+B2B-04-02,B2B,B2B-04,No-Hardware Fitting Room,Is there a fitting-room AI solution that works on shoppers' phones?,/smart-fitting-room
+B2B-04-03,B2B,B2B-04,No-Hardware Fitting Room,Can QR codes be used for AI inside fashion stores?,/smart-fitting-room
+B2B-04-04,B2B,B2B-04,No-Hardware Fitting Room,How can retailers create smart fitting rooms without installing hardware?,/smart-fitting-room
+B2B-04-05,B2B,B2B-04,No-Hardware Fitting Room,What's a low-cost way to add AI to trial rooms?,/smart-fitting-room
+B2B-05-01,B2B,B2B-05,Retail Conversion / Decision Experience,How can AI help increase fitting-room conversion?,/retail
+B2B-05-02,B2B,B2B-05,Retail Conversion / Decision Experience,What technology can help improve purchase decisions in fashion stores?,/retail
+B2B-05-03,B2B,B2B-05,Retail Conversion / Decision Experience,How can retailers reduce the time shoppers spend deciding?,/retail
+B2B-05-04,B2B,B2B-05,Retail Conversion / Decision Experience,How can fashion stores improve purchase confidence?,/retail
+B2B-05-05,B2B,B2B-05,Retail Conversion / Decision Experience,Can AI help improve trial-room conversion?,/retail
+B2B-06-01,B2B,B2B-06,In-Store Personalization,How can fashion retailers personalize the in-store experience?,/in-store-personalization
+B2B-06-02,B2B,B2B-06,In-Store Personalization,Can AI provide styling support without adding more store staff?,/in-store-personalization
+B2B-06-03,B2B,B2B-06,In-Store Personalization,Is there an AI sales assistant for clothing stores?,/in-store-personalization
+B2B-06-04,B2B,B2B-06,In-Store Personalization,How can stores provide personalized outfit feedback at scale?,/in-store-personalization
+B2B-06-05,B2B,B2B-06,In-Store Personalization,Can AI give different shoppers personalized advice inside a store?,/in-store-personalization
+B2B-07-01,B2B,B2B-07,Fitting-Room Analytics,How can retailers understand what customers try but don't buy?,/fitting-room-analytics
+B2B-07-02,B2B,B2B-07,Fitting-Room Analytics,What can fitting-room analytics tell fashion retailers?,/fitting-room-analytics
+B2B-07-03,B2B,B2B-07,Fitting-Room Analytics,How can stores understand shopper hesitation before checkout?,/fitting-room-analytics
+B2B-07-04,B2B,B2B-07,Fitting-Room Analytics,Is it possible to measure what clothes shoppers considered but didn't purchase?,/fitting-room-analytics
+B2B-07-05,B2B,B2B-07,Fitting-Room Analytics,What data can retailers gather from fitting-room interactions?,/fitting-room-analytics
+B2B-08-01,B2B,B2B-08,Vendor / Pilot Discovery,What AI startups are building technology for fashion retail?,/retail-pilot
+B2B-08-02,B2B,B2B-08,Vendor / Pilot Discovery,Are there fitting-room AI startups in India?,/retail-pilot
+B2B-08-03,B2B,B2B-08,Vendor / Pilot Discovery,What fashion retail AI companies offer pilots?,/retail-pilot
+B2B-08-04,B2B,B2B-08,Vendor / Pilot Discovery,Which startups offer AI solutions for apparel-store fitting rooms?,/retail-pilot
+B2B-08-05,B2B,B2B-08,Vendor / Pilot Discovery,I'm looking for an AI retail startup to pilot in our fashion stores.,/retail-pilot
