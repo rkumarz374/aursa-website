@@ -95,7 +95,7 @@ const AppPage = () => {
                                 href="https://apps.apple.com/in/app/aursa/id6761254001"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                onClick={() => trackEvent('app_store_click', { store: 'apple', source: 'consumer_hero', platform: 'ios' })}
+                                onClick={() => trackEvent('app_store_click', { store: 'apple', source: 'consumer_hero', platform: 'ios', store_platform: 'ios', origin_path: window.location.pathname })}
                                 className="opacity-90 hover:opacity-100 transition-opacity duration-200"
                             >
                                 <img 
@@ -108,7 +108,7 @@ const AppPage = () => {
                                 href="https://play.google.com/store/apps/details?id=com.aursa.app"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                onClick={() => trackEvent('app_store_click', { store: 'google', source: 'consumer_hero', platform: 'android' })}
+                                onClick={() => trackEvent('play_store_click', { store: 'google', source: 'consumer_hero', platform: 'android', store_platform: 'android', origin_path: window.location.pathname })}
                                 className="opacity-90 hover:opacity-100 transition-opacity duration-200"
                             >
                                 <img 

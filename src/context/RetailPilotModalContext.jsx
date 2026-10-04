@@ -15,7 +15,7 @@ export const RetailPilotModalProvider = ({ children }) => {
             setTriggerEl(document.activeElement);
         }
         setIsDeepLink(fromDeepLink);
-        trackEvent('retail_pilot_cta_click', { source });
+        trackEvent('retail_pilot_cta_click', { source, origin_path: window.location.pathname });
         setIsOpen(true);
     };
 
