@@ -25,6 +25,10 @@ const FittingRoomIntelligencePage = lazy(() => import("./pages/pillars/FittingRo
 const FittingRoomAnalyticsPage = lazy(() => import("./pages/pillars/FittingRoomAnalyticsPage"));
 const InStorePersonalizationPage = lazy(() => import("./pages/pillars/InStorePersonalizationPage"));
 const PersonalStyleIntelligencePage = lazy(() => import("./pages/PersonalStyleIntelligencePage"));
+const AIOutfitCheckPage = lazy(() => import("./pages/discovery/AIOutfitCheckPage"));
+const OutfitSecondOpinionPage = lazy(() => import("./pages/discovery/OutfitSecondOpinionPage"));
+const OutfitOccasionsPage = lazy(() => import("./pages/discovery/OutfitOccasionsPage"));
+const RetailPilotPage = lazy(() => import("./pages/discovery/RetailPilotPage"));
 
 // ── Navbar ────────────────────────────────────────────────────────────────────
 
@@ -458,6 +462,10 @@ const AnimatedRoutes = () => {
                     <Route path="/fitting-room-analytics" element={<PageWrapper><FittingRoomAnalyticsPage /></PageWrapper>} />
                     <Route path="/in-store-personalization" element={<PageWrapper><InStorePersonalizationPage /></PageWrapper>} />
                     <Route path="/personal-style-intelligence" element={<PageWrapper><PersonalStyleIntelligencePage /></PageWrapper>} />
+                    <Route path="/ai-outfit-check" element={<PageWrapper><AIOutfitCheckPage /></PageWrapper>} />
+                    <Route path="/outfit-second-opinion" element={<PageWrapper><OutfitSecondOpinionPage /></PageWrapper>} />
+                    <Route path="/outfit-check-for-occasions" element={<PageWrapper><OutfitOccasionsPage /></PageWrapper>} />
+                    <Route path="/retail-pilot" element={<PageWrapper><RetailPilotPage /></PageWrapper>} />
 
                     <Route path="/about" element={<PageWrapper><AboutPage /></PageWrapper>} />
                     <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />

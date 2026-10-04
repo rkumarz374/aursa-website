@@ -305,12 +305,13 @@ const RetailPage = () => {
                         <h2 className="font-serif text-3xl sm:text-4xl text-[#FFFFFF]">Explore retail intelligence concepts.</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left pt-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-left pt-2">
                         {[
                             { title: "Smart Fitting Room", path: "/smart-fitting-room", desc: "Understanding hardware vs experience approaches" },
                             { title: "Fitting Room Intelligence", path: "/fitting-room-intelligence", desc: "The concept behind the decision moment" },
                             { title: "Fitting Room Analytics", path: "/fitting-room-analytics", desc: "Decision context vs outcome data" },
-                            { title: "In-Store Personalization", path: "/in-store-personalization", desc: "Extending personalization in physical retail" }
+                            { title: "In-Store Personalization", path: "/in-store-personalization", desc: "Extending personalization in physical retail" },
+                            { title: "Retail Pilot Program", path: "/retail-pilot", desc: "Test lightweight fitting room decision support" }
                         ].map((pillar, idx) => (
                             <Link
                                 key={idx}

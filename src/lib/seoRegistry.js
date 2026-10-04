@@ -79,6 +79,42 @@ export const STATIC_ROUTES = [
         ogType: 'website'
     },
     {
+        path: '/ai-outfit-check',
+        canonical: `${DOMAIN}/ai-outfit-check`,
+        title: 'AI Outfit Check — Get a Second Opinion on Your Outfit | AURSA',
+        description: "Not sure about your outfit? AURSA gives you a personalized second opinion on the look you're already wearing before you step out.",
+        indexPolicy: 'index, follow',
+        sitemap: true,
+        ogType: 'website'
+    },
+    {
+        path: '/outfit-second-opinion',
+        canonical: `${DOMAIN}/outfit-second-opinion`,
+        title: 'Get a Second Opinion on Your Outfit | AURSA',
+        description: 'Already dressed but still unsure? AURSA gives you a private, personalized second opinion before you step out.',
+        indexPolicy: 'index, follow',
+        sitemap: true,
+        ogType: 'website'
+    },
+    {
+        path: '/outfit-check-for-occasions',
+        canonical: `${DOMAIN}/outfit-check-for-occasions`,
+        title: 'Check Your Outfit for Dates, Interviews, Weddings & More | AURSA',
+        description: 'Use AURSA for a personalized second opinion before a date, interview, meeting, wedding, event or shopping decision.',
+        indexPolicy: 'index, follow',
+        sitemap: true,
+        ogType: 'website'
+    },
+    {
+        path: '/retail-pilot',
+        canonical: `${DOMAIN}/retail-pilot`,
+        title: 'Pilot AURSA in Your Fashion Stores | AURSA',
+        description: 'Explore a lightweight AURSA retail pilot designed to support shoppers during the fitting-room decision.',
+        indexPolicy: 'index, follow',
+        sitemap: true,
+        ogType: 'website'
+    },
+    {
         path: '/about',
         canonical: `${DOMAIN}/about`,
         title: 'About — AURSA',

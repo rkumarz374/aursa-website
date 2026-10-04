@@ -175,6 +175,37 @@ const routes = [
         description: 'AURSA helps fashion retailers support shoppers at the fitting-room decision moment with a private, personalized second opinion — without requiring a smart mirror.',
         canonical: 'https://aursa.app/retail',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/retail#webpage',
+                    'url': 'https://aursa.app/retail',
+                    'name': 'Fashion Retail Intelligence for the Fitting-Room Decision | AURSA',
+                    'description': 'AURSA helps fashion retailers support shoppers at the fitting-room decision moment with a private, personalized second opinion — without requiring a smart mirror.'
+                },
+                {
+                    '@type': 'Service',
+                    '@id': 'https://aursa.app/retail#service',
+                    'name': 'AURSA Fashion Retail Intelligence',
+                    'serviceType': 'Fitting Room Decision Support',
+                    'provider': {
+                        '@type': 'Organization',
+                        '@id': 'https://aursa.app/#organization'
+                    },
+                    'description': 'Fitting-room decision support and intelligence for fashion retailers, helping shoppers evaluate try-on looks using their own phone.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/retail#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Retail', 'item': 'https://aursa.app/retail' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>FASHION RETAIL INTELLIGENCE</p>
@@ -254,6 +285,38 @@ const routes = [
         description: "Use AURSA as a private AI outfit checker and personal style companion when you're standing in front of the mirror and wondering whether a look works for you.",
         canonical: 'https://aursa.app/app',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/app#webpage',
+                    'url': 'https://aursa.app/app',
+                    'name': 'AURSA — AI Outfit Checker & Personal Style App',
+                    'description': "Use AURSA as a private AI outfit checker and personal style companion when you're standing in front of the mirror and wondering whether a look works for you."
+                },
+                {
+                    '@type': 'SoftwareApplication',
+                    '@id': 'https://aursa.app/#softwareapplication',
+                    'name': 'AURSA',
+                    'operatingSystem': 'iOS, Android',
+                    'applicationCategory': 'Style & Fashion Application',
+                    'url': 'https://aursa.app/',
+                    'publisher': {
+                        '@id': 'https://aursa.app/#organization'
+                    },
+                    'description': 'AURSA gives people a personalized second opinion on the outfit they are already wearing before they step out.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/app#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'App', 'item': 'https://aursa.app/app' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>YOUR AI STYLE MIRROR</p>
@@ -305,6 +368,26 @@ const routes = [
         description: 'Explore Personal Style Intelligence: how preferences, context, recurring choices and outfit decisions can help you better understand what works for you.',
         canonical: 'https://aursa.app/personal-style-intelligence',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/personal-style-intelligence#webpage',
+                    'url': 'https://aursa.app/personal-style-intelligence',
+                    'name': 'What Is Personal Style Intelligence? | AURSA',
+                    'description': 'Explore Personal Style Intelligence: how preferences, context, recurring choices and outfit decisions can help you better understand what works for you.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/personal-style-intelligence#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Personal Style Intelligence', 'item': 'https://aursa.app/personal-style-intelligence' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>PERSONAL STYLE INTELLIGENCE</p>
@@ -352,6 +435,27 @@ const routes = [
         description: 'Learn what smart fitting rooms are, how traditional fitting-room technology works, and how shopper-phone experiences can add intelligence without requiring a smart mirror.',
         canonical: 'https://aursa.app/smart-fitting-room',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/smart-fitting-room#webpage',
+                    'url': 'https://aursa.app/smart-fitting-room',
+                    'name': 'Smart Fitting Rooms Without New Hardware | AURSA',
+                    'description': 'Learn what smart fitting rooms are, how traditional fitting-room technology works, and how shopper-phone experiences can add intelligence without requiring a smart mirror.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/smart-fitting-room#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Retail', 'item': 'https://aursa.app/retail' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Smart Fitting Room', 'item': 'https://aursa.app/smart-fitting-room' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>RETAIL TECHNOLOGY EVALUATION</p>
@@ -375,6 +479,27 @@ const routes = [
         description: "Explore fitting room intelligence: understanding the shopper's decision moment between trying an item on and deciding what to do next.",
         canonical: 'https://aursa.app/fitting-room-intelligence',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/fitting-room-intelligence#webpage',
+                    'url': 'https://aursa.app/fitting-room-intelligence',
+                    'name': 'What Is Fitting Room Intelligence? | AURSA',
+                    'description': "Explore fitting room intelligence: understanding the shopper's decision moment between trying an item on and deciding what to do next."
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/fitting-room-intelligence#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Retail', 'item': 'https://aursa.app/retail' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Fitting Room Intelligence', 'item': 'https://aursa.app/fitting-room-intelligence' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>CATEGORY CONCEPT & DEFINITION</p>
@@ -394,6 +519,27 @@ const routes = [
         description: 'Understand fitting room analytics, the gap between try-on and purchase data, and the types of decision signals retailers may explore through fitting-room experiences.',
         canonical: 'https://aursa.app/fitting-room-analytics',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/fitting-room-analytics#webpage',
+                    'url': 'https://aursa.app/fitting-room-analytics',
+                    'name': 'Fitting Room Analytics & Shopper Decision Insights | AURSA',
+                    'description': 'Understand fitting room analytics, the gap between try-on and purchase data, and the types of decision signals retailers may explore through fitting-room experiences.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/fitting-room-analytics#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Retail', 'item': 'https://aursa.app/retail' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Fitting Room Analytics', 'item': 'https://aursa.app/fitting-room-analytics' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>MEASUREMENT & SIGNALS</p>
@@ -413,6 +559,27 @@ const routes = [
         description: 'Explore in-store personalization for fashion retail and how personal decision support can extend personalization into the physical fitting-room experience.',
         canonical: 'https://aursa.app/in-store-personalization',
         sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/in-store-personalization#webpage',
+                    'url': 'https://aursa.app/in-store-personalization',
+                    'name': 'In-Store Personalization for Fashion Retail | AURSA',
+                    'description': 'Explore in-store personalization for fashion retail and how personal decision support can extend personalization into the physical fitting-room experience.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/in-store-personalization#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Retail', 'item': 'https://aursa.app/retail' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'In-Store Personalization', 'item': 'https://aursa.app/in-store-personalization' }
+                    ]
+                }
+            ]
+        },
         htmlContent: `<main class="prerendered-content">
             <section>
                 <p>PERSONALIZATION & EXPERIENCE</p>
@@ -512,6 +679,245 @@ const routes = [
                     <time>${post.date || ''}</time>
                 </article>
                 `).join('')}
+            </section>
+        </main>`
+    },
+    {
+        path: '/ai-outfit-check',
+        title: 'AI Outfit Check — Get a Second Opinion on Your Outfit | AURSA',
+        description: "Not sure about your outfit? AURSA gives you a personalized second opinion on the look you're already wearing before you step out.",
+        canonical: 'https://aursa.app/ai-outfit-check',
+        sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/ai-outfit-check#webpage',
+                    'url': 'https://aursa.app/ai-outfit-check',
+                    'name': 'AI Outfit Check — Get a Second Opinion on Your Outfit | AURSA',
+                    'description': "Not sure about your outfit? AURSA gives you a personalized second opinion on the look you're already wearing before you step out."
+                },
+                {
+                    '@type': 'SoftwareApplication',
+                    '@id': 'https://aursa.app/#softwareapplication',
+                    'name': 'AURSA',
+                    'operatingSystem': 'iOS, Android',
+                    'applicationCategory': 'Style & Fashion Application',
+                    'url': 'https://aursa.app/',
+                    'description': 'AURSA is an AI-powered outfit analysis app that gives people a personalized second opinion on what they are already wearing before they step out.'
+                }
+            ]
+        },
+        htmlContent: `<main class="prerendered-content">
+            <section>
+                <p>AI OUTFIT CHECK</p>
+                <h1>Get a Second Opinion on Your Outfit</h1>
+                <p>Already dressed but not sure if the outfit works? AURSA gives you a personalized second opinion on the look you're wearing so you can understand what's working and decide with more confidence.</p>
+            </section>
+            <section>
+                <h2>What can AURSA help with?</h2>
+                <ul>
+                    <li>Understanding Visual Balance — See whether colors, proportions, and layering feel harmonious.</li>
+                    <li>Gaining Another Perspective — Get objective, non-judgmental feedback standing at the mirror.</li>
+                    <li>Noticing Small Adjustments — Discover subtle tweaks to refine your look.</li>
+                    <li>Deciding with Clarity — Step out knowing why your outfit works.</li>
+                </ul>
+            </section>
+            <section>
+                <h2>How do you use it?</h2>
+                <ol>
+                    <li>Share Your Look — Share the outfit you are currently wearing.</li>
+                    <li>Second Opinion — Receive an instant, personalized second opinion.</li>
+                    <li>Review Feedback — Understand what's working and what you may adjust.</li>
+                    <li>Step Out — Make your own decision and wear with confidence.</li>
+                </ol>
+            </section>
+            <section>
+                <h2>When is an outfit check useful?</h2>
+                <p>Before going out, dates, job interviews, work, weddings, events, or when shopping alone.</p>
+            </section>
+            <section>
+                <h2>Not a fashion judge.</h2>
+                <p>AURSA is not designed to tell you that your personal style is right or wrong. It gives you another perspective on the outfit you're already wearing so you can decide for yourself.</p>
+            </section>
+        </main>`
+    },
+    {
+        path: '/outfit-second-opinion',
+        title: 'Get a Second Opinion on Your Outfit | AURSA',
+        description: 'Already dressed but still unsure? AURSA gives you a private, personalized second opinion before you step out.',
+        canonical: 'https://aursa.app/outfit-second-opinion',
+        sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/outfit-second-opinion#webpage',
+                    'url': 'https://aursa.app/outfit-second-opinion',
+                    'name': 'Get a Second Opinion on Your Outfit | AURSA',
+                    'description': 'Already dressed but still unsure? AURSA gives you a private, personalized second opinion before you step out.'
+                },
+                {
+                    '@type': 'SoftwareApplication',
+                    '@id': 'https://aursa.app/#softwareapplication',
+                    'name': 'AURSA',
+                    'operatingSystem': 'iOS, Android',
+                    'applicationCategory': 'Style & Fashion Application',
+                    'url': 'https://aursa.app/',
+                    'publisher': {
+                        '@id': 'https://aursa.app/#organization'
+                    },
+                    'description': 'AURSA is an AI-powered outfit analysis app that gives people a personalized second opinion on what they are already wearing before they step out.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/outfit-second-opinion#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'App', 'item': 'https://aursa.app/app' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Outfit Second Opinion', 'item': 'https://aursa.app/outfit-second-opinion' }
+                    ]
+                }
+            ]
+        },
+        htmlContent: `<main class="prerendered-content">
+            <section>
+                <p>SECOND OPINION</p>
+                <h1>Not Sure About Your Outfit? Get a Second Opinion.</h1>
+                <p>Sometimes you're already dressed — you just want another perspective before deciding. AURSA gives you a private, personalized second opinion on the outfit you're wearing.</p>
+            </section>
+            <section>
+                <h2>The moment AURSA is built for</h2>
+                <p>Checking the mirror one last time, wondering if the outfit works together, or thinking about changing one piece. AURSA makes that second opinion available right when you need it.</p>
+            </section>
+            <section>
+                <h2>What do you receive?</h2>
+                <ul>
+                    <li>Another Perspective — Objective evaluation standing in front of the mirror.</li>
+                    <li>Clarity on What Works — Positive reinforcement on your strongest visual elements.</li>
+                    <li>Small Adjustments — Subtle suggestions on areas to reconsider.</li>
+                    <li>Decision Confidence — Step out feeling comfortable in your own choice.</li>
+                </ul>
+            </section>
+        </main>`
+    },
+    {
+        path: '/outfit-check-for-occasions',
+        title: 'Check Your Outfit for Dates, Interviews, Weddings & More | AURSA',
+        description: 'Use AURSA for a personalized second opinion before a date, interview, meeting, wedding, event or shopping decision.',
+        canonical: 'https://aursa.app/outfit-check-for-occasions',
+        sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/outfit-check-for-occasions#webpage',
+                    'url': 'https://aursa.app/outfit-check-for-occasions',
+                    'name': 'Check Your Outfit for Dates, Interviews, Weddings & More | AURSA',
+                    'description': 'Use AURSA for a personalized second opinion before a date, interview, meeting, wedding, event or shopping decision.'
+                },
+                {
+                    '@type': 'SoftwareApplication',
+                    '@id': 'https://aursa.app/#softwareapplication',
+                    'name': 'AURSA',
+                    'operatingSystem': 'iOS, Android',
+                    'applicationCategory': 'Style & Fashion Application',
+                    'url': 'https://aursa.app/',
+                    'publisher': {
+                        '@id': 'https://aursa.app/#organization'
+                    },
+                    'description': 'AURSA is an AI-powered outfit analysis app that gives people a personalized second opinion on what they are already wearing before they step out.'
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/outfit-check-for-occasions#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'App', 'item': 'https://aursa.app/app' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Occasion Outfit Check', 'item': 'https://aursa.app/outfit-check-for-occasions' }
+                    ]
+                }
+            ]
+        },
+        htmlContent: `<main class="prerendered-content">
+            <section>
+                <p>OCCASION OUTFIT CHECK</p>
+                <h1>Check Your Outfit Before the Moment Matters</h1>
+                <p>Different moments create different outfit doubts. AURSA gives you a personalized second opinion on the outfit you've chosen before the moment matters.</p>
+            </section>
+            <section>
+                <h2>Occasions & Settings</h2>
+                <ul>
+                    <li>First Date — "Does this outfit feel right for a date?"</li>
+                    <li>Job Interview — "Does this outfit feel right for the interview?"</li>
+                    <li>Weddings & Formal Events — "Does this look feel right for the occasion?"</li>
+                    <li>Solo Shopping — "Do I feel confident buying this?"</li>
+                </ul>
+            </section>
+            <section>
+                <h2>AURSA supports the decision. You make it.</h2>
+                <p>Whether it's a major event or a casual Friday, AURSA helps you understand your look so you can walk into any room feeling authentic.</p>
+            </section>
+        </main>`
+    },
+    {
+        path: '/retail-pilot',
+        title: 'Pilot AURSA in Your Fashion Stores | AURSA',
+        description: 'Explore a lightweight AURSA retail pilot designed to support shoppers during the fitting-room decision.',
+        canonical: 'https://aursa.app/retail-pilot',
+        sitemap: true,
+        schema: {
+            '@context': 'https://schema.org',
+            '@graph': [
+                {
+                    '@type': 'WebPage',
+                    '@id': 'https://aursa.app/retail-pilot#webpage',
+                    'url': 'https://aursa.app/retail-pilot',
+                    'name': 'Pilot AURSA in Your Fashion Stores | AURSA',
+                    'description': 'Explore a lightweight AURSA retail pilot designed to support shoppers during the fitting-room decision.'
+                },
+                {
+                    '@type': 'Service',
+                    '@id': 'https://aursa.app/retail-pilot#service',
+                    'name': 'AURSA Retail Pilot',
+                    'serviceType': 'Fashion Retail Fitting Room Decision Support Pilot',
+                    'provider': {
+                        '@type': 'Organization',
+                        '@id': 'https://aursa.app/#organization'
+                    }
+                },
+                {
+                    '@type': 'BreadcrumbList',
+                    '@id': 'https://aursa.app/retail-pilot#breadcrumb',
+                    'itemListElement': [
+                        { '@type': 'ListItem', 'position': 1, 'name': 'AURSA', 'item': 'https://aursa.app/' },
+                        { '@type': 'ListItem', 'position': 2, 'name': 'Retail', 'item': 'https://aursa.app/retail' },
+                        { '@type': 'ListItem', 'position': 3, 'name': 'Retail Pilot', 'item': 'https://aursa.app/retail-pilot' }
+                    ]
+                }
+            ]
+        },
+        htmlContent: `<main class="prerendered-content">
+            <section>
+                <p>RETAIL PILOT PROGRAM</p>
+                <h1>Pilot AURSA in Your Stores</h1>
+                <p>AURSA gives fashion retailers a lightweight way to test personalized fitting-room decision support for shoppers who are unsure about an outfit.</p>
+            </section>
+            <section>
+                <h2>How the pilot works</h2>
+                <ul>
+                    <li>No Specialized Hardware — Deployed through QR-based entry in fitting rooms, running on the shopper's own phone.</li>
+                    <li>Focused Store Scope — Test in selected store locations to observe shopper interaction during trial-room decision moments.</li>
+                    <li>Privacy-First Setup — Outfit photos are processed in real time and are not stored.</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Understand shopper decision engagement.</h2>
+                <p>The pilot is designed to help retailers understand how shoppers engage with decision support during the fitting-room experience.</p>
+                <a href="/contact?interest=retail-pilot">Request a Retail Pilot</a>
             </section>
         </main>`
     },

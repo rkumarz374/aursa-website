@@ -283,6 +283,27 @@ const AppPage = () => {
                 </div>
             </section>
 
+            {/* ── DISCOVERY PAGES LINKING ───────────────────────────────────────── */}
+            <section className="py-16 px-6 border-t border-white/5 relative z-10 text-center">
+                <div className="max-w-3xl mx-auto space-y-6">
+                    <span className="text-xs font-bold uppercase tracking-[0.3em] text-[#D88A3D] font-neutra">OUTFIT FEEDBACK SCENARIOS</span>
+                    <div className="flex flex-wrap justify-center gap-4 text-xs font-bold uppercase tracking-[0.2em] font-neutra">
+                        <Link to="/ai-outfit-check" className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors">
+                            AI Outfit Check
+                        </Link>
+                        <Link to="/outfit-second-opinion" className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors">
+                            Outfit Second Opinion
+                        </Link>
+                        <Link to="/outfit-check-for-occasions" className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors">
+                            Occasion Outfit Check
+                        </Link>
+                        <Link to="/personal-style-intelligence" className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white border border-white/10 transition-colors">
+                            Personal Style Intelligence
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
             {/* ── SECTION 7: DOWNLOAD AURSA ────────────────────────────────────── */}
             <AppDownloadSection source="app_page" />
         </div>
